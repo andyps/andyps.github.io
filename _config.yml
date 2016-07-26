@@ -11,8 +11,9 @@ email: andrey.pashentsev@gmail.com
 description: > # this means to ignore newlines until "baseurl:"
   A blog by Andrii Pashentsev
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://yourdomain.com" # the base hostname & protocol for your site
+url: "https://andyps.github.io" # the base hostname & protocol for your site
 github_username:  andyps
+repository: andyps/andyps.github.io
 
 # Build settings
 markdown: kramdown
