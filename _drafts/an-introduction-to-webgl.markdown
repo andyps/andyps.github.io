@@ -669,14 +669,107 @@ _x_ и _y_ соответственно. Вращение задается в р
 
 ## Используем BabylonJS
 
-_BabylonJS_ моложе _Three.js_. Первый релиз состоялся в 2013 году. _BabylonJS_ стремительно развивается и сейчас
+_BabylonJS_ моложе _Three.js_. Первый релиз состоялся в 2013 году. Но _BabylonJS_ стремительно развивается и сейчас
 является одним из самым популярных WebGL-фреймворков.
 [Ссылка на официальный сайт BabylonJS](http://www.babylonjs.com/){:target="_blank"}.
 
 Настал черед портировать приложение на _BabylonJS_. На самом деле большинство фреймворков используют одинаковые понятия и многое окажется
-сходным с приложением на _Three.js_. Структура приложения осталась той же, методы _update_ и _checkRotateLimits_ вообще
+сходным с реализацией на _Three.js_. Структура приложения осталась та же, методы _update_ и _checkRotateLimits_ вообще
 не нужно менять.
 
+Проверить поддержку WebGL браузером в BabylonJS можно следующим образом:
 
+    if (!BABYLON.Engine.isSupported()) {
+        document.body.innerHTML = 'Unfortunately your browser is not supported';
+        return;
+    }
+
+После этой проверки создадим экземпляр _BABYLON.Engine_, который является аналогом _THREE.WebGLRenderer_.
+Первым аргументом передается элемент canvas. Второй включает / отключает поддержку сглаживания (antialias).
+
+    this.engine = new BABYLON.Engine(this.canvas, true);
+
+Создание и настройка сцены
+
+    this.scene = new BABYLON.Scene(this.engine);
+    this.scene.clearColor = new BABYLON.Color3(0, 0, 0);
+    this.scene.ambientColor = new BABYLON.Color3(1, 1, 1);
+
+В качестве камеры я выбрал _ArcRotateCamera_. Нужно заметить, что BabylonJS камера отвечает и за ее управление.
+Данная камера вращается вокруг указанной точке по сфере с указанным радиусом.
+
+    var camera = new BABYLON.ArcRotateCamera('camera', -1, 1, -130, new BABYLON.Vector3(0, 0, 0), this.scene);
+    camera.setPosition(new BABYLON.Vector3(-95, 95, 95));
+
+Первый аргумент - название камеры. Никто не мешает использовать несколько камер в одной сцене, существуют методы для
+получения камеры по ее имени.  
+Второй и третий параметры (свойства камеры _alpha_ и _beta_) указывают углы поворота камеры по осям _x_ и _y_ (можно провести
+аналогию с широтой и долготой).  
+Четвертый аргумент конструктора камеры - радиус воображаемой сферы (ее свойство _radius_), на которой располагается камера.  
+Пятый параметр - точка на которую направлена камера.
+Шестой параметр - сцена, к которой камера относится.  
+В нашем случае, второй, третий и четвертый параметры не играют роли, т.к. далее по коду
+мы устанавливаем позицию камеры в точку -95, 95, 95, что в свою очередь изменяет соответствующие 
+ее свойства (alpha, beta, radius).
+
+Создание точечного источника света в указанной позиции и настройка некоторых его параметров:
+
+    var light = new BABYLON.PointLight('light', new BABYLON.Vector3(0, 0, 0), this.scene);
+    light.specular = new BABYLON.Color3(0, 0, 0);
+    light.intensity = 0.2;
+
+Позиция источника света, указанная в конструкторе неважна, т.к. с помощью 
+
+    light.parent = camera;
+
+мы привязываем источник света к камере. Таким образом, через свойство _parent_ можно связать
+объекты в BabylonJS.
+
+Для того, чтобы картинка не искажалась при изменении размеров браузера, в BabylonJS достаточно сделать следующее
+
+    var $this = this;
+    window.addEventListener('resize', function(){
+        $this.engine.resize();
+    });
+
+Т.е. все, что нужно - это вызвать метод _resize_ у объекта _engine_.
+
+Создание _Mesh_ в BabylonJS выглядит следующим образом
+
+    this.cubeMesh = BABYLON.Mesh.CreateBox('box', 40, this.scene);
+    var material = new BABYLON.StandardMaterial('material', this.scene);
+    material.diffuseColor = new BABYLON.Color3(0.3, 0.3, 0.7);
+    material.ambientColor = new BABYLON.Color3(0.3, 0.3, 0.7);
+    this.cubeMesh.material = material;
+
+В BabylonJS, как в Three.js заготовлено много различных геометрических объектов для использования и различные
+виды материалов.
+
+Так выглядит метод _run_:
+
+    run: function() {
+        var $this = this;
+        this.scene.registerBeforeRender(function() {
+            $this.update();
+        });
+        this.engine.runRenderLoop(function(){
+            $this.scene.render();
+        });
+    }
+
+Нет необходимости использовать requestAnimationFrame. Вместо этого используется
+_engine.runRenderLoop_ c указанием функции, которая должна выполняться в каждом фрейме.
+Для прорисовки сцены необходимо вызвать _render_
+
+    $this.scene.render();
+
+Можно зарегистрировать функции с помощью _scene.registerBeforeRender_ и
+_scene.registerAfterRender_ (названия говорят сами за себя).
+
+Как замечено выше, методы _update_ и _checkRotateLimits_ не поменялись. Каждый _Mesh_
+в BabylonJS содержит свойства с такими же именами, как в Three.js для вращения и изменения 
+позиции: _rotation_ и _position_. 
+
+Реализация на _BabylonJS_ готова, понадобилось около 80 строчек кода.
 
 
