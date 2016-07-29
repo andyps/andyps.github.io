@@ -1,5 +1,6 @@
 ---
 layout: post
+comments: true
 title:  "Введение в WebGL"
 date:   2016-07-29 00:00:00 +0300
 categories: webgl
