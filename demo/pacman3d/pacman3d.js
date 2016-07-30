@@ -1,5 +1,5 @@
-var pacman3d = window.pacman3d = function(canvasId) {
-    return this.init(canvasId); 
+var pacman3d = function(canvasId) {
+    this.init(canvasId); 
 };
 
 pacman3d.prototype = {
@@ -13,11 +13,9 @@ pacman3d.prototype = {
     scoreContainer: null,
     engine: null,
     scene: null,
-    shadows: null,
     player: null,
     level: null,
     spriteManager: null,
-    objects: [],
     
     currentLevel: 0,
     levelsCompleted: 0,
@@ -209,6 +207,6 @@ window.addEventListener('DOMContentLoaded', function() {
     var game = new pacman3d('gameCanvas');
     if (debugMode) {
         window.game = game;
-        //game.scene.debugLayer.show();
+        // game.scene.debugLayer.show();
     }
 }, false);
