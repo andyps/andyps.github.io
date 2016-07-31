@@ -573,5 +573,9 @@ _Constructive Solid Geometry_ и это способ моделирования 
 
 Четвертый параметр метода _beginAnimation_ установлен в true для зацикливания анимации.
 
-[Что получается на данный момент](http://cube-sim.com/pacman3d/step2.html){:target="_blank"}.
+Что получается на данный момент:
+[демо](http://cube-sim.com/pacman3d/step2.html){:target="_blank"},  
+[html](https://github.com/andyps/andyps.github.io/tree/master/demo/pacman3d/step2.html){:target="_blank"},  
+[код класса игры](https://github.com/andyps/andyps.github.io/tree/master/demo/pacman3d/pacman3d-step2.js){:target="_blank"},  
+[остальной код](https://github.com/andyps/andyps.github.io/tree/master/demo/pacman3d/step2){:target="_blank"}.
 
