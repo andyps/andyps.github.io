@@ -259,8 +259,319 @@ HemisphericLight определяется направлением к солнц
 цветом земли (groundColor, цвет пикселей, направленных к земле)
 и отраженным цветом (specular).
 
-Свойства __diffuse__ и __specular__, а также __intensity__ относятся ко всем классам источников света. Каждый свет
-можно отключить / включить, вызвав метод __setEnabled(true/false)__.
+Свойства _diffuse_ и _specular_, а также _intensity_ относятся ко всем классам источников света. Каждый свет
+можно отключить / включить, вызвав метод _setEnabled(true/false)_.
 
-Для лучшего ориентирования в сцене хорошая идея - отобразить оси мировой системы координат, что и делает метод _createWorldAxis_.
+Прежде, чем что-то добавить в сцену для удобства разработки добавим оси мировой системы координат, что реализовано в методе _createWorldAxis_.
+**Mesh** - еще одно базовое понятие 3d-программ. В BabylonJS они создаются статическими методами класса _BABYLON.Mesh_.
+Вот некоторые из них:  
+_BABYLON.Mesh.CreateBox_ - создание куба,  
+_BABYLON.Mesh.CreateSphere_ - создание сферы,  
+_BABYLON.Mesh.CreatePlane_ - создает плоскую прямоугольную поверхность,  
+_BABYLON.Mesh.CreateCylinder_ - цилиндр,  
+_BABYLON.Mesh.CreateTorus - создание тора,  
+_BABYLON.Mesh.CreateTube_ - создание поверхности трубчатой формы,  
+_BABYLON.Mesh.CreateRibbon_ - поверхность ленточно формы,  
+_BABYLON.Mesh.CreateLines - создание линий.
+
+Заполним кодом метод _createWorldAxis_
+
+    pacman3d.prototype.createWorldAxis = function() {
+        var halfSize = 50;
+        var x = BABYLON.Mesh.CreateLines('x', [
+            new BABYLON.Vector3(-halfSize, 0, 0),
+            new BABYLON.Vector3(halfSize, 0, 0),
+            new BABYLON.Vector3(halfSize, 10, 0)
+        ], this.scene);
+        x.color = new BABYLON.Color3(1, 0, 0);
+        var y = BABYLON.Mesh.CreateLines('y', [
+           new BABYLON.Vector3(0, -halfSize, 0),
+           new BABYLON.Vector3(0, halfSize, 0),
+           new BABYLON.Vector3(10, halfSize, 0)
+        ], this.scene);
+        y.color = new BABYLON.Color3(0, 1, 0);
+        var z = BABYLON.Mesh.CreateLines('z', [
+           new BABYLON.Vector3(0, 0, -halfSize),
+           new BABYLON.Vector3(0, 0, halfSize),
+           new BABYLON.Vector3(0, 10, halfSize)
+        ], this.scene);
+        z.color = new BABYLON.Color3(0, 0, 1);
+    };
+
+после чего можно будет увидеть
+[следующий результат](http://cube-sim.com/pacman3d/step1.html){:target="_blank"}.
+
+Самыми важными свойствами мешей являются _position_ и _rotation_.  
+_position_ - свойство-объект, которое содержит координаты меша на сцене.  
+_rotation_ - свойство-объект, которое содержит информацию о ориентации меша относительно осей x, y и z.
+C помощью _rotation_ меш можно вращать.  
+Оба свойства являются экземплярами объекта **BABYLON.Vector3**.
+
+## Создание уровня
+
+Вся информация по уровням игры содержится в файле _levels.js_. Каждый уровень представлен
+в виде массива, который представляет из себя карту располагаемых объектов. Каждый элемент карты уровня - это обозначение
+типа блока данного участка карты.
+
+Уровни создаются классом _Level_ в методе _Level.Create_ на основе карты уровня.
+
+    Level.Create = function(matrix, game) {
+        var level = new Level(game);
+        for (var z = 0; z < matrix.length; z++) {
+            for (var x = 0; x < matrix[z].length; x++) {
+                var type = matrix[z][x];
+                if (type == Block.TYPES.NOTHING) {
+                    continue;
+                }
+                
+                var position = new BABYLON.Vector3(x, 0, -z);
+                var block = Block.create(game, position);
+                level.blocks.push(block);
+                
+                if (type == Block.TYPES.NORMAL) {
+                    continue;
+                }
+                
+                if (type == Block.TYPES.START) {
+                    level.startPosition = position;
+                    continue;
+                }
+                
+                position.y = 0.9;
+                
+                if (type == Block.TYPES.COINX || type == Block.TYPES.COINZ) {
+                    var coin = Coin.create(game, position, type);
+                    level.coins.push(coin);
+                } else if (type == Block.TYPES.ENEMY1) {
+                    var enemy = Ghost.create(game, z, x, position.y);
+                    level.enemies.push(enemy);
+                } else if (type == Block.TYPES.ENEMY2) {
+                    
+                }
+            }
+        }
+        return level;
+    };
+
+Конструктор класса _Level_:
+
+    var Level = function(game) {
+        this.game = game;
+        
+        this.startPosition = new BABYLON.Vector3(0, 0, 0);
+        this.score = 0;
+        this.coins = [];
+        this.blocks = [];
+        this.enemies = [];
+    };
+
+## Классы GameObject и Block
+
+Все объекты уровня основываются на классе _GameObject_, который в свою очередь наследуется от класса _BABYLON.Mesh_.
+
+    var GameObject = function(name, game) {
+        BABYLON.Mesh.call(this, name, game.scene);
+        this.game = game;
+    };
+    GameObject.prototype = Object.create(BABYLON.Mesh.prototype);
+    GameObject.prototype.constructor = GameObject;
+
+Другой подход - не расширять класс _BABYLON.Mesh_, а инкапсулировать соответствующий экземпляр _BABYLON.Mesh_ внутри игрового объекта.  
+
+Рассмотрим класс _Block_.
+
+    var Block = function(game, position) {
+        GameObject.call(this, 'block', game);
+        var vertexData = BABYLON.VertexData.CreateBox({size: 1});
+        vertexData.applyToMesh(this);
+        this.init(game, position);
+    };
+
+    Block.prototype = Object.create(GameObject.prototype);
+    Block.prototype.constructor = Block;
+
+    Block.TYPES = {
+        NOTHING: '-',
+        NORMAL: 0,
+        START: 'S',
+        COINX: 'CX',
+        COINZ: 'CZ',
+        ENEMY1: 'E1',
+        ENEMY2: 'E2',
+    };
+
+    Block.prototype.init = function(game, position) {
+        this.game = game;
+        this.position.x = position.x;
+        this.position.y = position.y;
+        this.position.z = position.z;
+    };
+
+    Block.objectPrototype = null;
+
+    Block.create = function(game, position) {
+        if (!Block.objectPrototype) {
+            Block.objectPrototype = new Block(game, new BABYLON.Vector3(0, 0, 0));
+            Block.objectPrototype.isVisible = false;
+            Block.objectPrototype.setEnabled(false);
+        }
+        var block = Block.objectPrototype.createInstance('block');
+        block.init = Block.prototype.init;
+        
+        block.isVisible = true;
+        block.setEnabled(true);
+        
+        block.init(game, position);
+        
+        return block;
+    };
+
+В _Block.TYPES_ находятся все типы блоков.  
+Хочу обратить внимание на два момента.  
+В конструкторе _Block_ приходится создавать набор вершин, представляющий собой куб,
+с помощью _BABYLON.VertexData.CreateBox_, так как _Block_ расширяет класс GameObject и, следовательно, BABYLON.Mesh.
+Потом этот набор применяется следующим образом:
+
+    vertexData.applyToMesh(this);
+
+Второе - поскольку блоков много, мы сначала создаем прототип блока, на основание которого создаются все остальные блоки.
+
+    Block.objectPrototype = new Block(game, new BABYLON.Vector3(0, 0, 0));
+    Block.objectPrototype.isVisible = false;
+    Block.objectPrototype.setEnabled(false);
+
+## Улучшение производительности с помощью инстанцирования
+
+В BabylonJS есть удобные средства для оптимизации. В данном приложении мы повсюду используем инстанцирование. Это позволяет отрендерить
+множество однотипных объектов с помощью одного "draw call". Уменьшение количества необходимых вызовов прорисовки -
+эффективное средство для улучшения производительности. Если количество fps вас не устраивает,
+в первую очередь обратите внимание на значение "draw calls" в панели отладки. Пример инстанцирования блоков:
+
+    var block = Block.objectPrototype.createInstance('block');
+
+С этой целью также можно использовать способ склеивания мешей. В BabylonJS это делается очень просто:
+в метод **BABYLON.Mesh.MergeMeshes** первым параметром нужно передать массив мешей. На выходе получится
+один единственный меш, поэтому применять этот способ имеет смысл только тогда, когда вам не нужны больше исходные меши как
+отдельные объекты, например, если не нужно изменять их позиции. Второй параметр метода _BABYLON.Mesh.MergeMeshes_ позволяет
+оставить исходные объекты, если указать его равным _false_ (по умолчанию равен _true_).
+
+Упомяну еще, что BabylonJS поддерживает **LOD** (Level Of Detail). _LOD_ - это способ улучшения производительности
+за счет уменьшения уровня детализации объекта при удалении от него.
+
+## Класс Coin
+
+Для создания монеток используется **BABYLON.VertexData.CreateCylinder**.
+
+    var Coin = function(game, position, faceTo) {
+        GameObject.call(this, 'coin', game);
+        var vertexData = BABYLON.VertexData.CreateCylinder({
+            height: 0.05,
+            diameterBottom: 0.6,
+            diameterTop: 0.6,
+            tessellation: 16
+        });
+        vertexData.applyToMesh(this);
+        this.init(game, position, faceTo);
+    };
+
+Отличие монеток CX и CZ состоит в их ориентации. CX "смотрит" на плоскость yz, а CZ - на xy.
+
+    Coin.prototype.init = function(game, position, faceTo) {
+        this.game = game;
+        
+        this.position.x = position.x;
+        this.position.y = position.y;
+        this.position.z = position.z;
+        
+        if (faceTo === Block.TYPES.COINZ) {
+            this.rotation.x = Math.PI / 2;
+        } else {
+            this.rotation.z = Math.PI / 2;
+        }
+        this.animate();
+    };
+
+_rotation.x_ и _rotation.z_ используются для разворота монеты. Углы задаются в радианах.
+
+## Класс Player
+
+В классе _Player_ используется метод **CSG** для задания геометрии. _CSG_ расшифровывается как 
+_Constructive Solid Geometry_ и это способ моделирования геометрических тел с помощью комбинирования нескольких
+примитивов.  
+Мы используем сферу как основу, из которой вырезается треугольная призма, созданная с помощью _BABYLON.Mesh.CreateCylinder_.
+
+    var Player = function(game, position) {
+        GameObject.call(this, 'player', game);
+        
+        var mouth = BABYLON.Mesh.CreateCylinder('playerMouth', 0.8, 0.8, 0.8, 3, 1, game.scene, false);
+        var head = BABYLON.Mesh.CreateSphere('playerHead', 16, 0.8, game.scene);
+        mouth.position.x += 0.4;
+        mouth.rotation.y = Math.PI;
+        mouth.rotation.x = Math.PI / 2;
+        var mouthCSG = BABYLON.CSG.FromMesh(mouth);
+        var headCSG = BABYLON.CSG.FromMesh(head);
+        var playerCSG = headCSG.subtract(mouthCSG);
+        mouth.dispose();
+        head.dispose();
+        
+        var tmpPlayerMesh = playerCSG.toMesh('tmp', new BABYLON.StandardMaterial('tmp', game.scene), game.scene);
+        var vertexData = BABYLON.VertexData.ExtractFromMesh(tmpPlayerMesh);
+        vertexData.applyToMesh(this);
+        tmpPlayerMesh.dispose();
+        
+        this.reset(position);
+    };
+
+## Анимация
+
+Применим анимацию к монеткам.  
+Можно управлять анимацией самому, например используя свойства мешей _position_ и _rotation_, а можно 
+использовать заготовленный для этих целей класс **BABYLON.Animation**.
+
+Для начала создадим объект BABYLON.Animation, указав свойство, которое будет изменяться
+
+    Coin.animation = new BABYLON.Animation(
+        'coin', 'rotation.y', 30,
+        BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE
+    );
+
+Третий параметр - количество фреймов в секунду для анимации,  
+четвертый - тип данных,
+пятый параметр позволяет зациклить анимацию, поэтому здесь указано _BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE_.
+
+Следующим шагом нужно создать набор значений для каждого фрейма (animation keys) и добавить его в свойство _animations_ меша:
+
+    Coin.animation.setKeys([
+        {
+            frame: 0,
+            value: 0
+        },
+        {
+            frame: 15,
+            value: Math.PI / 2
+        },     
+        {
+            frame: 30,
+            value: 0
+        },     
+        {
+            frame: 45,
+            value: -Math.PI / 2
+        }, 
+        {
+            frame: 60,
+            value: 0
+        }
+    ]);
+
+И, наконец, с помощью метода _beginAnimation_ сцены, анимация начинает работать:
+
+    Coin.prototype.animate = function() {
+        this.animations.push(Coin.animation.clone());
+        this.getScene().beginAnimation(this, 0, 60, true, 1.0);
+    };
+
+Четвертый параметр метода _beginAnimation_ установлен в true для зацикливания анимации.
+
+[Что получается на данный момент](http://cube-sim.com/pacman3d/step2.html){:target="_blank"}.
 
