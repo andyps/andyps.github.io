@@ -18,10 +18,6 @@ var Player = function(game, position) {
     vertexData.applyToMesh(this);
     tmpPlayerMesh.dispose();
     
-    var material = new BABYLON.StandardMaterial('player', game.scene);
-    material.diffuseColor = material.ambientColor = new BABYLON.Color3(1, 1, 0);
-    
-    this.material = material;
     this.rotationQuaternion = new BABYLON.Quaternion();
     this.physicsImpostor = new BABYLON.PhysicsImpostor(
         this, 
@@ -99,6 +95,7 @@ Player.prototype.moveTo = function(dir) {
 Player.prototype.rotateTo = function(angle) {
     var mQuaternion = this.rotationQuaternion;
     var q = BABYLON.Quaternion.RotationAxis(BABYLON.Axis.Y, angle * this.game.scene.getAnimationRatio());
+    // update mesh rotationQuaternion
     this.rotationQuaternion = q.multiply(mQuaternion);
 };
 Player.prototype.reset = function(position) {
