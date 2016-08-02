@@ -53,4 +53,3 @@ Ghost.create = function(game, mapCellZ, mapCellX, y) {
     
     return ghost;
 };
-
