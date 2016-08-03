@@ -797,6 +797,91 @@ _intersects_ возвращает немного интересной инфор
 [код класса игры](https://github.com/andyps/andyps.github.io/tree/master/demo/pacman3d/pacman3d-step5.js){:target="_blank"},  
 [остальной код](https://github.com/andyps/andyps.github.io/tree/master/demo/pacman3d/step5){:target="_blank"}.
 
-## Текстуры
+## Материал и текстуры
 
-Текстуры - еще один важнейший элемент 3d-приложений, особенно игр.
+Материал и текстуры - еще одни важнейшие элементы 3d-приложений, особенно игровых.  
+Материал характеризует оптические свойства объектов. С помощью текстур мы можем имитировать поверхность
+реальных предметов.
+
+На данный момент все объекты, кроме привидений и осей координат раскрашены дефолтным серым цветом. Сейчас мы все раскрасим!
+
+Начнем с главного игрового персонажа.
+
+    var material = new BABYLON.StandardMaterial('player', game.scene);
+
+_BABYLON.StandardMaterial_ является стандартным материалом BabylonJS. Конструктору этого класса нужно 
+передать название материала и конкретную сцену. В дальнейшем этот материал можно достать с помощью метода 
+_getMaterialByName_ сцены. Все остальное достигается путем использования соответствующих свойств материала.
+
+    material.diffuseColor = material.ambientColor = new BABYLON.Color3(1, 1, 0);
+
+Материал присваивается объекту очень просто
+
+    this.material = material;
+
+После этих действий pacman становится желтым. 
+
+Раскрашиваем монетки
+
+    var material = new BABYLON.StandardMaterial('coin', game.scene);
+    material.diffuseColor = new BABYLON.Color3(1,1,1);
+    material.emissiveColor = new BABYLON.Color3(1,1,1);
+
+Итак, о некоторых свойства материалов.  
+_diffuseColor_ - цвет объекта под светом или диффузный цвет (то есть на финальный цвет влияет цвет света),  
+_emissiveColor_ - цвет объекта без источника света (то есть его продуцирует сам объект) или исходящий свет,  
+_ambientColor_ - фоновый цвет объекта, т.е. цвет, на который влияет фоновый цвет сцены (свойство _scene.ambientColor_).
+Фоновый свет - свет, который распределен или рассеян средой.  
+_specularColor_ - зеркальный цвет, цвет отражения на поверхности объекта.  
+Свойство _specularPower_ характеризует отражающие свойства материала.  
+_alpha_ - прозрачность материала.  
+Свойство _wireframe_, установленное в _true_ показывает каркас меша.  
+С точки зрения производительности полезно выключить отображение текстур с обратной стороны поверхностей путем
+присвоения _false_ свойству _backFaceCulling_.
+
+Следующий код, демонстрирует некоторые дополнительные эффекты, которые можно реализовать в BabylonJS достаточно просто.
+
+    material.emissiveFresnelParameters = new BABYLON.FresnelParameters();
+    material.emissiveFresnelParameters.bias = 0.01;
+    material.emissiveFresnelParameters.power = 2;
+    material.emissiveFresnelParameters.leftColor = BABYLON.Color3.Black();
+    material.emissiveFresnelParameters.rightColor = new BABYLON.Color3(1, 1, 1);
+
+После этого монетки стали блестеть.
+
+Что касается платформы, то для нее мы добавим текстуры
+
+    this.material = new BABYLON.StandardMaterial('ground', game.scene);
+    this.material.diffuseTexture = new BABYLON.Texture('images/ground1.jpg', game.scene);
+
+Конструктору _BABYLON.Texture_ нужно передать путь к изображению текстуры и объект сцены, после чего 
+присвоить полученную текстуру свойству _diffuseTexture_ материала.  
+Кстати, для свойств материала _diffuseColor_, _emissiveColor_, _ambientColor_ и _specularColor_ существуют
+аналогичные текстурные свойства с аналогичными различиями между ними:
+_diffuseTexture_, _emissiveTexture_, _ambientTexture_ и _specularTexture_.
+
+Из свойств текстур хочу обратить внимание на следующие:
+_hasAlpha_ - установите в _true_ если текстура содержит alpha-канал,  
+_uOffset_ и _vOffset_ - смещение в системе координат _(u, v)_ текстуры,
+_uScale_ и _vScale_ - скейлинг текстуры вдоль осей _u_ и _v_.
+
+Это конечно же не все возможности, которые предоставляет BabylonJS с помощью текстур.
+Например, поддерживаются видеотекстуры (_BABYLON.VideoTexture_), имитация зеркал с помощью
+_BABYLON.MirrorTexture_, **бамп маппинг** (см. свойство материала _bumpTexture_).
+
+В нашей программе используется _skybox_ с помощью кубической текстуры для создания окружения:
+
+    var skybox = BABYLON.Mesh.CreateBox('skybox', 100.0, this.scene);
+    skybox.infiniteDistance = false;
+    var skyboxMaterial = new BABYLON.StandardMaterial('skybox', this.scene);
+    skyboxMaterial.backFaceCulling = false;
+    skyboxMaterial.disableLighting = true;
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture('images/skybox/env', this.scene);
+    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+    skybox.material = skyboxMaterial;
+
+В конце обзора добавим звуке к игре.
+
+
