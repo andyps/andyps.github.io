@@ -1,6 +1,6 @@
 ---
 layout: post
-comments: false
+comments: true
 title:  "Введение в BabylonJS"
 date:   2016-08-04 00:00:08 +0000
 categories: webgl
