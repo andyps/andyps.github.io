@@ -4,6 +4,8 @@ comments: true
 title:  "Введение в WebGL"
 date:   2016-07-29 05:00:10 +0000
 categories: webgl
+description: Введение в WebGL на примере, базовое использование BabylonJS и Three.js
+keywords: webgl, введение в webgl, нативный webgl, пример webgl, three.js, BabylonJS, blog, developer blog, Andrii Pashentsev, Andrey Pashentsev, блог
 ---
 В данном обзоре мы создадим простую 3d-программу, используя **WebGL**. Сначала мы будем использовать
 WebGL Api напрямую. Потом сделаем варианты на популярных WebGL-фреймворках **Three.js** и **BabylonJS**.  

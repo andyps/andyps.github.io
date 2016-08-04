@@ -3,7 +3,9 @@ layout: post
 comments: true
 title:  "Введение в BabylonJS"
 date:   2016-08-04 00:00:08 +0000
-categories: webgl
+categories: webgl, BabylonJS
+description: Введение в BabylonJS на примере создания прототипа игры
+keywords: BabylonJS, Babylon, введение в BabylonJS, webgl, прототип игры, 3d движок, webgl фреймворк, blog, developer blog, Andrii Pashentsev, Andrey Pashentsev, блог
 ---
 В этой статье мы познакомимся с популярным WebGL-фреймворком **BabylonJS** на
 примере создания прототипа игры. Полные листинги программы доступны 
