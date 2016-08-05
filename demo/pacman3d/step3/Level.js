@@ -45,8 +45,7 @@ Level.Create = function(matrix, game) {
                 var coin = Coin.create(game, position, type);
                 level.coins.push(coin);
             } else if (type == Block.TYPES.ENEMY1) {
-                var enemy = Ghost.create(game, z, x, position.y);
-                level.enemies.push(enemy);
+
             } else if (type == Block.TYPES.ENEMY2) {
                 
             }

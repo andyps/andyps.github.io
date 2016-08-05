@@ -30,6 +30,7 @@ pacman3d.prototype.init = function(canvasId) {
     
     var camera = new BABYLON.FreeCamera('camera', new BABYLON.Vector3(5, 10, -8), this.scene);
     camera.attachControl(this.engine.getRenderingCanvas());
+    camera.setTarget(new BABYLON.Vector3(5, 0, -1));
     this.scene.activeCamera = camera;
     
     var light  = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), this.scene);
