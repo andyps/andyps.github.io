@@ -84,17 +84,15 @@ Cube.prototype = {
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, null);
     },
     createCube: function() {
-        var halfSize = 0.5;
-        var halfDiag = Math.sqrt(2 * 2 * halfSize * 2 * halfSize) / 2;
         var vertices = [
-            0, halfSize, halfDiag, // 0
-            -halfDiag, halfSize, 0, // 1
-            -halfDiag, -halfSize, 0, // 2
-            0, -halfSize, halfDiag, // 3
-            halfDiag, halfSize, 0, // 4
-            0, halfSize, -halfDiag, // 5
-            0, -halfSize, -halfDiag, // 6
-            halfDiag, -halfSize, 0 // 7
+            0, 0.7865660786628723, 0.36237241422448463, // 0
+            -0.7071067690849304, 0.4330126941204071, -0.25, // 1
+            -0.7071067690849304, -0.4330126941204071, 0.25, // 2
+            0, -0.0794593095779419, 0.8623724142244846, // 3
+            0.7071067690849304, 0.4330126941204071, -0.25, // 4
+            0, 0.0794593095779419, -0.8623724142244846, // 5
+            0, -0.7865660786628723, -0.36237241422448463, // 6
+            0.7071067690849304, -0.4330126941204071, 0.25 // 7
         ];
         var indices = [
             0, 1, 2, 0, 2, 3, // front
