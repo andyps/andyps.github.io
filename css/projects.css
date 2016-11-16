@@ -1,0 +1,104 @@
+* {
+    padding: 0px;
+    margin: 0px;
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    font: 400 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #111;
+    background-color: #fdfdfd;
+}
+a {
+    text-decoration: none;
+    color: #2a7ae2;
+}
+a:visited {
+    color: #1756a9;
+}
+a:hover {
+    color: #111; text-decoration: underline;
+}
+body > header a:visited {
+    color: #424242;
+}
+h1 {
+    /* font-size: 2rem; */
+    font-size: 26px;
+}
+h2 {
+    font-weight: 400;
+    /* font-size: 1.5rem; */
+    font-size: 24px;
+}
+body > header * {
+    font-weight: 300;
+    letter-spacing: -1px;
+}
+body > header h1 {
+    line-height: 56px;
+}
+body > header {
+    border-top: 5px solid #424242;
+    border-bottom: 1px solid #e8e8e8;
+    min-height: 56px;
+}
+main {
+    margin-top: 30px;
+}
+.wrapper {
+    padding: 0px 30px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: calc(800px - (30px * 2));
+}
+img {
+    display: block;
+    width: 300px;
+}
+article img {
+    filter: grayscale(50%) blur(0.5px);
+    transition: all 0.9s ease;
+    transform: perspective(600px) rotateY(15deg);
+    border-radius: 6px;
+    border: 5px solid #fff;
+    box-shadow: 2px 2px 5px #ccc;
+}
+figure img:hover {
+    filter: grayscale(0%) blur(0px);
+    transform: rotateY(0deg);
+}
+figure {
+    display: flex;
+    margin-bottom: 15px;
+}
+figcaption {
+    margin-left: 25px;
+}
+article ul {
+    list-style-type: none;
+    list-style-position: outside;
+}
+article {
+    padding-bottom: 30px;
+    padding-top: 30px;
+    border-bottom: 1px solid #e8e8e8;
+}
+article:first-child {
+    padding-top: 0px;
+}
+article b {
+    color: #828282;
+    font-weight: 400;
+}
+.octicon {
+  display: inline-block;
+  vertical-align: text-top;
+  fill: currentColor;
+}
+blockquote {
+    font-style: italic;
+}
+blockquote:before, blockquote:after {
+    content: '"';
+}
