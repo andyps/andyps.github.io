@@ -3,6 +3,7 @@ class App {
         this.startVideoBtn = document.querySelector('#startVideoBtn');
         this.saveVideoBtn = document.querySelector('#saveVideoBtn');
         this.record2dBtn = document.querySelector('#record2dBtn');
+        this.record3dBtn = document.querySelector('#record3dBtn');
         this.cameraVideoEl = document.querySelector('#cameraVideo');
         this.resultVideoEl = document.querySelector('#resultVideo');
         this.canvas2dEl = document.querySelector('#canvas2d');
@@ -10,13 +11,17 @@ class App {
         this.fps2dEl = document.querySelector('#fps2d');
 
         this.canvas2dActive = false;
+        this.canvas3dActive = false;
         this.videoRecorded = false;
         this.frames2d = [];
+        this.frames3d = [];
         this.frameTimestamps2d = [];
         this.lastFps2dTimestamp = 0;
         this.deltaTime2d = 0;
         this.animationRatio2d = 1;
+        this.animationRatio3d = 1;
         this.record2d = false;
+        this.record3d = false;
         this.fps2d = 60;
         this.anim2d = { x: 150, y: 0, dir: 1 };
         this.canvas2dCtx = this.canvas2dEl.getContext('2d');
@@ -30,10 +35,11 @@ class App {
         }
         this.initWebGLContext();
 
-        this.canvasRecorder = new CanvasRecorder(this.canvas2dEl, { disableLogs: true });
+        this.canvasRecorder2d = new CanvasRecorder(this.canvas2dEl, { disableLogs: true });
+        this.canvasRecorder3d = new CanvasRecorder(this.canvas3dEl, { disableLogs: true });
 
         this.record2dBtn.addEventListener('click', e => {
-            if (!this.canvas2dActive) {
+            if (!this.canvas2dActive || this.record3d) {
                 return;
             }
             if (!this.record2d) {
@@ -42,20 +48,45 @@ class App {
                 e.target.textContent = 'Recording 2d Canvas';
                 e.target.style.color = 'red';
 
-                this.canvasRecorder.clearRecordedData();
-                this.canvasRecorder.record();
+                this.canvasRecorder2d.clearRecordedData();
+                this.canvasRecorder2d.record();
 
             } else {
                 this.record2d = false;
                 e.target.textContent = 'Record 2d Canvas';
                 e.target.style.color = 'black';
 
-                this.canvasRecorder.stop(blob => {
+                this.canvasRecorder2d.stop(blob => {
                     this.resultVideoEl.src = window.URL.createObjectURL(blob);
                     this.videoRecorded = true;
                 });
             }
         });
+        this.record3dBtn.addEventListener('click', e => {
+            if (!this.canvas3dActive || this.record2d) {
+                return;
+            }
+            if (!this.record3d) {
+                this.frames3d = [];
+                this.record3d = true;
+                e.target.textContent = 'Recording 3d Canvas';
+                e.target.style.color = 'red';
+
+                this.canvasRecorder3d.clearRecordedData();
+                this.canvasRecorder3d.record();
+
+            } else {
+                this.record3d = false;
+                e.target.textContent = 'Record 3d Canvas';
+                e.target.style.color = 'black';
+
+                this.canvasRecorder3d.stop(blob => {
+                    this.resultVideoEl.src = window.URL.createObjectURL(blob);
+                    this.videoRecorded = true;
+                });
+            }
+        });
+
         this.cameraVideoEl.addEventListener('loadedmetadata', e => {
             e.target.play();
         });
@@ -83,6 +114,9 @@ class App {
 
             this.canvas2dRun(0, 0);
             this.canvas2dActive = true;
+
+            this.canvas3dRun();
+            this.canvas3dActive = true;
         }, err => {
             alert('getUserMedia error! ' + err.name + ": " + err.message);
             console.log('getUserMedia error', err);
@@ -127,6 +161,77 @@ class App {
             this.lastFps2dTimestamp = t2;
             this.fps2dEl.textContent = this.fps2d;
         }
+    }
+
+    canvas3dRun() {
+        this.scene = new THREE.Scene();
+        this.engine = new THREE.WebGLRenderer({
+            antialias: true,
+            canvas: this.canvas3dEl
+        });
+        this.engine.setSize(this.canvas3dEl.width, this.canvas3dEl.height, true);
+        this.engine.setClearColor(0x000000);
+
+
+        this.camera = new THREE.PerspectiveCamera(this.fov, this.canvas3dEl.width / this.canvas3dEl.height, 1, 10000);
+
+        this.camera.position.set(
+            -220, 314, 340
+        );
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        let light = new THREE.PointLight(0xffffff, 2);
+        this.camera.add(light);
+        this.scene.add(this.camera);
+        light.position.set(0, 1000, 9000);
+        light.intensity = 1.2;
+        this.light = light;
+
+        let axisHelper = new THREE.AxisHelper(6000);
+        this.axis  = axisHelper;
+        this.scene.add(axisHelper);
+
+        let geometry = new THREE.PlaneGeometry(512, 256);
+        const texture = new THREE.CanvasTexture(this.canvas2dEl);
+        let material = new THREE.MeshBasicMaterial({
+            map: texture,
+            side: THREE.FrontSide
+        });
+        material.map.needsUpdate = true;
+        let tv = new THREE.Mesh(geometry, material);
+        tv.name = 'tv';
+
+        this.scene.add(tv);
+
+        this.tv = tv;
+
+        this.fpsStats = new Stats();
+        this.fpsStats.setMode(0);
+        document.body.appendChild(this.fpsStats.domElement);
+        this.fpsStats.domElement.style.left = 'auto';
+        this.fpsStats.domElement.style.right = '0px';
+
+
+        this.clock = new THREE.Clock();
+
+        this.render3d();
+    }
+
+    render3d() {
+        let deltaTime = Math.max(0.001, Math.min(this.clock.getDelta(), 1));
+        this.animationRatio3d = deltaTime * 60.0;
+
+        this.fpsStats.begin();
+
+        this.tv.rotation.y += this.animationRatio3d * 0.01;
+
+        this.tv.material.map.needsUpdate = true;
+        this.engine.render(this.scene, this.camera);
+
+        this.fpsStats.end();
+        window.requestAnimationFrame(() => {
+            this.render3d();
+        });
     }
 
     render2d() {
