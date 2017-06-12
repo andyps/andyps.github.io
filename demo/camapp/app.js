@@ -1,6 +1,7 @@
 class App {
     constructor() {
         this.startVideoBtn = document.querySelector('#startVideoBtn');
+        this.saveVideoBtn = document.querySelector('#saveVideoBtn');
         this.record2dBtn = document.querySelector('#record2dBtn');
         this.cameraVideoEl = document.querySelector('#cameraVideo');
         this.resultVideoEl = document.querySelector('#resultVideo');
@@ -8,6 +9,8 @@ class App {
         this.canvas3dEl = document.querySelector('#canvas3d');
         this.fps2dEl = document.querySelector('#fps2d');
 
+        this.canvas2dActive = false;
+        this.videoRecorded = false;
         this.frames2d = [];
         this.frameTimestamps2d = [];
         this.lastFps2dTimestamp = 0;
@@ -27,16 +30,30 @@ class App {
         }
         this.initWebGLContext();
 
+        this.canvasRecorder = new CanvasRecorder(this.canvas2dEl, { disableLogs: true });
+
         this.record2dBtn.addEventListener('click', e => {
+            if (!this.canvas2dActive) {
+                return;
+            }
             if (!this.record2d) {
                 this.frames2d = [];
                 this.record2d = true;
                 e.target.textContent = 'Recording 2d Canvas';
                 e.target.style.color = 'red';
+
+                this.canvasRecorder.clearRecordedData();
+                this.canvasRecorder.record();
+
             } else {
                 this.record2d = false;
                 e.target.textContent = 'Record 2d Canvas';
                 e.target.style.color = 'black';
+
+                this.canvasRecorder.stop(blob => {
+                    this.resultVideoEl.src = window.URL.createObjectURL(blob);
+                    this.videoRecorded = true;
+                });
             }
         });
         this.cameraVideoEl.addEventListener('loadedmetadata', e => {
@@ -47,6 +64,9 @@ class App {
         });
         this.startVideoBtn.addEventListener('click', () => {
             this.getUserMedia();
+        });
+        this.saveVideoBtn.addEventListener('click', () => {
+            this.saveVideo();
         });
     }
 
@@ -62,6 +82,7 @@ class App {
             this.cameraVideoEl.srcObject = streamInfo;
 
             this.canvas2dRun(0, 0);
+            this.canvas2dActive = true;
         }, err => {
             alert('getUserMedia error! ' + err.name + ": " + err.message);
             console.log('getUserMedia error', err);
@@ -93,7 +114,7 @@ class App {
         this.render2d();
 
         if (this.record2d) {
-            this.saveFrames2d();
+            // this.saveFrames2d();
         }
 
         window.requestAnimationFrame(t2 => {
@@ -109,9 +130,6 @@ class App {
     }
 
     render2d() {
-        this.canvas2dCtx.fillStyle = 'green';
-
-
         this.canvas2dCtx.clearRect(0, 0, this.canvas2dEl.width, this.canvas2dEl.height);
         this.canvas2dCtx.drawImage(this.cameraVideoEl, 0, 0, this.canvas2dEl.width, this.canvas2dEl.height);
 
@@ -122,10 +140,12 @@ class App {
         if (this.anim2d.y >= 250) {
             this.anim2d.y = 250;
             this.anim2d.dir = -this.anim2d.dir;
+            this.canvas2dCtx.fillStyle = 'red';
         }
         if (this.anim2d.y <= 0) {
             this.anim2d.y = 0;
             this.anim2d.dir = -this.anim2d.dir;
+            this.canvas2dCtx.fillStyle = 'green';
         }
     }
 
@@ -153,6 +173,13 @@ class App {
             }
             this.fps2d = Math.round(1000 * dCnt / dt);
         }
+    }
+
+    saveVideo() {
+        if (!this.resultVideoEl.src || !this.videoRecorded) {
+            return;
+        }
+        this.saveVideoBtn.href = this.resultVideoEl.src;
     }
 
     saveFrames2d() {
