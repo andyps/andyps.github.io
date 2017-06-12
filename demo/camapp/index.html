@@ -9,12 +9,19 @@
 <body>
 <div>
     <button id="startVideoBtn">Start Video</button>
+    <button id="record2dBtn">Record 2d Canvas</button>
 </div>
 <hr>
-<video id="cameraVideo"></video>
-<canvas id="gameCanvas">Browser not supported</canvas>
 <div>
-    Content
+    2d fps: <span id="fps2d">60</span>
 </div>
+<hr>
+
+<video id="cameraVideo" title="Original Video" width="400" height="300"></video>
+<canvas id="canvas2d" title="Video On 2d Canvas" width="400" height="300">Browser not supported</canvas>
+<canvas id="canvas3d" width="400" height="300">Browser not supported</canvas>
+
+<video id="resultVideo" title="Result Video" width="400" height="300"></video>
+
 </body>
 </html>
