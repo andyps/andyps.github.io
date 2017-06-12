@@ -1,0 +1,18 @@
+html, body {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+canvas {
+    width: 400px;
+    height: 300px;
+    border: 1px solid black;
+    /*touch-action: none;*/
+}
+video {
+    width: 400px;
+    height: 300px;
+    border: 1px solid black;
+}
