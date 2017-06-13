@@ -1,5 +1,13 @@
 class App {
     constructor() {
+        this.canvas3dActive = false;
+        this.canvas3dEl = document.querySelector('#canvas3d');
+        this.disable3dBtn = document.querySelector('#disable3dBtn');
+        this.disable3dBtn.addEventListener('click', e => {
+            this.canvas3dActive = false;
+            // this.canvas3dEl.parentNode.removeChild(this.canvas3dEl);
+        });
+
         this.startVideoBtn = document.querySelector('#startVideoBtn');
         this.saveVideoBtn = document.querySelector('#saveVideoBtn');
         this.record2dBtn = document.querySelector('#record2dBtn');
@@ -7,11 +15,11 @@ class App {
         this.cameraVideoEl = document.querySelector('#cameraVideo');
         this.resultVideoEl = document.querySelector('#resultVideo');
         this.canvas2dEl = document.querySelector('#canvas2d');
-        this.canvas3dEl = document.querySelector('#canvas3d');
+
         this.fps2dEl = document.querySelector('#fps2d');
 
         this.canvas2dActive = false;
-        this.canvas3dActive = false;
+
         this.videoRecorded = false;
         this.frames2d = [];
         this.frames3d = [];
@@ -115,8 +123,9 @@ class App {
             this.canvas2dRun(0, 0);
             this.canvas2dActive = true;
 
-            this.canvas3dRun();
             this.canvas3dActive = true;
+            this.canvas3dRun();
+
         }, err => {
             alert('getUserMedia error! ' + err.name + ": " + err.message);
             console.log('getUserMedia error', err);
@@ -229,9 +238,12 @@ class App {
         this.engine.render(this.scene, this.camera);
 
         this.fpsStats.end();
-        window.requestAnimationFrame(() => {
-            this.render3d();
-        });
+
+        if (this.canvas3dActive) {
+            window.requestAnimationFrame(() => {
+                this.render3d();
+            });
+        }
     }
 
     render2d() {
