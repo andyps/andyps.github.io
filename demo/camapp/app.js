@@ -182,7 +182,7 @@ class App {
         this.engine.setClearColor(0x000000);
 
 
-        this.camera = new THREE.PerspectiveCamera(this.fov, this.canvas3dEl.width / this.canvas3dEl.height, 1, 10000);
+        this.camera = new THREE.PerspectiveCamera(50, this.canvas3dEl.width / this.canvas3dEl.height, 1, 10000);
 
         this.camera.position.set(
             -220, 314, 340
