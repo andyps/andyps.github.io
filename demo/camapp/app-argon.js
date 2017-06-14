@@ -1,6 +1,7 @@
 class App {
     constructor() {
         const argonApp = Argon.init();
+        // app.context.subscribeGeolocation({enableHighAccuracy: true});
         // argonApp.context.setDefaultReferenceFrame(argonApp.context.localOriginEastUpSouth); // deprecated
         argonApp.context.defaultReferenceFrame = argonApp.context.localOriginEastUpSouth;
 
@@ -26,7 +27,7 @@ class App {
         const box = new THREE.Object3D();
         const loader = new THREE.TextureLoader();
         loader.load('box.png', texture => {
-            const geometry = new THREE.BoxGeometry(2, 2, 2);
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
             const material = new THREE.MeshBasicMaterial({map: texture});
             const mesh = new THREE.Mesh(geometry, material);
             box.add(mesh);
@@ -49,6 +50,8 @@ class App {
         this.camera = camera;
         this.renderer = renderer;
 
+        this.lastInfo = '';
+        this.infoEl = document.querySelector('#info');
         this.run();
     }
 
@@ -68,6 +71,7 @@ class App {
             // THREE user object to match it
             if (userPose.poseStatus & Argon.PoseStatus.KNOWN) {
                 this.userLocation.position.copy(userPose.position);
+                this.userLocation.quaternion.copy(userPose.orientation);
             } else {
                 // if we don't know the user pose we can't do anything
                 return;
@@ -104,17 +108,27 @@ class App {
 
             // get the local coordinates of the local box, and set the THREE object
             const boxPose = this.argonApp.context.getEntityPose(this.boxGeoEntity);
+            if (boxPose.poseStatus & Argon.PoseStatus.KNOWN) {
+                this.boxGeoObject.position.copy(boxPose.position);
+                this.boxGeoObject.quaternion.copy(boxPose.orientation);
 
-            this.boxGeoObject.position.copy(boxPose.position);
-            this.boxGeoObject.quaternion.copy(boxPose.orientation);
+                this.axis.position.copy(boxPose.position);
+                this.axis.quaternion.copy(boxPose.orientation);
+            }
 
-
-            this.axis.position.copy(boxPose.position);
-            this.axis.quaternion.copy(boxPose.orientation);
 
             // rotate the box at a constant speed, independent of frame rates
             // to make it a little less boring
             this.box.rotateY(3 * frame.deltaTime / 10000);
+
+            const userWorldPos = this.userLocation.getWorldPosition();
+            const boxWorldPos = this.box.getWorldPosition();
+            let distanceToBox = userWorldPos.distanceTo(boxWorldPos);
+            distanceToBox = Math.round(distanceToBox * 100) / 100;
+            if (distanceToBox !== this.lastInfo) {
+                this.lastInfo = distanceToBox;
+                this.infoEl.textContent = this.lastInfo;
+            }
         });
     }
 
@@ -128,6 +142,7 @@ class App {
             const viewport = this.argonApp.view.viewport;
 
             this.renderer.setSize(viewport.width, viewport.height);
+            // this.renderer.setPixelRatio(this.argonApp.suggestedPixelRatio);
 
             // there is 1 subview in monocular mode, 2 in stereo mode
             // for (let subview of this.argonApp.view.getSubviews()) { // deprecated
