@@ -19,7 +19,7 @@ class App {
             alpha: true,
             logarithmicDepthBuffer: true
         });
-        renderer.setClearColor(0x000000);
+        // renderer.setClearColor(0x000000);
         renderer.setPixelRatio(window.devicePixelRatio);
         argonApp.view.element.appendChild(renderer.domElement);
 
