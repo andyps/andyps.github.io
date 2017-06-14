@@ -11,6 +11,8 @@ class App {
         const userLocation = new THREE.Object3D();
         scene.add(camera);
         scene.add(userLocation);
+        const axisHelper = new THREE.AxisHelper(6000);
+        scene.add(axisHelper);
 
         const renderer = new THREE.WebGLRenderer({
             alpha: true,
@@ -41,6 +43,7 @@ class App {
         this.boxGeoEntity = boxGeoEntity;
         this.boxGeoObject = boxGeoObject;
         this.box = box;
+        this.axis = axisHelper;
         this.userLocation = userLocation;
         this.scene = scene;
         this.camera = camera;
@@ -76,8 +79,8 @@ class App {
                 // const defaultFrame = this.argonApp.context.getDefaultReferenceFrame(); // deprecated
                 const defaultFrame = this.argonApp.context.defaultReferenceFrame;
 
-                // set the box's position to 10 meters away from the user.
-                // First, clone the userPose postion, and add 10 to the X
+                // set the box's position to some meters away from the user.
+                // First, clone the userPose postion, and add meters to the axis
                 const boxPos = userPose.position.clone();
                 boxPos.x += 2;
                 boxPos.z -= 3;
@@ -104,6 +107,10 @@ class App {
 
             this.boxGeoObject.position.copy(boxPose.position);
             this.boxGeoObject.quaternion.copy(boxPose.orientation);
+
+
+            this.axis.position.copy(boxPose.position);
+            this.axis.quaternion.copy(boxPose.orientation);
 
             // rotate the box at a constant speed, independent of frame rates
             // to make it a little less boring
