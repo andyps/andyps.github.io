@@ -1,7 +1,7 @@
 class App {
     constructor() {
         const argonApp = Argon.init();
-        // app.context.subscribeGeolocation({enableHighAccuracy: true});
+        argonApp.context.subscribeGeolocation({enableHighAccuracy: true});
         // argonApp.context.setDefaultReferenceFrame(argonApp.context.localOriginEastUpSouth); // deprecated
         argonApp.context.defaultReferenceFrame = argonApp.context.localOriginEastUpSouth;
 
