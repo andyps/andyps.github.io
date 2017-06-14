@@ -79,8 +79,8 @@ class App {
                 // set the box's position to 10 meters away from the user.
                 // First, clone the userPose postion, and add 10 to the X
                 const boxPos = userPose.position.clone();
-                boxPos.x += 5;
-                boxPos.z -= 20;
+                boxPos.x += 2;
+                boxPos.z -= 3;
 
                 // set the value of the box Entity to this local position, by
                 // specifying the frame of reference to our local frame
