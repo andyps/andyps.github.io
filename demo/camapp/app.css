@@ -20,3 +20,31 @@ video {
     border: 1px solid black;
     background: lightblue;
 }
+
+#hud {
+    color: red;
+    width: 100%;
+    height: 50px;
+    text-align: center;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    justify-content: center;
+    display: flex;
+}
+
+#hudInfo {
+    width: 100px;
+    height: 50px;
+    border: 1px solid red;
+    padding: 5px;
+    pointer-events: auto;
+    user-select: initial;
+}
+
+#boxLocation {
+    background: lightblue;
+    outline: 1px solid red;
+    padding: 5px;
+    pointer-events: auto;
+}

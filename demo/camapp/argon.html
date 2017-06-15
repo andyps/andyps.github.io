@@ -9,15 +9,22 @@
     <script src="vendor/stats.js"></script>
     <script src="vendor/RecordRTC.js"></script>
     <script src="vendor/argon.js"></script>
+    <script src="vendor/CSS3DArgonRenderer.js"></script>
+    <script src="vendor/CSS3DArgonHUD.js"></script>
 
     <script src="app-argon.js"></script>
 </head>
 <body>
 <div id="argon">
-    <p id="info">
+    <p id="info" style="font-size: 8px;">
         Anything you put in this div (or in divs nested inside this one) will be rendered on the screen in 2D,
         in front of the 3D AR content in the Argon view.
     </p>
+    <div id="hud">
+        <div id="hudInfo"></div>
+    </div>
+
+    <button id="boxLocation">Box Location</button>
 
 </div>
 </body>

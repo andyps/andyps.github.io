@@ -40,6 +40,24 @@ class App {
             orientation: Argon.Cesium.Quaternion.IDENTITY
         });
 
+
+        const cssRenderer = new THREE.CSS3DArgonRenderer();
+        const hud = new THREE.CSS3DArgonHUD();
+        argonApp.view.element.appendChild(cssRenderer.domElement);
+        argonApp.view.element.appendChild(hud.domElement);
+
+        const hudEl = document.getElementById('hud');
+        const hudInfoEl = document.getElementById('hudInfo');
+        hud.appendChild(hudEl);
+        const boxLocEl = document.getElementById('boxLocation');
+        boxLocEl.onclick = function() {
+            alert('Yes, this is an html button!');
+        };
+        const boxLabel = new THREE.CSS3DSprite(boxLocEl);
+        boxLabel.scale.set(0.01, 0.01, 0.01);
+        boxLabel.position.set(0, 0.7, 0);
+        boxGeoObject.add(boxLabel);
+
         this.argonApp = argonApp;
         this.boxGeoEntity = boxGeoEntity;
         this.boxGeoObject = boxGeoObject;
@@ -50,8 +68,12 @@ class App {
         this.camera = camera;
         this.renderer = renderer;
 
+        this.boxLocEl = boxLocEl;
+        this.cssRenderer = cssRenderer;
+        this.hudInfoEl = hudInfoEl;
+        this.hud = hud;
+
         this.lastInfo = '';
-        this.infoEl = document.querySelector('#info');
         this.run();
     }
 
@@ -127,7 +149,8 @@ class App {
             distanceToBox = Math.round(distanceToBox * 100) / 100;
             if (distanceToBox !== this.lastInfo) {
                 this.lastInfo = distanceToBox;
-                this.infoEl.textContent = this.lastInfo;
+                this.hudInfoEl.textContent = this.lastInfo + 'm';
+                this.boxLocEl.textContent = 'BOX: ' + this.lastInfo + 'm';
             }
         });
     }
@@ -142,11 +165,13 @@ class App {
             const viewport = this.argonApp.view.viewport;
 
             this.renderer.setSize(viewport.width, viewport.height);
+            this.hud.setSize(viewport.width, viewport.height);
             // this.renderer.setPixelRatio(this.argonApp.suggestedPixelRatio);
 
             // there is 1 subview in monocular mode, 2 in stereo mode
             // for (let subview of this.argonApp.view.getSubviews()) { // deprecated
             for (let subview of this.argonApp.view.subviews) {
+                const frustum = subview.frustum;
                 // set the position and orientation of the camera for
                 // this subview
                 this.camera.position.copy(subview.pose.position);
@@ -159,11 +184,19 @@ class App {
                 // set the viewport for this view
                 let {x, y, width, height} = subview.viewport;
 
+                this.camera.fov = THREE.Math.radToDeg(frustum.fovy);
+
                 // set the webGL rendering parameters and render this view
                 this.renderer.setViewport(x, y, width, height);
                 this.renderer.setScissor(x, y, width, height);
                 this.renderer.setScissorTest(true);
                 this.renderer.render(this.scene, this.camera);
+
+                this.hud.setViewport(x, y, width, height, subview.index);
+                this.hud.render(subview.index);
+
+                this.cssRenderer.setViewport(x, y, width, height, subview.index);
+                this.cssRenderer.render(this.scene, this.camera, subview.index);
             }
         });
     }
