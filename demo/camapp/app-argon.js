@@ -47,13 +47,17 @@ class App {
         argonApp.view.element.appendChild(hud.domElement);
 
         const hudEl = document.getElementById('hud');
-        const hudInfoEl = document.getElementById('hudInfo');
         hud.appendChild(hudEl);
+        const hudInfoEls = hud.domElement.getElementsByClassName('hudInfo');
+
         const boxLocEl = document.getElementById('boxLocation');
         boxLocEl.onclick = function() {
             alert('Yes, this is an html button!');
         };
-        const boxLabel = new THREE.CSS3DSprite(boxLocEl);
+        const boxLocEl2 = boxLocEl.cloneNode(true);
+        boxLocEl2.onclick = boxLocEl.onclick;
+
+        const boxLabel = new THREE.CSS3DSprite([boxLocEl, boxLocEl2]);
         boxLabel.scale.set(0.01, 0.01, 0.01);
         boxLabel.position.set(0, 0.7, 0);
         boxGeoObject.add(boxLabel);
@@ -69,8 +73,9 @@ class App {
         this.renderer = renderer;
 
         this.boxLocEl = boxLocEl;
+        this.boxLocEl2 = boxLocEl2;
         this.cssRenderer = cssRenderer;
-        this.hudInfoEl = hudInfoEl;
+        this.hudInfoEls = hudInfoEls;
         this.hud = hud;
 
         this.lastInfo = '';
@@ -149,8 +154,13 @@ class App {
             distanceToBox = Math.round(distanceToBox * 100) / 100;
             if (distanceToBox !== this.lastInfo) {
                 this.lastInfo = distanceToBox;
-                this.hudInfoEl.textContent = this.lastInfo + 'm';
+
+                for (let i = 0; i < this.hudInfoEls.length; i++) {
+                    this.hudInfoEls[i].textContent = this.lastInfo + 'm';
+                }
+
                 this.boxLocEl.textContent = 'BOX: ' + this.lastInfo + 'm';
+                this.boxLocEl2.textContent = this.boxLocEl.textContent;
             }
         });
     }
@@ -163,6 +173,12 @@ class App {
             // both views if we are in stereo viewing mode
             // const viewport = this.argonApp.view.getViewport(); // deprecated
             const viewport = this.argonApp.view.viewport;
+
+            if (this.argonApp.view.subviews.length > 1) {
+                // something to do not in mono mode
+            } else {
+                // something to do only in mono mode
+            }
 
             this.renderer.setSize(viewport.width, viewport.height);
             this.hud.setSize(viewport.width, viewport.height);
