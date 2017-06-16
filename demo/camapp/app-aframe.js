@@ -1,3 +1,10 @@
+AFRAME.registerComponent('log', {
+    schema: {type: 'string'},
+    init() {
+        console.log(this.data);
+    }
+});
+
 class App {
     constructor() {
     }
