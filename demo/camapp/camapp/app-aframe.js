@@ -68,7 +68,7 @@ class App {
     }
     
     getARData(key) {
-        if (this.ar.rawARData && typeof(this.ar.rawARData[key]) == 'undefined') {
+        if (this.ar.rawARData && typeof(this.ar.rawARData[key]) != 'undefined') {
             return this.ar.rawARData[key];
         }
         return null;

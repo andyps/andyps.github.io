@@ -34,7 +34,7 @@ class webkitSimulatorMessageHandler {
                 };
                 this.simulator.watchARIntervalId = navigator.geolocation.watchPosition(
                     pos => {
-                        //~ console.log('get location success', pos, this.data);
+                        console.log('get location success', pos, this.data);
                         this.data.location = {};
                         this.data.location.latitude = pos.coords.latitude;
                         this.data.location.longitude = pos.coords.longitude;
@@ -46,6 +46,9 @@ class webkitSimulatorMessageHandler {
                     },
                     options
                 );
+                
+                //~ setInterval(() => {console.log('this.data',  this.data); window[data.callback](this.data);}, 3000);
+                
                 console.log('this.simulator.watchARIntervalId', this.simulator.watchARIntervalId);
             } else {
                 setTimeout(() => {
