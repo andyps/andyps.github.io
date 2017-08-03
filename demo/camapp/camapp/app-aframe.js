@@ -19,7 +19,7 @@ let AppComponent = {
 
 AFRAME.registerComponent('app', AppComponent);
 
-const EARTH_RADIUS = 6371.032;
+const EARTH_RADIUS = 6371032;
 class App {
     constructor() {
         this.ar = new AR(this.onARInit.bind(this));
