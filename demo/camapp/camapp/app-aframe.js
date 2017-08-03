@@ -89,6 +89,9 @@ class App {
                 y: this.userLocation.y,
                 z: this.userLocation.z
             }
+            
+            document.querySelector('#info-iniLocation').textContent = JSON.stringify(this.initialARData.location);
+            document.querySelector('#info-iniLocation2d').textContent = JSON.stringify(this.initialLocation);
         } else {
             this.userLocation = this.geo2Cartesian(this.getARData('location'));
             this.diffLocation.x = this.userLocation.x - this.initialLocation.x;
@@ -96,8 +99,8 @@ class App {
             this.diffLocation.z = this.userLocation.z - this.initialLocation.z;
         }
         
-        document.querySelector('#info-location').value = JSON.stringify(data) + ':' + date +
-            "\n" + JSON.stringify(this.diffLocation);
+        document.querySelector('#info-location').value = JSON.stringify(this.diffLocation) + "\n"
+            + JSON.stringify(data) + ':' + date;
     }
     
     geo2Cartesian(location) {

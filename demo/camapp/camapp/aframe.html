@@ -39,8 +39,12 @@
         <button id="btn-stop">Stop</button>
     </div>
     <div id="info-container">
-        <div>
+        <div style="width: 300px; height: 150px; overflow: auto; word-wrap: break-word">
             <span>DeviceId</span>: <span id="info-deviceId"></span>
+            <br>
+            <span>Initial Loc</span>: <span id="info-iniLocation"></span>
+            <br>
+            :<span id="info-iniLocation2d"></span>
         </div>
         <div>
             <textarea tabindex="-1" readonly id="info-location" rows="10" cols="40"></textarea>
