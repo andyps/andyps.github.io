@@ -308,3 +308,12 @@ window.addEventListener('DOMContentLoaded', () => {
     let app = new App();
     window.app = app;
 });
+
+/******************/
+window.addEventListener('DOMContentLoaded', () => {
+    window.takeScreenShot = function() {
+        var canvas = document.querySelector('canvas');
+        
+        return this.canvas.toDataURL('image/webp');
+    }
+});

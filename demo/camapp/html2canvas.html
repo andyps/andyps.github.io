@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Camera App Research</title>
+    
+    <script src="vendor/three.js"></script>
+    <script src="vendor/html2canvas.min.js"></script>
+    <script>
+    var videoEl, contentEl, screenshotBtnEl, canvasInEl, canvas3dEl;
+    function onload() {
+        videoEl = document.querySelector('#video');
+        contentEl = document.querySelector('#content');
+        screenshotBtnEl = document.querySelector('#screenshotBtn');
+        
+        canvasInEl = document.querySelector("#canvasIn");
+        
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+        var renderer = new THREE.WebGLRenderer();
+        //~ renderer.setSize( window.innerWidth, window.innerHeight );
+        contentEl.appendChild( renderer.domElement );
+        renderer.domElement.id = 'canvas3d';
+        canvas3dEl = renderer.domElement;
+
+        var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+        var cube = new THREE.Mesh( geometry, material );
+        scene.add( cube );
+
+        camera.position.z = 5;
+
+        var animate = function () {
+            requestAnimationFrame( animate );
+
+            cube.rotation.x += 0.1;
+            cube.rotation.y += 0.1;
+
+            renderer.render(scene, camera);
+        };
+
+        animate();
+        
+        var ctx = canvasInEl.getContext('2d');
+        ctx.beginPath();
+        ctx.arc(75,75,50,0,Math.PI*2,true); // Outer circle
+        ctx.moveTo(110,75);
+        ctx.arc(75,75,35,0,Math.PI,false);   // Mouth (clockwise)
+        ctx.moveTo(65,65);
+        ctx.arc(60,65,5,0,Math.PI*2,true);  // Left eye
+        ctx.moveTo(95,65);
+        ctx.arc(90,65,5,0,Math.PI*2,true);  // Right eye
+        ctx.stroke();
+        
+    }
+    
+    function screenshot() {
+        html2canvas(contentEl, {
+            onrendered: function(canvas) {
+                console.log(canvas);
+                canvas.style.borderColor = 'red';
+                canvas.style.borderWidth = '1px';
+                document.body.appendChild(canvas);
+            }
+        });
+    }
+    </script>
+</head>
+<body onload="onload()">
+<div id="content">
+<div id="fly" style="position: absolute; right: 0px; top: 0px; color: red">
+    blablabla
+</div>    
+<div>
+    <button style="opacity: 0.5" id="screenshotBtn" onclick="screenshot()">Screenshot</button>
+</div>
+<hr>
+<canvas id="canvasIn"></canvas>
+<hr>
+
+<video id="video" src="Big_Buck_Bunny_small.ogv" controls></video>
+</div>
+</body>
+</html>

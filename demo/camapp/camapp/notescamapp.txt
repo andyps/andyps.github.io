@@ -1,0 +1,21 @@
+<!--
+        <a-asset-item id="obj-material" src="assets/fordFocus/fordFocus.mtl"></a-asset-item>
+-->
+
+<!--
+        <a-asset-item id="obj-asset" src="tree.gltf">
+-->
+
+<!--
+     <a-obj-model id="obj1" src="#obj-model" mtl="#obj-material"></a-obj-model> 
+-->
+<!--
+    <a-gltf-model id="obj" src="#obj-asset"></a-gltf-model>
+-->
+
+<!--
+    <script src="../vendor/three.js"></script>
+-->
+    <!-- <script src="vendor/stats.js"></script> -->
+
+App should be singleton
