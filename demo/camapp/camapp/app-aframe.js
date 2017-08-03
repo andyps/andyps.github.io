@@ -55,7 +55,7 @@ class App {
         if (!this.initialARData) {
             return;
         }
-        /*
+        
         this.cameraPositionEl.setAttribute(
             'position', 
             new THREE.Vector3(
@@ -64,7 +64,7 @@ class App {
                 this.diffLocation.z
             )
         );
-        */
+        
     }
     
     getARData(key) {
@@ -80,7 +80,7 @@ class App {
     
     onARWatch(data) {
         const date = (new Date()).toTimeString();
-        document.querySelector('#info-location').value = JSON.stringify(data) + ':' + date;
+        
         if (!this.initialARData) {
             this.initialARData = this.ar.rawARData;
             this.userLocation = this.geo2Cartesian(this.initialARData.location);
@@ -95,6 +95,9 @@ class App {
             this.diffLocation.y = this.userLocation.y - this.initialLocation.y;
             this.diffLocation.z = this.userLocation.z - this.initialLocation.z;
         }
+        
+        document.querySelector('#info-location').value = JSON.stringify(data) + ':' + date +
+            "\n" + JSON.stringify(this.diffLocation);
     }
     
     geo2Cartesian(location) {
