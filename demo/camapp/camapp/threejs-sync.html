@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>Camera App Three.js</title>
+    <link href="app.css" rel="stylesheet" type="text/css" charset="utf-8" >
+    
+    <script src="../vendor/three.js"></script>
+    <script src="../vendor/OrbitControls.js"></script>
+    <script src="../vendor/stats.js"></script> 
+    
+    <script src="webkit-simulator.js"></script>
+    <script src="ar.js"></script>
+    <script src="utils.js"></script>
+    <script src="app-three-sync.js"></script>
+
+</head>
+<body>
+<canvas id="app-canvas" oncontextmenu="return false;">Browser not supported</canvas>
+
+<div id="ui">
+    <div id="ui-buttons">
+        <button id="btn-watch">Watch</button>
+        <button id="btn-stop">Stop</button>
+        <button id="btn-debug">Debug</button>
+    </div>
+    <div id="info-container" style="display: none;">
+        <div style="width: 300px; height: 150px; overflow: auto; word-wrap: break-word">
+            <span>DeviceId</span>: <span id="info-deviceId"></span>
+            <br>
+            <span>Initial Loc</span>: <span id="info-iniLocation"></span>
+            <br>
+            :<span id="info-iniLocation2d"></span>
+        </div>
+        <div>
+            <textarea tabindex="-1" readonly id="info-location" rows="10" cols="40"></textarea>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

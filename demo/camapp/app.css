@@ -8,7 +8,7 @@ canvas {
     width: 512px;
     height: 256px;
     border: 1px solid black;
-    /*touch-action: none;*/
+    touch-action: none;
 }
 video {
     width: 512px;
