@@ -4,10 +4,13 @@ const PI_180 = Math.PI / 180;
 class App {
     constructor(canvasId) {
         this.isDebug = false;
+        this.isARReady = false;
         
         this.clock = new THREE.Clock();
         this.initScene(canvasId);
         
+        this.cubesNum = 0;
+        this.cubeProto = null;
         this.createObjects();
         
         this.ar = new AR(this.onARInit.bind(this));
@@ -15,9 +18,11 @@ class App {
         this.registerEvents();
         
         this.initialARData = null;
+        
         this.userLocation = null;
         this.initialLocation = null;
         this.diffLocation = {x: 0, y: 0, z: 0};
+        
     }
     
     run() {
@@ -28,9 +33,37 @@ class App {
         render();
     }
 
+    addObject() {
+        if (!this.isARReady || !this.initialARData) {
+            return;
+        }
+        const fromCamera = {x: -1, y: 0, z: -2};
+        fromCamera.x += this.cubesNum - 1;
+        
+        const cubeMesh = this.cubeProto.clone();
+        cubeMesh.name = 'obj-2';
+        
+        console.log('ttt', this.camera.position.x + fromCamera.x);
+        console.log('ttt', this.camera.position.y + fromCamera.y);
+        console.log('ttt', this.camera.position.z + fromCamera.z);
+        
+        cubeMesh.position.x = this.camera.position.x + fromCamera.x;
+        cubeMesh.position.y = this.camera.position.y + fromCamera.y;
+        cubeMesh.position.z = this.camera.position.z + fromCamera.z;
+        
+        this.ar.addObject(cubeMesh.name, fromCamera.x, fromCamera.y, fromCamera.z);
+        
+        
+        this.scene.add(cubeMesh);
+        
+        this.cubesNum++;
+        
+        this.requestAnimationFrame();
+    }
+    
     createObjects() {
         let geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-        let material = new THREE.MeshLambertMaterial({color: 0x4d4db2, reflectivity: 0});
+        let material = new THREE.MeshLambertMaterial({color: 0x4d4db2, reflectivity: 0, wireframe: false});
         let cubeMesh = new THREE.Mesh(geometry, material);
         cubeMesh.name = 'obj-1';
         
@@ -40,7 +73,9 @@ class App {
         cubeMesh.position.set(2, 0.5, -4);
         this.scene.add(cubeMesh);
         
-        this.mesh = cubeMesh;
+        this.cubeProto = cubeMesh;
+        
+        this.cubesNum++;
     }
     
     initScene(canvasId) {
@@ -114,6 +149,10 @@ class App {
             this.resize();
         });
         
+        document.querySelector('#btn-add').addEventListener('click', () => {
+            this.addObject();
+        });
+        
         document.querySelector('#btn-debug').addEventListener('click', () => {
             this.isDebug = !this.isDebug;
             
@@ -142,6 +181,10 @@ class App {
                 alert('Error: ' + e.message);
             }
         });
+    }
+    
+    requestAnimationFrame() {
+        window.requestAnimationFrame(this.render.bind(this));
     }
     
     render(time) {
@@ -177,6 +220,7 @@ class App {
     
     onARInit(deviceId) {
         document.querySelector('#info-deviceId').textContent = deviceId;
+        this.isARReady = true;
     }
     
     onARWatch(data) {
@@ -202,7 +246,7 @@ class App {
             this.logDebugData(data);
         }
         
-        this.render();
+        this.requestAnimationFrame();
     }
     
     logDebugData(data) {

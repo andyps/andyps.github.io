@@ -79,6 +79,15 @@ class AR {
         window.webkit.messageHandlers.watchAR.postMessage(data);
     }
     
+    addObject(name, x, y, z) {
+        window.webkit.messageHandlers.addObject.postMessage({
+            name: name,
+            x: x,
+            y: y,
+            z: z
+        });
+    }
+    
     generateCallbacks() {
         ['onInit', 'onWatch', 'onStop'].forEach((callbackName, num) => {
             this.generateCallback(callbackName, num);
