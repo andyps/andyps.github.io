@@ -41,7 +41,7 @@ class App {
         fromCamera.x += this.cubesNum - 1;
         
         const cubeMesh = this.cubeProto.clone();
-        cubeMesh.name = 'obj-2';
+        cubeMesh.name = 'obj-' + this.cubesNum;
         
         console.log('ttt', this.camera.position.x + fromCamera.x);
         console.log('ttt', this.camera.position.y + fromCamera.y);
