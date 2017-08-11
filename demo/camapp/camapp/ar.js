@@ -30,6 +30,13 @@ class AR {
     }
     
     onWatch(data) {
+        if (data.projection_camera) {
+            
+        }
+        if (data.camera_transform) {
+            
+        }
+
         this.rawARData = data;
         this.userCallbacks.onWatch(data);
     }

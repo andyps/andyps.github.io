@@ -4,7 +4,9 @@ class webkitSimulatorMessageHandler {
         this.isAsync = !(isAsync === false);
         this.simulator = simulator;
         this.data = {
-            location: null
+            location: null,
+            projection_camera: null,
+            camera_transform: null
         };
     }
     
@@ -43,6 +45,10 @@ class webkitSimulatorMessageHandler {
                         this.data.location = {};
                         this.data.location.latitude = pos.coords.latitude;
                         this.data.location.longitude = pos.coords.longitude;
+                        
+                        this.data.projection_camera = [1.636377, 0, 0, 0, 0, 2.909114, 0, 0,  0.004712701, 0.02586138, -1.000002, -1,  0, 0, -0.002000002, 0];
+                        this.data.camera_transform = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, 0, 1];
+                        
                         console.log('this.data', this.data);
                         window[data.callback](this.data);
                     },

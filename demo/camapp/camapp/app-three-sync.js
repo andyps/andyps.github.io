@@ -111,6 +111,8 @@ class App {
         let light = new THREE.PointLight(0xffffff, 2, 0);
         this.camera.add(light);
         
+        this.camera.matrixAutoUpdate = false;
+        
         //~ this.createOrbitCameraControls();
         
         this.fpsStats = new Stats();
@@ -173,7 +175,8 @@ class App {
             try {
                 this.ar.watch(
                     {
-                        'location': true
+                        'location': true,
+                        'camera': true
                     },
                     this.onARWatch.bind(this)
                 );
@@ -211,9 +214,12 @@ class App {
         }
     }
     
-    getARData(key) {
-        if (this.ar.rawARData && typeof(this.ar.rawARData[key]) != 'undefined') {
-            return this.ar.rawARData[key];
+    getARData(key, data) {
+        if (!data) {
+            data = this.ar.rawARData;
+        }
+        if (data && typeof(data[key]) != 'undefined') {
+            return data[key];
         }
         return null;
     }
@@ -241,6 +247,16 @@ class App {
             this.diffLocation.y = this.userLocation.y - this.initialLocation.y;
             this.diffLocation.z = this.userLocation.z - this.initialLocation.z;
         }
+        
+        const cameraProjectionMatrix = this.getARData('projection_camera');
+        const cameraTransformMatrix = this.getARData('camera_transform');
+        if (cameraProjectionMatrix && cameraTransformMatrix) {
+            console.log('apply matrices',cameraProjectionMatrix,cameraTransformMatrix);
+            this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
+            this.camera.matrix.fromArray(cameraTransformMatrix);
+            //~ this.camera.updateMatrixWorld(true);
+        }
+        
         
         if (this.isDebug) {
             this.logDebugData(data);
