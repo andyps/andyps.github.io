@@ -271,7 +271,7 @@ class App {
         document.querySelector('#info-iniLocation').textContent = JSON.stringify(this.initialARData.location);
         document.querySelector('#info-iniLocation2d').textContent = JSON.stringify(this.initialLocation);
         
-        document.querySelector('#info-location').value = JSON.stringify(this.diffLocation) + "\n"
+        document.querySelector('#info-location').value = JSON.stringify(this.diffLocation) + "\n---\n"
             + JSON.stringify(data) + ':' + date;
     }
     
