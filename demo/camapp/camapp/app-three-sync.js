@@ -57,11 +57,10 @@ class App {
         cubeMesh.position.y = this.camera.position.y + fromCamera.y;
         cubeMesh.position.z = this.camera.position.z + fromCamera.z;
         
-        this.ar.addObject(cubeMesh.name, fromCamera.x, fromCamera.y, fromCamera.z);
-        
         this.scene.add(cubeMesh);
-        
         this.cubesNum++;
+        
+        this.ar.addObject(cubeMesh.name, fromCamera.x, fromCamera.y, fromCamera.z);
         
         this.requestAnimationFrame();
     }
@@ -153,7 +152,11 @@ class App {
         });
         
         document.querySelector('#btn-add').addEventListener('click', () => {
-            this.addObject();
+            try {
+                this.addObject();
+            } catch(e) {
+                alert('Error: ' + e.message);
+            }
         });
         
         document.querySelector('#btn-debug').addEventListener('click', () => {
@@ -271,8 +274,20 @@ class App {
         document.querySelector('#info-iniLocation').textContent = JSON.stringify(this.initialARData.location);
         document.querySelector('#info-iniLocation2d').textContent = JSON.stringify(this.initialLocation);
         
-        document.querySelector('#info-location').value = JSON.stringify(this.diffLocation) + "\n---\n"
-            + JSON.stringify(data) + ':' + date;
+        const objPositions = [];
+        this.scene.children.forEach(child => {
+            if (child.name.substr(0, 3) !== 'obj') {
+                return;
+            }
+            objPositions.push(child.position);
+        });
+        document.querySelector('#info-location').value = 
+            JSON.stringify(this.camera.position) + "\n---\n" +
+            JSON.stringify(objPositions) + "\n---\n" +
+            JSON.stringify(this.diffLocation) + "\n---\n" +
+            JSON.stringify(data) + ':' + date;
+            
+        document.querySelector('#info-objectsCnt').textContent = this.scene.children.length - 2;
     }
     
     geo2Cartesian(location) {
