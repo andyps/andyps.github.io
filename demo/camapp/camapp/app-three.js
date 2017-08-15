@@ -8,6 +8,8 @@ class App {
         this.clock = new THREE.Clock();
         this.initScene(canvasId);
         
+        this.cubesNum = 0;
+        this.cubeProto = null;
         this.createObjects();
         
         this.ar = new AR(this.onARInit.bind(this));
@@ -28,19 +30,49 @@ class App {
         render();
     }
 
-    createObjects() {
+    createCube(name) {
         let geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
         let material = new THREE.MeshLambertMaterial({color: 0x4d4db2, reflectivity: 0});
         let cubeMesh = new THREE.Mesh(geometry, material);
-        cubeMesh.name = 'obj-1';
+        cubeMesh.name = name;
         
-        let axisHelper = new THREE.AxisHelper(45);
+        return cubeMesh;
+    }
+    addObject() {
+        if (!this.isARReady || !this.initialARData) {
+            return;
+        }
+        const fromCamera = {x: -1, y: 0, z: -2};
+        fromCamera.x += this.cubesNum - 1;
+        
+        const cubeMesh = this.createCube('obj-' + this.cubesNum);
+        
+        console.log('ttt', this.camera.position.x + fromCamera.x);
+        console.log('ttt', this.camera.position.y + fromCamera.y);
+        console.log('ttt', this.camera.position.z + fromCamera.z);
+        
+        cubeMesh.position.x = this.camera.position.x + fromCamera.x;
+        cubeMesh.position.y = this.camera.position.y + fromCamera.y;
+        cubeMesh.position.z = this.camera.position.z + fromCamera.z;
+        
+        this.ar.addObject(cubeMesh.name, fromCamera.x, fromCamera.y, fromCamera.z);
+        
+        this.scene.add(cubeMesh);
+        
+        this.cubesNum++;
+    }
+
+    createObjects() {
+        const cubeMesh = this.createCube('obj-0');
+        
+        const axisHelper = new THREE.AxisHelper(45);
         cubeMesh.add(axisHelper);
         
         cubeMesh.position.set(2, 0.5, -4);
         this.scene.add(cubeMesh);
         
-        this.mesh = cubeMesh;
+        this.cubeProto = cubeMesh;
+        this.cubesNum++;
     }
     
     initScene(canvasId) {
@@ -114,6 +146,10 @@ class App {
             this.resize();
         });
         
+        document.querySelector('#btn-add').addEventListener('click', () => {
+            this.addObject();
+        });
+
         document.querySelector('#btn-debug').addEventListener('click', () => {
             this.isDebug = !this.isDebug;
             
@@ -177,6 +213,7 @@ class App {
     
     onARInit(deviceId) {
         document.querySelector('#info-deviceId').textContent = deviceId;
+        this.isARReady = true;
     }
     
     onARWatch(data) {

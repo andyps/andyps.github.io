@@ -32,7 +32,14 @@ class App {
         };
         render();
     }
-
+    createCube(name) {
+        let geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+        let material = new THREE.MeshLambertMaterial({color: 0x4d4db2, reflectivity: 0});
+        let cubeMesh = new THREE.Mesh(geometry, material);
+        cubeMesh.name = name;
+        
+        return cubeMesh;
+    }
     addObject() {
         if (!this.isARReady || !this.initialARData) {
             return;
@@ -40,8 +47,7 @@ class App {
         const fromCamera = {x: -1, y: 0, z: -2};
         fromCamera.x += this.cubesNum - 1;
         
-        const cubeMesh = this.cubeProto.clone();
-        cubeMesh.name = 'obj-' + this.cubesNum;
+        const cubeMesh = this.createCube('obj-' + this.cubesNum);
         
         console.log('ttt', this.camera.position.x + fromCamera.x);
         console.log('ttt', this.camera.position.y + fromCamera.y);
@@ -53,28 +59,23 @@ class App {
         
         this.ar.addObject(cubeMesh.name, fromCamera.x, fromCamera.y, fromCamera.z);
         
-        
         this.scene.add(cubeMesh);
         
         this.cubesNum++;
         
         this.requestAnimationFrame();
     }
-    
+
     createObjects() {
-        let geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-        let material = new THREE.MeshLambertMaterial({color: 0x4d4db2, reflectivity: 0, wireframe: true});
-        let cubeMesh = new THREE.Mesh(geometry, material);
-        cubeMesh.name = 'obj-1';
+        const cubeMesh = this.createCube('obj-0');
         
-        let axisHelper = new THREE.AxisHelper(45);
+        const axisHelper = new THREE.AxisHelper(45);
         cubeMesh.add(axisHelper);
         
         cubeMesh.position.set(2, 0.5, -4);
         this.scene.add(cubeMesh);
         
         this.cubeProto = cubeMesh;
-        
         this.cubesNum++;
     }
     
