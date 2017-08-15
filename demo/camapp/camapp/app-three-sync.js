@@ -53,9 +53,13 @@ class App {
         console.log('ttt', this.camera.position.y + fromCamera.y);
         console.log('ttt', this.camera.position.z + fromCamera.z);
         
-        cubeMesh.position.x = this.camera.position.x + fromCamera.x;
-        cubeMesh.position.y = this.camera.position.y + fromCamera.y;
-        cubeMesh.position.z = this.camera.position.z + fromCamera.z;
+        //~ cubeMesh.position.x = this.camera.position.x + fromCamera.x;
+        //~ cubeMesh.position.y = this.camera.position.y + fromCamera.y;
+        //~ cubeMesh.position.z = this.camera.position.z + fromCamera.z;
+        
+        cubeMesh.position.x = fromCamera.x;
+        cubeMesh.position.y = fromCamera.y;
+        cubeMesh.position.z = fromCamera.z;
         
         this.scene.add(cubeMesh);
         this.cubesNum++;
@@ -71,7 +75,7 @@ class App {
         const axisHelper = new THREE.AxisHelper(45);
         cubeMesh.add(axisHelper);
         
-        cubeMesh.position.set(0, 0, -4);
+        cubeMesh.position.set(2, 0.5, -4);
         this.scene.add(cubeMesh);
         
         this.cubeProto = cubeMesh;
