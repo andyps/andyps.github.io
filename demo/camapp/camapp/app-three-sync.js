@@ -57,9 +57,9 @@ class App {
         //~ cubeMesh.position.y = this.camera.position.y + fromCamera.y;
         //~ cubeMesh.position.z = this.camera.position.z + fromCamera.z;
         
-        cubeMesh.position.x = fromCamera.x;
-        cubeMesh.position.y = fromCamera.y;
-        cubeMesh.position.z = fromCamera.z;
+        cubeMesh.position.x = 0;
+        cubeMesh.position.y = 0;
+        cubeMesh.position.z = -2;
         
         this.scene.add(cubeMesh);
         this.cubesNum++;
