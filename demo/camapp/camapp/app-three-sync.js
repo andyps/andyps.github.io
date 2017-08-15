@@ -71,7 +71,7 @@ class App {
         const axisHelper = new THREE.AxisHelper(45);
         cubeMesh.add(axisHelper);
         
-        cubeMesh.position.set(2, 0.5, -4);
+        cubeMesh.position.set(0, 0, -4);
         this.scene.add(cubeMesh);
         
         this.cubeProto = cubeMesh;
