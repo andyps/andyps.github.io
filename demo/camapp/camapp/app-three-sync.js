@@ -251,6 +251,9 @@ class App {
         
         const cubeMesh = this.createCube(info.name);
         
+        const axisHelper = new THREE.AxisHelper(45);
+        cubeMesh.add(axisHelper);
+        
         cubeMesh.matrixAutoUpdate = false;
         
         cubeMesh.matrix.fromArray(info2.transform);
