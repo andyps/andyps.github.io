@@ -247,13 +247,45 @@ class App {
         }
         info = info2;
         
-        document.querySelector('#info-deviceId').textContent = 'obj2: ' + JSON.stringify(info);
+        document.querySelector('#info-deviceId').textContent = 'obj!: ' + JSON.stringify(info);
         
         const cubeMesh = this.createCube(info.name);
         
-        cubeMesh.position.x = 0;
-        cubeMesh.position.y = 1.6;
-        cubeMesh.position.z = -2;
+        cubeMesh.matrixAutoUpdate = false;
+        
+        cubeMesh.matrix.fromArray(info2.transform);
+        //~ cubeMesh.position.x = 0;
+        //~ cubeMesh.position.y = 1.6;
+        //~ cubeMesh.position.z = -2;
+        
+        /*
+
+[
+0.9914429783821106,
+-0.10326667129993439,
+0.079854816198349,
+0,
+
+0.12760323286056519,
+0.8956893682479858,
+-0.4259788990020752,
+0,
+
+-0.0275356974452734,
+0.4325235188007355,
+0.9012021422386169,
+0,
+ 
+0.07370418310165405,
+-0.8629032373428345,
+-1.7984013557434082,
+1
+]
+
+
+
+
+         */
         
         
         this.scene.add(cubeMesh);
@@ -314,10 +346,12 @@ class App {
             if (child.name.substr(0, 3) !== 'obj') {
                 return;
             }
-            objPositions.push(child.position);
+            objPositions.push(child.getWorldPosition());
+            //~ objPositions.push(child.position);
         });
         document.querySelector('#info-location').value = 
-            JSON.stringify(this.camera.position) + "\n---\n" +
+            JSON.stringify(this.camera.position) + "\n---WP\n" +
+            JSON.stringify(this.camera.getWorldPosition()) + "\n WP---\n" +
             JSON.stringify(objPositions) + "\n---\n" +
             JSON.stringify(this.diffLocation) + "\n---\n" +
             JSON.stringify(data) + ':' + date;
