@@ -231,19 +231,22 @@ class App {
     }
     
     onARAddObject(info) {
-        alert('Object added ');
-        document.querySelector('#info-deviceId').textContent = 'obj: ' + JSON.stringify(info);
+        
+        //~ document.querySelector('#info-deviceId').textContent = 'obj0: ' + JSON.stringify(info);
+        
+        var info2 = {};
         try {
-            var info2 = {};
             for (var name in info) {
                 info2.name = name;
                 info2.transform = info[name];
                 break;
             }
-            info = info2;
+            
         } catch(e) {
             alert('error');
         }
+        info = info2;
+        
         document.querySelector('#info-deviceId').textContent = 'obj2: ' + JSON.stringify(info);
         
         const cubeMesh = this.createCube(info.name);
@@ -257,7 +260,7 @@ class App {
         this.cubesNum++;
 
         this.requestAnimationFrame();
-        alert('Object added ' + info.name);
+        //~ alert('Object added ' + info.name);
     }
     
     onARInit(deviceId) {
