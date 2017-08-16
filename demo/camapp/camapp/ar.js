@@ -41,6 +41,10 @@ class AR {
         this.userCallbacks.onWatch(data);
     }
     
+    onAddObject(data) {
+        this.userCallbacks.onAddObject(data);
+    }
+    
     getDeviceId() {
         return this.deviceId;
     }
@@ -86,17 +90,20 @@ class AR {
         window.webkit.messageHandlers.watchAR.postMessage(data);
     }
     
-    addObject(name, x, y, z) {
+    addObject(name, x, y, z, callback) {
+        this.userCallbacks.onAddObject = callback;
+        
         window.webkit.messageHandlers.addObject.postMessage({
             name: name,
             x: x,
             y: y,
-            z: z
+            z: z,
+            callback: this.callbacksMap.onAddObject
         });
     }
     
     generateCallbacks() {
-        ['onInit', 'onWatch', 'onStop'].forEach((callbackName, num) => {
+        ['onInit', 'onWatch', 'onStop', 'onAddObject'].forEach((callbackName, num) => {
             this.generateCallback(callbackName, num);
         });
     }

@@ -13,10 +13,6 @@ class webkitSimulatorMessageHandler {
     postMessage(data) {
         console.log('webkitSimulatorMessageHandler:postMessage', this.name, data);
         
-        if (this.name === 'addObject') {
-            return;
-        }
-        
         if (this.name === 'stopAR') {
             //~ clearInterval(this.simulator.watchARIntervalId);
             navigator.geolocation.clearWatch(this.simulator.watchARIntervalId);
@@ -63,6 +59,10 @@ class webkitSimulatorMessageHandler {
                 console.log('this.simulator.watchARIntervalId', this.simulator.watchARIntervalId);
             } else {
                 setTimeout(() => {
+                    if (this.name === 'addObject') {
+                        window[data.callback](data);
+                        return;
+                    }
                     window[data.callback]('data callback simulator: ' + this.name);
                 }, 3000);
             }

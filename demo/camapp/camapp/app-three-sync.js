@@ -47,26 +47,24 @@ class App {
         const fromCamera = {x: -1, y: 0, z: -2};
         fromCamera.x += this.cubesNum - 1;
         
-        const cubeMesh = this.createCube('obj-' + this.cubesNum);
-        
-        console.log('ttt', this.camera.position.x + fromCamera.x);
-        console.log('ttt', this.camera.position.y + fromCamera.y);
-        console.log('ttt', this.camera.position.z + fromCamera.z);
+        const name = 'obj-' + this.cubesNum;
+        //~ const cubeMesh = this.createCube(name);
         
         //~ cubeMesh.position.x = this.camera.position.x + fromCamera.x;
         //~ cubeMesh.position.y = this.camera.position.y + fromCamera.y;
         //~ cubeMesh.position.z = this.camera.position.z + fromCamera.z;
         
-        cubeMesh.position.x = 0;
-        cubeMesh.position.y = 0;
-        cubeMesh.position.z = -2;
+        //~ cubeMesh.position.x = 0;
+        //~ cubeMesh.position.y = 0;
+        //~ cubeMesh.position.z = -2;
         
-        this.scene.add(cubeMesh);
-        this.cubesNum++;
+        //~ this.scene.add(cubeMesh);
+        //~ this.cubesNum++;
         
-        this.ar.addObject(cubeMesh.name, fromCamera.x, fromCamera.y, fromCamera.z);
+        //~ this.ar.addObject(cubeMesh.name, fromCamera.x, fromCamera.y, fromCamera.z, this.onARAddObject.bind(this));
+        this.ar.addObject(name, 0, 0, -2, this.onARAddObject.bind(this));
         
-        this.requestAnimationFrame();
+        //~ this.requestAnimationFrame();
     }
 
     createObjects() {
@@ -230,6 +228,21 @@ class App {
             return data[key];
         }
         return null;
+    }
+    
+    onARAddObject(info) {
+        const cubeMesh = this.createCube(info.name);
+        
+        cubeMesh.position.x = 0;
+        cubeMesh.position.y = 1.6;
+        cubeMesh.position.z = -2;
+        
+        
+        this.scene.add(cubeMesh);
+        this.cubesNum++;
+
+        this.requestAnimationFrame();
+        alert('Object added ' + info.name);
     }
     
     onARInit(deviceId) {
