@@ -241,6 +241,7 @@ class App {
         }
         info = info2;
         
+        document.querySelector('#info-deviceId').textContent = 'obj2: ' + JSON.stringify(info);
         
         const cubeMesh = this.createCube(info.name);
         
