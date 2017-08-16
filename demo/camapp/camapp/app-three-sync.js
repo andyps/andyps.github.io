@@ -64,6 +64,7 @@ class App {
         //~ this.ar.addObject(cubeMesh.name, fromCamera.x, fromCamera.y, fromCamera.z, this.onARAddObject.bind(this));
         this.ar.addObject(name, 0, 0, -2, this.onARAddObject.bind(this));
         
+        document.body.style.color = 'red';
         //~ this.requestAnimationFrame();
     }
 
@@ -231,6 +232,7 @@ class App {
     }
     
     onARAddObject(info) {
+        document.querySelector('#info-deviceId').textContent = 'obj: ' + JSON.stringify(info);
         const cubeMesh = this.createCube(info.name);
         
         cubeMesh.position.x = 0;
