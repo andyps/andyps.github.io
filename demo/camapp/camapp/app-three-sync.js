@@ -182,7 +182,8 @@ class App {
                 this.ar.watch(
                     {
                         'location': true,
-                        'camera': true
+                        'camera': true,
+                        'objects': true
                     },
                     this.onARWatch.bind(this)
                 );
@@ -232,7 +233,8 @@ class App {
     
     onARAddObject(info) {
         
-        //~ document.querySelector('#info-deviceId').textContent = 'obj0: ' + JSON.stringify(info);
+        document.querySelector('#info-deviceId').textContent = 'obj0: ' + JSON.stringify(info);
+        return;
         
         var info2 = {};
         try {
