@@ -323,7 +323,7 @@ class App {
             document.querySelector('#info-deviceId').textContent = 'objects found';
             
             arObjects.forEach(info => {
-                if (name !== 'obj-1') {
+                if (info.name !== 'obj-1') {
                     return;
                 }
                 const mesh = this.scene.getObjectByName(info.name);
@@ -331,6 +331,7 @@ class App {
                 mesh.matrix.fromArray(info.transform);
                 
                 document.querySelector('#info-deviceId').textContent = 'obj0!: ' + JSON.stringify(info);
+                return;
             });
         }
         
