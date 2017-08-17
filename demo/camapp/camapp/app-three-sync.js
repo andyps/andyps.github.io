@@ -300,7 +300,7 @@ class App {
         const arObjects = this.getARData('objects');
         if (arObjects && arObjects.forEach) {
             arObjects.forEach(info => {
-                if (info.name !== 'obj-1') {
+                if (info.name !== 'obj-0') {
                     return;
                 }
                 
@@ -325,11 +325,9 @@ class App {
         let obj1Info = null;
         
         if (arObjects && arObjects.length) {
-            document.querySelector('#info-deviceId').textContent = 'arobjs: ' + JSON.stringify(arObjects);
-            document.querySelector('#info-deviceId').textContent = 'arobjs2: ' + JSON.stringify(arObjects[0]);
             
             for (let i = 0; i < arObjects.length; i++) {
-                if (arObjects[i].name == 'obj-1') {
+                if (arObjects[i].name == 'obj-0') {
                     obj1Info = arObjects[i];
                     break;
                 }
