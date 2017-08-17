@@ -323,9 +323,9 @@ class App {
         
         const arObjects = this.getARData('objects');
         let obj1Info = null;
-        if (arObjects) {
+        if (arObjects && arObjects.length) {
             for (let i = 0; i < arObjects.length; i++) {
-                if (arObjectInfo.name == 'obj-1') {
+                if (arObjects[i].name == 'obj-1') {
                     obj1Info = arObjects[i];
                     break;
                 }

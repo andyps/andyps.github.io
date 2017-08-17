@@ -76,7 +76,9 @@ class AR {
     }
     
     toggleDebug(isDebug) {
-        window.webkit.messageHandlers.showDebug.postMessage(isDebug ? 1 : 0);
+        if (window.webkit.messageHandlers.showDebug) {
+            window.webkit.messageHandlers.showDebug.postMessage(isDebug ? 1 : 0);
+        }
     }
     
     watch(options, callback) {
