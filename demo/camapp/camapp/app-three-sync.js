@@ -321,9 +321,11 @@ class App {
         const date = (new Date()).toTimeString();
         document.querySelector('#info-deviceId').textContent = this.deviceId;
         
-        const arObjects = this.getARData('objects');
+        const arObjects = data.objects;
         let obj1Info = null;
         if (arObjects && arObjects.length) {
+            document.querySelector('#info-deviceId').textContent = 'arobjs: ' + arObjects.length;
+            
             for (let i = 0; i < arObjects.length; i++) {
                 if (arObjects[i].name == 'obj-1') {
                     obj1Info = arObjects[i];
