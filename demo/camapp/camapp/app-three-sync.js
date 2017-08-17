@@ -323,9 +323,12 @@ class App {
             document.querySelector('#info-deviceId').textContent = 'objects found';
             
             arObjects.forEach(info => {
+                document.querySelector('#info-deviceId').textContent = 'objects found:' + info.name;
                 if (info.name !== 'obj-1') {
                     return;
                 }
+                
+                
                 const mesh = this.scene.getObjectByName(info.name);
                 //~ mesh.matrixAutoUpdate = false;
                 mesh.matrix.fromArray(info.transform);
