@@ -318,7 +318,10 @@ class App {
         }
         
         const arObjects = this.getARData('objects');
+        document.querySelector('#info-deviceId').textContent = 'try find objects';
         if (arObjects && arObjects.forEach) {
+            document.querySelector('#info-deviceId').textContent = 'objects found';
+            
             arObjects.forEach(info => {
                 if (name !== 'obj-1') {
                     return;
