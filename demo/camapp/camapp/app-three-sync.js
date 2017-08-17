@@ -319,10 +319,13 @@ class App {
     
     logDebugData(data) {
         const date = (new Date()).toTimeString();
-        document.querySelector('#info-deviceId').textContent = this.deviceId;
+        document.querySelector('#info-deviceId').textContent = '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' + this.deviceId;
         
         const arObjects = data.objects;
         let obj1Info = null;
+        
+        document.querySelector('#info-deviceId').textContent = JSON.stringify(arObjects);
+        
         if (arObjects && arObjects.length) {
             document.querySelector('#info-deviceId').textContent = 'arobjs: ' + arObjects.length;
             
