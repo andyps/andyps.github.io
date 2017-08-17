@@ -5,13 +5,15 @@ class App {
     constructor(canvasId) {
         this.isDebug = false;
         this.isARReady = false;
+        this.isWatchingAR = false;
+        this.deviceId = null;
         
         this.clock = new THREE.Clock();
         this.initScene(canvasId);
         
         this.cubesNum = 0;
         this.cubeProto = null;
-        this.createObjects();
+        //~ this.createObjects();
         
         this.ar = new AR(this.onARInit.bind(this));
         
@@ -148,29 +150,32 @@ class App {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
     }
+    
+    toggleDebug() {
+        this.isDebug = !this.isDebug;
+        
+        if (!this.isDebug) {
+            document.querySelector('#info-container').style.display = 'none';
+            this.fpsStats.domElement.style.display = 'none';
+        } else {
+            document.querySelector('#info-container').style.display = '';
+            this.fpsStats.domElement.style.display = '';
+        }
+        
+        this.ar.toggleDebug(this.isDebug);
+    }
+    
     registerEvents() {
         window.addEventListener('resize', () => {
             this.resize();
         });
         
         document.querySelector('#btn-add').addEventListener('click', () => {
-            try {
-                this.addObject();
-            } catch(e) {
-                alert('Error: ' + e.message);
-            }
+            this.addObject();
         });
         
         document.querySelector('#btn-debug').addEventListener('click', () => {
-            this.isDebug = !this.isDebug;
-            
-            if (!this.isDebug) {
-                document.querySelector('#info-container').style.display = 'none';
-                this.fpsStats.domElement.style.display = 'none';
-            } else {
-                document.querySelector('#info-container').style.display = '';
-                this.fpsStats.domElement.style.display = '';
-            }
+            this.toggleDebug();
         });
         
         document.querySelector('#btn-stop').addEventListener('click', () => {
@@ -178,23 +183,34 @@ class App {
         });
         
         document.querySelector('#btn-watch').addEventListener('click', () => {
-            try {
-                this.ar.watch(
-                    {
-                        'location': true,
-                        'camera': true,
-                        'objects': true
-                    },
-                    this.onARWatch.bind(this)
-                );
-            } catch (e) {
-                alert('Error: ' + e.message);
-            }
+            this.watchAR();
         });
     }
     
     requestAnimationFrame() {
         window.requestAnimationFrame(this.render.bind(this));
+    }
+    
+    watchAR() {
+        if (!this.isARReady || this.isWatchingAR) {
+            return;
+        }
+        
+        this.isWatchingAR = true;
+        
+        this.ar.watch(
+            {
+                location: true,
+                camera: true,
+                objects: true,
+                debug: false,
+                
+                h_plane: true,
+                hit_test_result: 'hit_test_plane'
+                
+            },
+            this.onARWatch.bind(this)
+        );
     }
     
     render(time) {
@@ -232,9 +248,6 @@ class App {
     }
     
     onARAddObject(info) {
-        
-        document.querySelector('#info-deviceId').textContent = 'obj0: ' + JSON.stringify(info);
-        
         const cubeMesh = this.createCube(info.name);
         
         const axisHelper = new THREE.AxisHelper(45);
@@ -243,50 +256,18 @@ class App {
         cubeMesh.matrixAutoUpdate = false;
         
         cubeMesh.matrix.fromArray(info.transform);
-        //~ cubeMesh.position.x = 0;
-        //~ cubeMesh.position.y = 1.6;
-        //~ cubeMesh.position.z = -2;
-        
-        /*
-
-[
-0.9914429783821106,
--0.10326667129993439,
-0.079854816198349,
-0,
-
-0.12760323286056519,
-0.8956893682479858,
--0.4259788990020752,
-0,
-
--0.0275356974452734,
-0.4325235188007355,
-0.9012021422386169,
-0,
- 
-0.07370418310165405,
--0.8629032373428345,
--1.7984013557434082,
-1
-]
-
-
-
-
-         */
-        
         
         this.scene.add(cubeMesh);
         this.cubesNum++;
 
         this.requestAnimationFrame();
-        //~ alert('Object added ' + info.name);
     }
     
     onARInit(deviceId) {
-        document.querySelector('#info-deviceId').textContent = deviceId;
+        this.deviceId = deviceId;
         this.isARReady = true;
+        
+        this.watchAR();
     }
     
     onARWatch(data) {
@@ -311,7 +292,6 @@ class App {
         const cameraProjectionMatrix = this.getARData('projection_camera');
         const cameraTransformMatrix = this.getARData('camera_transform');
         if (cameraProjectionMatrix && cameraTransformMatrix) {
-            console.log('apply matrices',cameraProjectionMatrix,cameraTransformMatrix);
             this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
             this.camera.matrix.fromArray(cameraTransformMatrix);
             //~ this.camera.updateMatrixWorld(true);
@@ -320,18 +300,13 @@ class App {
         const arObjects = this.getARData('objects');
         if (arObjects && arObjects.forEach) {
             arObjects.forEach(info => {
-                document.querySelector('#info-deviceId').textContent = 'objects found!!!:' + info.name;
                 if (info.name !== 'obj-1') {
                     return;
                 }
                 
-                
                 const mesh = this.scene.getObjectByName(info.name);
                 //~ mesh.matrixAutoUpdate = false;
                 mesh.matrix.fromArray(info.transform);
-                
-                document.querySelector('#info-deviceId').textContent = 'obj0!: ' + JSON.stringify(info);
-                return;
             });
         }
         
@@ -344,8 +319,18 @@ class App {
     
     logDebugData(data) {
         const date = (new Date()).toTimeString();
-        document.querySelector('#info-iniLocation').textContent = JSON.stringify(this.initialARData.location);
-        document.querySelector('#info-iniLocation2d').textContent = JSON.stringify(this.initialLocation);
+        document.querySelector('#info-deviceId').textContent = this.deviceId;
+        
+        const arObjects = this.getARData('objects');
+        let obj1Info = null;
+        if (arObjects) {
+            for (let i = 0; i < arObjects.length; i++) {
+                if (arObjectInfo.name == 'obj-1') {
+                    obj1Info = arObjects[i];
+                    break;
+                }
+            }
+        }
         
         const objPositions = [];
         this.scene.children.forEach(child => {
@@ -353,16 +338,14 @@ class App {
                 return;
             }
             objPositions.push(child.getWorldPosition());
-            //~ objPositions.push(child.position);
         });
         document.querySelector('#info-location').value = 
-            JSON.stringify(this.camera.position) + "\n---WP\n" +
-            JSON.stringify(this.camera.getWorldPosition()) + "\n WP---\n" +
-            JSON.stringify(objPositions) + "\n---\n" +
-            JSON.stringify(this.diffLocation) + "\n---\n" +
+            'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n WP---\n" +
+            'Positions:' + JSON.stringify(objPositions) + "\n---\n" +
+            'FirstObjectData:' + JSON.stringify(obj1Info) + "\n---\n" +
             JSON.stringify(data) + ':' + date;
             
-        document.querySelector('#info-objectsCnt').textContent = this.scene.children.length - 2;
+        document.querySelector('#info-objectsCnt').textContent = this.scene.children.length - 1;
     }
     
     geo2Cartesian(location) {

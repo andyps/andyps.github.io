@@ -99,7 +99,8 @@ class webkitSimulator {
             initAR: new webkitSimulatorMessageHandler(this, 'initAR'),
             watchAR: new webkitSimulatorMessageHandler(this, 'watchAR'),
             stopAR: new webkitSimulatorMessageHandler(this, 'stopAR'),
-            addObject: new webkitSimulatorMessageHandler(this, 'addObject')
+            addObject: new webkitSimulatorMessageHandler(this, 'addObject'),
+            showDebug: new webkitSimulatorMessageHandler(this, 'showDebug')
         };
     }
 }

@@ -75,6 +75,10 @@ class AR {
         this.isWatching = false;
     }
     
+    toggleDebug(isDebug) {
+        window.webkit.messageHandlers.showDebug.postMessage(isDebug ? 1 : 0);
+    }
+    
     watch(options, callback) {
         if (this.isWatching || !this.isInitialized) {
             return;
