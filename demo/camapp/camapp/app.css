@@ -21,10 +21,7 @@ canvas {
 }
 
 .reset, .mic, .debug, .object3d {
-/*
     border: 0;
-*/
-    border: 1px solid black;
     z-index: 100;
     cursor: pointer;
 }
