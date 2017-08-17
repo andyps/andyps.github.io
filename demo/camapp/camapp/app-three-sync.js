@@ -234,22 +234,6 @@ class App {
     onARAddObject(info) {
         
         document.querySelector('#info-deviceId').textContent = 'obj0: ' + JSON.stringify(info);
-        return;
-        
-        var info2 = {};
-        try {
-            for (var name in info) {
-                info2.name = name;
-                info2.transform = info[name];
-                break;
-            }
-            
-        } catch(e) {
-            alert('error');
-        }
-        info = info2;
-        
-        document.querySelector('#info-deviceId').textContent = 'obj!: ' + JSON.stringify(info);
         
         const cubeMesh = this.createCube(info.name);
         
@@ -258,7 +242,7 @@ class App {
         
         cubeMesh.matrixAutoUpdate = false;
         
-        cubeMesh.matrix.fromArray(info2.transform);
+        cubeMesh.matrix.fromArray(info.transform);
         //~ cubeMesh.position.x = 0;
         //~ cubeMesh.position.y = 1.6;
         //~ cubeMesh.position.z = -2;
@@ -333,6 +317,19 @@ class App {
             //~ this.camera.updateMatrixWorld(true);
         }
         
+        const arObjects = this.getARData('objects');
+        if (arObjects && arObjects.forEach) {
+            arObjects.forEach(info => {
+                if (name !== 'obj-1') {
+                    return;
+                }
+                const mesh = this.scene.getObjectByName(info.name);
+                //~ mesh.matrixAutoUpdate = false;
+                mesh.matrix.fromArray(info.transform);
+                
+                document.querySelector('#info-deviceId').textContent = 'obj0!: ' + JSON.stringify(info);
+            });
+        }
         
         if (this.isDebug) {
             this.logDebugData(data);
