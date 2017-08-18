@@ -70,22 +70,9 @@ class AR {
     }
     
     toggleDebug(isDebug) {
-        document.querySelector('#info-msg').style.display = 'block';
-        document.querySelector('#info-msg').textContent = 'showDebug will be called now';
-        let err = false;
-        
-        try {
-            window.webkit.messageHandlers.showDebug.postMessage({
-                debug: isDebug
-            });
-        } catch(e) {
-            document.querySelector('#info-msg').textContent = 'showDebug error: ' + e.message;
-            err = true;
-        }
-        if (!err) {
-            document.querySelector('#info-msg').textContent = 'showDebug has been just called!';
-        }
-        
+        window.webkit.messageHandlers.showDebug.postMessage({
+            debug: isDebug
+        });
     }
     
     watch(options, callback) {
