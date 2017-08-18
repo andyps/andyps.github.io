@@ -26,15 +26,15 @@ canvas {
     cursor: pointer;
 }
 
-.reset {
+.reset{
     width: 46px;
     height: 46px;
     background: transparent url(img/restoreClearCopy@2x.png) no-repeat center center;
     background-size: 46px 45px;
     position: absolute;
     outline: none;
-    left: 20px;
-    top: 20px;
+    left: 30px;
+    top: 30px;
 }
 .mic{
     width: 56px;
@@ -43,8 +43,8 @@ canvas {
     background-size: 56px 56px;
     position: absolute;
     outline: none;
-    right: 25px;
-    top: 20px;
+    right: 30px;
+    top: 30px;
 }
 .object3d{
     width: 56px;
@@ -53,8 +53,8 @@ canvas {
     background-size: 56px 56px;
     position: absolute;
     outline: none;
-    right: 25px;
-    bottom: 20px;
+    right: 30px;
+    bottom: 30px;
 }
 .debug{
     width: 46px;
@@ -63,6 +63,6 @@ canvas {
     background-size: 46px 46px;
     position: absolute;
     outline: none;
-    left: 20px;
-    bottom: 20px;
+    left: 30px;
+    bottom: 30px;
 }

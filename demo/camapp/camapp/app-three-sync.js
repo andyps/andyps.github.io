@@ -250,8 +250,8 @@ class App {
     onARAddObject(info) {
         const cubeMesh = this.createCube(info.name);
         
-        const axisHelper = new THREE.AxisHelper(45);
-        cubeMesh.add(axisHelper);
+        //~ const axisHelper = new THREE.AxisHelper(45);
+        //~ cubeMesh.add(axisHelper);
         
         cubeMesh.matrixAutoUpdate = false;
         
