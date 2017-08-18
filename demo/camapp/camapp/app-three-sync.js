@@ -261,6 +261,8 @@ class App {
         this.cubesNum++;
 
         this.requestAnimationFrame();
+        
+        document.querySelector('#info-objectsCnt').textContent = this.cubesNum;
     }
     
     onARInit(deviceId) {
@@ -346,8 +348,6 @@ class App {
             'Positions:' + JSON.stringify(objPositions) + "\n---\n" +
             'FirstObjectData:' + JSON.stringify(obj1Info) + "\n---\n" +
             JSON.stringify(data) + ':' + date;
-            
-        document.querySelector('#info-objectsCnt').textContent = this.scene.children.length - 1;
     }
     
     geo2Cartesian(location) {
