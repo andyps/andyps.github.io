@@ -36,7 +36,7 @@ class App {
     }
     createCube(name) {
         let geometry = new THREE.BoxGeometry(0.25, 0.25, 0.25);
-        let material = new THREE.MeshLambertMaterial({color: 0x7d4db2, reflectivity: 0});
+        let material = new THREE.MeshLambertMaterial({color: 0x7d4db2, reflectivity: 0, wireframe: true});
         let cubeMesh = new THREE.Mesh(geometry, material);
         cubeMesh.name = name;
         
@@ -233,7 +233,6 @@ class App {
                 camera: true,
                 objects: true,
                 debug: false,
-                
                 h_plane: true,
                 hit_test_result: 'hit_test_plane'
                 
@@ -281,6 +280,9 @@ class App {
         
         //~ const axisHelper = new THREE.AxisHelper(45);
         //~ cubeMesh.add(axisHelper);
+        //~ cubeMesh.position.x = 0;
+        //~ cubeMesh.position.y = 3;
+        //~ cubeMesh.position.z = -3;
         
         cubeMesh.matrixAutoUpdate = false;
         

@@ -70,9 +70,18 @@ class AR {
     }
     
     toggleDebug(isDebug) {
-        window.webkit.messageHandlers.showDebug.postMessage({
-            debug: isDebug
-        });
+        document.querySelector('#info-msg').style.display = 'block';
+        document.querySelector('#info-msg').textContent = 'showDebug will be called now';
+        
+        try {
+            window.webkit.messageHandlers.showDebug.postMessage({
+                debug: isDebug
+            });
+        } catch(e) {
+            document.querySelector('#info-msg').textContent = 'showDebug error: ' + e.message;
+        }
+        
+        document.querySelector('#info-msg').textContent = 'showDebug has been called!';
     }
     
     watch(options, callback) {
