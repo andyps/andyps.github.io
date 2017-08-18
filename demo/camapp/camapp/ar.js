@@ -72,6 +72,7 @@ class AR {
     toggleDebug(isDebug) {
         document.querySelector('#info-msg').style.display = 'block';
         document.querySelector('#info-msg').textContent = 'showDebug will be called now';
+        let err = false;
         
         try {
             window.webkit.messageHandlers.showDebug.postMessage({
@@ -79,9 +80,12 @@ class AR {
             });
         } catch(e) {
             document.querySelector('#info-msg').textContent = 'showDebug error: ' + e.message;
+            err = true;
+        }
+        if (!err) {
+            document.querySelector('#info-msg').textContent = 'showDebug has been called!';
         }
         
-        document.querySelector('#info-msg').textContent = 'showDebug has been called!';
     }
     
     watch(options, callback) {
