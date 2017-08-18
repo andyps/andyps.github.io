@@ -83,7 +83,7 @@ class AR {
             err = true;
         }
         if (!err) {
-            document.querySelector('#info-msg').textContent = 'showDebug has been called!';
+            document.querySelector('#info-msg').textContent = 'showDebug has been just called!';
         }
         
     }
