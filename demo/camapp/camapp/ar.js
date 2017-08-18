@@ -26,17 +26,11 @@ class AR {
     }
     
     onStop() {
-        this.log('Stop watching...');
+        this.isWatching = false;
+        this.userCallbacks.onStop();
     }
     
     onWatch(data) {
-        if (data.projection_camera) {
-            
-        }
-        if (data.camera_transform) {
-            
-        }
-
         this.rawARData = data;
         this.userCallbacks.onWatch(data);
     }
@@ -58,10 +52,13 @@ class AR {
         //~ nEl.value += msg + '\n';
         //~ nEl.scrollTop = nEl.scrollHeight;
     }
-    stop() {
+    stop(callback) {
         if (!this.isWatching) {
             return;
         }
+
+        this.userCallbacks.onStop = callback;
+        
         try {
             window.webkit.messageHandlers.stopAR.postMessage({
                 callback: this.callbacksMap.onStop
@@ -70,9 +67,6 @@ class AR {
         } catch(e) {
             this.log('Error: ' + e.message);
         }
-        
-        
-        this.isWatching = false;
     }
     
     toggleDebug(isDebug) {

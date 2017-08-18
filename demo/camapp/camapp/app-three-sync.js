@@ -72,8 +72,8 @@ class App {
     createObjects() {
         const cubeMesh = this.createCube('obj-0');
         
-        const axisHelper = new THREE.AxisHelper(45);
-        cubeMesh.add(axisHelper);
+        //~ const axisHelper = new THREE.AxisHelper(45);
+        //~ cubeMesh.add(axisHelper);
         
         cubeMesh.position.set(2, 0.5, -4);
         this.scene.add(cubeMesh);
@@ -165,6 +165,31 @@ class App {
         this.ar.toggleDebug(this.isDebug);
     }
     
+    cleanScene() {
+        let children2Remove = [];
+
+        this.scene.children.forEach(child => {
+            if (!child.isCamera) {
+                children2Remove.push(child);
+            }
+        });
+
+        children2Remove.forEach(child => {
+            child.parent.remove(child);
+        });
+        
+        this.cubesNum = 0;
+        document.querySelector('#info-objectsCnt').textContent = 0;
+    }
+
+    reset() {
+        this.ar.stop(() => {
+            this.cleanScene();
+            this.isWatchingAR = false;
+            this.watchAR();
+        });
+    }
+    
     registerEvents() {
         window.addEventListener('resize', () => {
             this.resize();
@@ -185,6 +210,10 @@ class App {
         document.querySelector('#btn-watch').addEventListener('click', () => {
             this.watchAR();
         });
+        
+        document.querySelector('#btn-reset').addEventListener('click', () => {
+            this.reset();
+        });
     }
     
     requestAnimationFrame() {
@@ -195,7 +224,7 @@ class App {
         if (!this.isARReady || this.isWatchingAR) {
             return;
         }
-        
+
         this.isWatchingAR = true;
         
         this.ar.watch(
