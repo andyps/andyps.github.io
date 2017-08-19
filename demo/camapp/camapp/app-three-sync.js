@@ -291,8 +291,8 @@ class App {
         cubeMesh.matrixAutoUpdate = false;
 
 
-        info.transform[12] = 0;
-        info.transform[13] = 0;
+        // info.transform[12] = 0;
+        // info.transform[13] = 0;
         info.transform[14] = -2;
         cubeMesh.matrix.fromArray(info.transform);
         
@@ -393,7 +393,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'Sz:' + JSON.stringify({
+            'Sizes:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height
             })
