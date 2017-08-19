@@ -395,7 +395,8 @@ class App {
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
             'Sz:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
-                sw: screen.width, sh: screen.height, sa: screen.width / screen.height
+                sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
+                p: window.devicePixelRatio
             })
             + "\n---\n" +
             'Positions:' + JSON.stringify(objPositions) + "\n---\n" +
