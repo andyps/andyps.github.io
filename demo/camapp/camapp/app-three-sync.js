@@ -146,9 +146,9 @@ class App {
     }
     
     resize() {
-        this.engine.setSize(window.innerWidth, window.innerHeight, true);
-        this.camera.aspect = window.innerWidth / window.innerHeight;
-        this.camera.updateProjectionMatrix();
+        // this.engine.setSize(window.innerWidth, window.innerHeight, true);
+        // this.camera.aspect = window.innerWidth / window.innerHeight;
+        // this.camera.updateProjectionMatrix();
     }
     
     toggleDebug() {
@@ -213,6 +213,10 @@ class App {
         
         document.querySelector('#btn-reset').addEventListener('click', () => {
             this.reset();
+        });
+
+        document.querySelector('#btn-snapdebug').addEventListener('click', () => {
+            document.querySelector('#info-snapdebug').value = document.querySelector('#info-location').value;
         });
     }
     
@@ -375,7 +379,9 @@ class App {
             objPositions.push(child.getWorldPosition());
         });
         document.querySelector('#info-location').value = 
-            'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n WP---\n" +
+            'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
+            'Size:' + JSON.stringify({w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight})
+            + "\n---\n" +
             'Positions:' + JSON.stringify(objPositions) + "\n---\n" +
             'FirstObjectData:' + JSON.stringify(obj1Info) + "\n---\n" +
             JSON.stringify(data) + ':' + date;
