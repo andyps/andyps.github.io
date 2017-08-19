@@ -329,6 +329,10 @@ class App {
         const cameraProjectionMatrix = this.getARData('projection_camera');
         const cameraTransformMatrix = this.getARData('camera_transform');
         if (cameraProjectionMatrix && cameraTransformMatrix) {
+
+            cameraProjectionMatrix[0] = 0.9942156119758434;
+            cameraProjectionMatrix[5] = 1.7674940162428914;
+
             this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
             this.camera.matrix.fromArray(cameraTransformMatrix);
             //~ this.camera.updateMatrixWorld(true);
