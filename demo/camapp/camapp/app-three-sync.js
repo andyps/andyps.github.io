@@ -380,7 +380,10 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'Size:' + JSON.stringify({w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight})
+            'Size:' + JSON.stringify({
+                w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
+                sw: screen.width, sh: screen.height, sa: screen.width / screen.height
+            })
             + "\n---\n" +
             'Positions:' + JSON.stringify(objPositions) + "\n---\n" +
             'FirstObjectData:' + JSON.stringify(obj1Info) + "\n---\n" +
