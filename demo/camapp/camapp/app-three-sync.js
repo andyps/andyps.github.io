@@ -103,7 +103,7 @@ class App {
         
         this.engine.setClearColor('#000', 0);
         
-        this.camera = new THREE.PerspectiveCamera(45, aspect, 1, 10000);
+        this.camera = new THREE.PerspectiveCamera(59, aspect, 0.001, 1000);
         //~ this.camera.position.set(-95, 95, 95);
         //~ this.camera.lookAt(new THREE.Vector3(0, 0, 0));
         
@@ -333,7 +333,7 @@ class App {
             cameraProjectionMatrix[0] = 0.9942156119758434;
             cameraProjectionMatrix[5] = 1.7674940162428914;
 
-            this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
+            // this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
             this.camera.matrix.fromArray(cameraTransformMatrix);
             //~ this.camera.updateMatrixWorld(true);
         }
