@@ -98,8 +98,10 @@ class App {
         let w = window.innerWidth;
         let h = window.innerHeight;
         let aspect = w / h;
-        
-        this.engine.setSize(w * 2, h * 2, true);
+
+        this.engine.setPixelRatio(window.devicePixelRatio);
+
+        this.engine.setSize(w, h, true);
         
         this.engine.setClearColor('#000', 0);
         
@@ -393,7 +395,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'Sz:' + JSON.stringify({
+            'S:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
                 p: window.devicePixelRatio
