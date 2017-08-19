@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>Camera App</title>
+    <link href="app.css" rel="stylesheet" type="text/css" charset="utf-8" >
+    <script src="../vendor/three.js"></script>
+    <!-- <script src="vendor/stats.js"></script> -->
+    <!-- <script src="../vendor/argon.js"></script> -->
+    <script src="../vendor/aframe-v0.6.1.js"></script>
+    <script src="app.js"></script>
+</head>
+<body>
+<div>
+    <button id="btn-watch">Watch</button>
+    <button id="btn-stop">Stop</button>
+</div>
+<div id="info-container">
+    <div>
+        <span>DeviceId</span>: <span id="info-deviceId"></span>
+    </div>
+    <div>
+        <span>Location</span>: <textarea id="info-location" rows="10" cols="80"></textarea>
+    </div>
+</div>
+
+<div>
+    <textarea id="notification"></textarea>
+</div>
+</body>
+</html>
