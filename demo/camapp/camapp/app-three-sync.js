@@ -333,11 +333,13 @@ class App {
             // cameraProjectionMatrix[0] = 0.9942156119758434;
             // cameraProjectionMatrix[5] = 1.7674940162428914;
 
-            this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
+
 
             if (!this.applied)
-                this.camera.matrix.fromArray(cameraTransformMatrix);
+                this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
             this.applied = true;
+
+            this.camera.matrix.fromArray(cameraTransformMatrix);
             // this.camera.updateMatrixWorld(true);
         }
         
@@ -387,7 +389,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'view:' + JSON.stringify({
+            'Size:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height
             })
