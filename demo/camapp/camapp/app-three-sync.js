@@ -289,7 +289,11 @@ class App {
         //~ cubeMesh.position.z = -3;
         
         cubeMesh.matrixAutoUpdate = false;
-        
+
+
+        info.transform[13] = 0;
+        info.transform[14] = -2;
+        info.transform[15] = 0;
         cubeMesh.matrix.fromArray(info.transform);
         
         this.scene.add(cubeMesh);
@@ -352,7 +356,7 @@ class App {
                 
                 const mesh = this.scene.getObjectByName(info.name);
                 //~ mesh.matrixAutoUpdate = false;
-                mesh.matrix.fromArray(info.transform);
+                // mesh.matrix.fromArray(info.transform);
             });
         }
         
@@ -389,7 +393,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'Size:' + JSON.stringify({
+            'S:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height
             })
