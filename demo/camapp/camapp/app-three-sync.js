@@ -334,8 +334,8 @@ class App {
             // cameraProjectionMatrix[5] = 1.7674940162428914;
 
             this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
-            // this.camera.matrix.fromArray(cameraTransformMatrix);
-            //~ this.camera.updateMatrixWorld(true);
+            this.camera.matrix.fromArray(cameraTransformMatrix);
+            this.camera.updateMatrixWorld(true);
         }
         
         const arObjects = this.getARData('objects');
@@ -384,7 +384,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'Sizes:' + JSON.stringify({
+            'S:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height
             })
