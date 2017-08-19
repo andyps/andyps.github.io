@@ -339,9 +339,9 @@ class App {
 
 
 
-            if (!this.applied)
+            // if (!this.applied)
                 this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
-            this.applied = true;
+            // this.applied = true;
 
             this.camera.matrix.fromArray(cameraTransformMatrix);
             // this.camera.updateMatrixWorld(true);
@@ -393,7 +393,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'Sizes:' + JSON.stringify({
+            'S:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height
             })
