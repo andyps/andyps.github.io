@@ -103,7 +103,7 @@ class App {
         
         this.engine.setClearColor('#000', 0);
         
-        this.camera = new THREE.PerspectiveCamera(59, aspect, 0.001, 1000);
+        this.camera = new THREE.PerspectiveCamera(37.94, aspect, 0.001, 1000);
         //~ this.camera.position.set(-95, 95, 95);
         //~ this.camera.lookAt(new THREE.Vector3(0, 0, 0));
         
@@ -384,7 +384,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'Si:' + JSON.stringify({
+            'Siz:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height
             })
