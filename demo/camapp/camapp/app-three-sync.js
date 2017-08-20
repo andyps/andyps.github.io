@@ -99,7 +99,7 @@ class App {
         let h = window.innerHeight;
         let aspect = w / h;
 
-        this.engine.setPixelRatio(window.devicePixelRatio);
+        // this.engine.setPixelRatio(window.devicePixelRatio);
 
         this.engine.setSize(w, h, true);
         
@@ -258,11 +258,11 @@ class App {
         }
         //~ this.cameraControls.update(deltaTime);
         
-        this.camera.position.set(
-            this.diffLocation.x,
-            this.camera.position.y,
-            this.diffLocation.z
-        );
+        // this.camera.position.set(
+        //     this.diffLocation.x,
+        //     this.camera.position.y,
+        //     this.diffLocation.z
+        // );
         
         this.engine.render(this.scene, this.camera);
         
@@ -395,7 +395,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'Sizes:' + JSON.stringify({
+            'S:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
                 p: window.devicePixelRatio
