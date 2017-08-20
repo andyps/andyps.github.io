@@ -94,12 +94,12 @@ class App {
             antialias: true,
             canvas: this.canvas
         });
-
         let w = window.innerWidth;
         let h = window.innerHeight;
         let aspect = w / h;
 
-        this.engine.setPixelRatio(window.devicePixelRatio);
+        // this.engine.setPixelRatio(window.devicePixelRatio);
+        this.engine.setPixelRatio(1);
 
         this.engine.setSize(w, h, false);
         
@@ -395,7 +395,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'Sizes:' + JSON.stringify({
+            'S:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
                 p: window.devicePixelRatio
