@@ -160,10 +160,10 @@ class App {
         this.isDebug = !this.isDebug;
         
         if (!this.isDebug) {
-            document.querySelector('#info-container').style.display = 'none';
+            // document.querySelector('#info-container').style.display = 'none';
             this.fpsStats.domElement.style.display = 'none';
         } else {
-            document.querySelector('#info-container').style.display = '';
+            // document.querySelector('#info-container').style.display = '';
             this.fpsStats.domElement.style.display = '';
         }
         
