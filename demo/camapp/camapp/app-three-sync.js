@@ -101,7 +101,7 @@ class App {
 
         this.engine.setPixelRatio(window.devicePixelRatio);
 
-        this.engine.setSize(w, h, true);
+        this.engine.setSize(w, h, false);
         
         this.engine.setClearColor('#000', 0);
         
@@ -395,7 +395,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'Sizez:' + JSON.stringify({
+            'Sizes:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
                 p: window.devicePixelRatio
