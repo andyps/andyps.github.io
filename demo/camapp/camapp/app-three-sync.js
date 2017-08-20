@@ -98,8 +98,8 @@ class App {
         let h = window.innerHeight;
         let aspect = w / h;
 
-        // this.engine.setPixelRatio(window.devicePixelRatio);
-        this.engine.setPixelRatio(1);
+        this.engine.setPixelRatio(window.devicePixelRatio);
+        // this.engine.setPixelRatio(1);
 
         this.engine.setSize(w*2, h*2, false);
 
@@ -296,8 +296,9 @@ class App {
 
 
         // info.transform[12] = 0;
-        // info.transform[13] = 0;
+        info.transform[13] += 0.25 / 2;
         // info.transform[14] = -2;
+        // info.transform[14] -= 0.25 / 2;
         cubeMesh.matrix.fromArray(info.transform);
         
         this.scene.add(cubeMesh);
@@ -397,7 +398,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'S:' + JSON.stringify({
+            'Size:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
                 p: window.devicePixelRatio, cw: this.canvas.width, ch: this.canvas.height
