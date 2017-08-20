@@ -351,7 +351,7 @@ class App {
             // cameraProjectionMatrix[0] = 1.2017212380551212;
             // cameraProjectionMatrix[5] = 2.13305519754784;
 
-            cameraProjectionMatrix[5] = 1 / Math.tan(fovy / 2);
+            cameraProjectionMatrix[5] = 1 / Math.tan(Math.PI * fovy / 360);
             cameraProjectionMatrix[0] = cameraProjectionMatrix[5] / aspect;
 
             // if (!this.applied)
@@ -408,7 +408,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'Size:' + JSON.stringify({
+            'Zzz:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
                 p: window.devicePixelRatio, cw: this.canvas.width, ch: this.canvas.height,
