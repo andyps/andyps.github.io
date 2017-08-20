@@ -101,7 +101,7 @@ class App {
         // this.engine.setPixelRatio(window.devicePixelRatio);
         // this.engine.setPixelRatio(1);
 
-        // this.engine.setSize(w*2, h*2, false);
+        this.engine.setSize(w, h, false);
 
         // this.engine.setViewport( 0, 0, w, h);
         
@@ -408,7 +408,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'S:' + JSON.stringify({
+            'Size:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
                 p: window.devicePixelRatio, cw: this.canvas.width, ch: this.canvas.height,
