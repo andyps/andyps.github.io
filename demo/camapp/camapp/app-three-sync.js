@@ -296,7 +296,7 @@ class App {
 
 
         // info.transform[12] = 0;
-        info.transform[13] += 0.25 / 2;
+        // info.transform[13] += 0.25 / 2;
         // info.transform[14] = -2;
         // info.transform[14] -= 0.25 / 2;
         cubeMesh.matrix.fromArray(info.transform);
@@ -342,7 +342,8 @@ class App {
             // cameraProjectionMatrix[0] = 0.9942156119758434;
             // cameraProjectionMatrix[5] = 1.7674940162428914;
 
-
+            cameraProjectionMatrix[0] = 1.2017212380551212;
+            cameraProjectionMatrix[5] = 2.13305519754784;
 
             // if (!this.applied)
                 this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
@@ -398,7 +399,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'S:' + JSON.stringify({
+            'Szz:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
                 p: window.devicePixelRatio, cw: this.canvas.width, ch: this.canvas.height
