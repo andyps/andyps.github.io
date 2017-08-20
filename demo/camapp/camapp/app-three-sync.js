@@ -35,7 +35,7 @@ class App {
         render();
     }
     createCube(name) {
-        let geometry = new THREE.BoxGeometry(0.25, 0.25, 0.25);
+        let geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
         let material = new THREE.MeshLambertMaterial({color: 0x7d4db2, reflectivity: 0, wireframe: true});
         let cubeMesh = new THREE.Mesh(geometry, material);
         cubeMesh.name = name;
@@ -408,7 +408,7 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'Zzz:' + JSON.stringify({
+            'Size:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
                 p: window.devicePixelRatio, cw: this.canvas.width, ch: this.canvas.height,
