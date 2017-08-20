@@ -99,14 +99,15 @@ class App {
         let aspect = w / h;
 
         // this.engine.setPixelRatio(window.devicePixelRatio);
-        this.engine.setPixelRatio(1);
+        // this.engine.setPixelRatio(1);
 
-        this.engine.setSize(w*2, h*2, false);
+        // this.engine.setSize(w*2, h*2, false);
 
-        this.engine.setViewport( 0, 0, w, h);
+        // this.engine.setViewport( 0, 0, w, h);
         
         this.engine.setClearColor('#000', 0);
-        
+
+        this.fov = 37.94;
         this.camera = new THREE.PerspectiveCamera(37.94, aspect, 0.001, 1000);
         //~ this.camera.position.set(-95, 95, 95);
         //~ this.camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -221,6 +222,9 @@ class App {
 
         document.querySelector('#btn-snapdebug').addEventListener('click', () => {
             document.querySelector('#info-snapdebug').value = document.querySelector('#info-location').value;
+        });
+        document.querySelector('#input-fov').addEventListener('change', (e) => {
+            this.fov = e.target.value;
         });
     }
     
@@ -342,8 +346,13 @@ class App {
             // cameraProjectionMatrix[0] = 0.9942156119758434;
             // cameraProjectionMatrix[5] = 1.7674940162428914;
 
-            cameraProjectionMatrix[0] = 1.2017212380551212;
-            cameraProjectionMatrix[5] = 2.13305519754784;
+            let aspect = 1.775;
+            let fovy = this.fov;
+            // cameraProjectionMatrix[0] = 1.2017212380551212;
+            // cameraProjectionMatrix[5] = 2.13305519754784;
+
+            cameraProjectionMatrix[5] = 1 / Math.tan(fovy / 2);
+            cameraProjectionMatrix[0] = cameraProjectionMatrix[5] / aspect;
 
             // if (!this.applied)
                 this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
@@ -399,11 +408,11 @@ class App {
         });
         document.querySelector('#info-location').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'Siz:' + JSON.stringify({
+            'S:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
-                p: window.devicePixelRatio, cw: this.canvas.width, ch: this.canvas.height
-
+                p: window.devicePixelRatio, cw: this.canvas.width, ch: this.canvas.height,
+                fovy: this.fov
             })
             + "\n---\n" +
             'Positions:' + JSON.stringify(objPositions) + "\n---\n" +
