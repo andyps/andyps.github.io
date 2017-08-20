@@ -99,7 +99,7 @@ class App {
         let h = window.innerHeight;
         let aspect = w / h;
 
-        // this.engine.setPixelRatio(window.devicePixelRatio);
+        this.engine.setPixelRatio(window.devicePixelRatio);
 
         this.engine.setSize(w, h, true);
         
