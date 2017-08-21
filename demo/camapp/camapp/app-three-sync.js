@@ -226,6 +226,20 @@ class App {
         document.querySelector('#input-fov').addEventListener('change', (e) => {
             this.fov = e.target.value;
         });
+        
+        // temporal solution
+        window.onStartRecording = () => {
+            document.querySelector('#btn-reset').style.display = 'none';
+            document.querySelector('#btn-add').style.display = 'none';
+            document.querySelector('#btn-debug').style.display = 'none';
+            document.querySelector('#info-objectsCnt').style.display = 'none';
+        }
+        window.onStopRecording = () => {
+            document.querySelector('#btn-reset').style.display = '';
+            document.querySelector('#btn-add').style.display = '';
+            document.querySelector('#btn-debug').style.display = '';
+            document.querySelector('#info-objectsCnt').style.display = '';
+        }
     }
     
     requestAnimationFrame() {
