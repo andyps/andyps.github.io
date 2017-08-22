@@ -240,6 +240,14 @@ class App {
             document.querySelector('#btn-debug').style.display = '';
             
         }
+        
+        window.didMoveBackground = () => {
+            this.onARDidMoveBackground();
+        }
+        window.willEnterForeground = () => {
+            this.onARWillEnterForeground();
+        }
+
     }
     
     requestAnimationFrame() {
