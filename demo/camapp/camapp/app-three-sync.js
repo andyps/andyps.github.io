@@ -336,8 +336,10 @@ class App {
     }
     
     onARDidMoveBackground() {
-        this.cleanScene();
-        this.isWatchingAR = false;
+        this.ar.stop(() => {
+            this.cleanScene();
+            this.isWatchingAR = false;
+        });
         console.log('onARDidMoveBackground');
     }
     
