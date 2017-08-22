@@ -46,7 +46,7 @@ class App {
         if (!this.isARReady || !this.initialARData) {
             return;
         }
-        const fromCamera = {x: -1, y: 0, z: -2};
+        const fromCamera = {x: -1, y: 0, z: -1};
         fromCamera.x += this.cubesNum - 1;
         
         const name = 'obj-' + this.cubesNum;
@@ -64,7 +64,7 @@ class App {
         //~ this.cubesNum++;
         
         //~ this.ar.addObject(cubeMesh.name, fromCamera.x, fromCamera.y, fromCamera.z, this.onARAddObject.bind(this));
-        this.ar.addObject(name, 0, 0, -2, this.onARAddObject.bind(this));
+        this.ar.addObject(name, 0, 0, -1, this.onARAddObject.bind(this));
         
         //~ this.requestAnimationFrame();
     }
