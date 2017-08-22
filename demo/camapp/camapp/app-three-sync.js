@@ -347,8 +347,6 @@ class App {
     }
     
     onARInit(deviceId) {
-        this.ar.didMoveBackground(this.onARDidMoveBackground.bind(this));
-        this.ar.willEnterForeground(this.onARWillEnterForeground.bind(this));
         
         this.deviceId = deviceId;
         this.isARReady = true;
