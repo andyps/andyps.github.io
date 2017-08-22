@@ -327,7 +327,21 @@ class App {
         document.querySelector('#info-objectsCnt').textContent = this.cubesNum;
     }
     
+    onARDidMoveBackground() {
+        this.cleanScene();
+        this.isWatchingAR = false;
+        console.log('onARDidMoveBackground');
+    }
+    
+    onARWillEnterForeground() {
+        this.watchAR();
+        console.log('onARWillEnterForeground');
+    }
+    
     onARInit(deviceId) {
+        this.ar.didMoveBackground(this.onARDidMoveBackground.bind(this));
+        this.ar.willEnterForeground(this.onARWillEnterForeground.bind(this));
+        
         this.deviceId = deviceId;
         this.isARReady = true;
         

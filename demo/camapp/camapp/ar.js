@@ -25,6 +25,31 @@ class AR {
         this.userCallbacks.onInit(data);
     }
     
+    // <temporal>
+    onDidMoveBackground() {
+        this.isWatching = false;
+        this.userCallbacks.onDidMoveBackground();
+    }
+    
+    didMoveBackground(callback) {
+        this.userCallbacks.onDidMoveBackground = callback;
+        window.webkit.messageHandlers.didMoveBackground.postMessage({
+            callback: this.callbacksMap.onDidMoveBackground
+        });
+    }
+    
+    onWillEnterForeground() {
+        this.userCallbacks.onWillEnterForeground();
+    }
+    
+    willEnterForeground(callback) {
+        this.userCallbacks.onWillEnterForeground = callback;
+        window.webkit.messageHandlers.willEnterForeground.postMessage({
+            callback: this.callbacksMap.onWillEnterForeground
+        });
+    }
+    // </temporal>
+
     onStop() {
         this.isWatching = false;
         this.userCallbacks.onStop();
@@ -103,7 +128,7 @@ class AR {
     }
     
     generateCallbacks() {
-        ['onInit', 'onWatch', 'onStop', 'onAddObject'].forEach((callbackName, num) => {
+        ['onInit', 'onWatch', 'onStop', 'onAddObject', 'onDidMoveBackground', 'onWillEnterForeground'].forEach((callbackName, num) => {
             this.generateCallback(callbackName, num);
         });
     }

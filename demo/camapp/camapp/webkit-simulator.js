@@ -100,7 +100,9 @@ class webkitSimulator {
             watchAR: new webkitSimulatorMessageHandler(this, 'watchAR'),
             stopAR: new webkitSimulatorMessageHandler(this, 'stopAR'),
             addObject: new webkitSimulatorMessageHandler(this, 'addObject'),
-            showDebug: new webkitSimulatorMessageHandler(this, 'showDebug')
+            showDebug: new webkitSimulatorMessageHandler(this, 'showDebug'),
+            didMoveBackground: new webkitSimulatorMessageHandler(this, 'didMoveBackground'),
+            willEnterForeground: new webkitSimulatorMessageHandler(this, 'willEnterForeground')
         };
     }
 }
