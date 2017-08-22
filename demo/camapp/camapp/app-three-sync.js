@@ -266,7 +266,7 @@ class App {
                 location: true,
                 camera: true,
                 objects: true,
-                debug: false,
+                debug: this.isDebug,
                 h_plane: true,
                 hit_test_result: 'hit_test_plane'
                 
@@ -340,6 +340,7 @@ class App {
             this.cleanScene();
             this.isWatchingAR = false;
         });
+        
         console.log('onARDidMoveBackground');
     }
     
