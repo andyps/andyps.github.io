@@ -1,4 +1,3 @@
-const EARTH_RADIUS = 6371032;
 const PI_180 = Math.PI / 180;
 
 class App {
@@ -13,18 +12,10 @@ class App {
         
         this.cubesNum = 0;
         this.cubeProto = null;
-        //~ this.createObjects();
         
         this.ar = new AR(this.onARInit.bind(this));
         
         this.registerEvents();
-        
-        this.initialARData = null;
-        
-        this.userLocation = null;
-        this.initialLocation = null;
-        this.diffLocation = {x: 0, y: 0, z: 0};
-        
     }
     
     run() {
@@ -43,45 +34,13 @@ class App {
         return cubeMesh;
     }
     addObject() {
-        if (!this.isARReady || !this.initialARData) {
+        if (!this.isARReady) {
             return;
         }
-        const fromCamera = {x: -1, y: 0, z: -1};
-        fromCamera.x += this.cubesNum - 1;
-        
         const name = 'obj-' + this.cubesNum;
-        //~ const cubeMesh = this.createCube(name);
-        
-        //~ cubeMesh.position.x = this.camera.position.x + fromCamera.x;
-        //~ cubeMesh.position.y = this.camera.position.y + fromCamera.y;
-        //~ cubeMesh.position.z = this.camera.position.z + fromCamera.z;
-        
-        //~ cubeMesh.position.x = 0;
-        //~ cubeMesh.position.y = 0;
-        //~ cubeMesh.position.z = -2;
-        
-        //~ this.scene.add(cubeMesh);
-        //~ this.cubesNum++;
-        
-        //~ this.ar.addObject(cubeMesh.name, fromCamera.x, fromCamera.y, fromCamera.z, this.onARAddObject.bind(this));
         this.ar.addObject(name, 0, 0, -1, this.onARAddObject.bind(this));
-        
-        //~ this.requestAnimationFrame();
     }
 
-    createObjects() {
-        const cubeMesh = this.createCube('obj-0');
-        
-        //~ const axisHelper = new THREE.AxisHelper(45);
-        //~ cubeMesh.add(axisHelper);
-        
-        cubeMesh.position.set(2, 0.5, -4);
-        this.scene.add(cubeMesh);
-        
-        this.cubeProto = cubeMesh;
-        this.cubesNum++;
-    }
-    
     initScene(canvasId) {
         this.canvas = document.getElementById(canvasId);
         if (!Utils.isWebGLSupported(this.canvas)) {
@@ -94,23 +53,14 @@ class App {
             antialias: true,
             canvas: this.canvas
         });
-        let w = window.innerWidth;
-        let h = window.innerHeight;
-        let aspect = w / h;
-
-        // this.engine.setPixelRatio(window.devicePixelRatio);
-        // this.engine.setPixelRatio(1);
-
-        this.engine.setSize(w, h, false);
-
-        // this.engine.setViewport( 0, 0, w, h);
+        this.width = window.innerWidth;
+        this.height = window.innerHeight;
+        
+        this.engine.setSize(this.width, this.height, false);
         
         this.engine.setClearColor('#000', 0);
 
-        this.fov = 37.94;
-        this.camera = new THREE.PerspectiveCamera(37.94, aspect, 0.001, 1000);
-        //~ this.camera.position.set(-95, 95, 95);
-        //~ this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+        this.camera = new THREE.PerspectiveCamera(37.94, this.width / this.height, 0.001, 1000);
         
         this.camera.position.set(0, 1.6, 0);
         this.camera.lookAt(new THREE.Vector3(0, 1.6, -100));
@@ -122,49 +72,21 @@ class App {
         
         this.camera.matrixAutoUpdate = false;
         
-        //~ this.createOrbitCameraControls();
-        
         this.fpsStats = new Stats();
         this.fpsStats.setMode(0);
         this.fpsStats.domElement.style.display = 'none';
         document.body.appendChild(this.fpsStats.domElement);
     }
     
-    createOrbitCameraControls() {
-        let controls = new THREE.OrbitControls(this.camera, this.canvas);
-        controls.enablePan = false;
-        controls.minPolarAngle = 0;
-        controls.target.set(0, 0, 0);
-        controls.zoomSpeed = 1.0;
-        controls.rotateSpeed = 0.3;
-        controls.keyPanSpeed = 7.0;
-
-        controls.minDistance = 10;
-        controls.maxDistance = 300;
-        controls.minZoom = 1;
-        controls.maxZoom = 100;
-
-        controls.maxPolarAngle = 85 * PI_180;
-        controls.enableRotate = true;
-        
-        this.cameraControls = controls;
-    }
-    
-    resize() {
-        // this.engine.setSize(window.innerWidth, window.innerHeight, true);
-        // this.camera.aspect = window.innerWidth / window.innerHeight;
-        // this.camera.updateProjectionMatrix();
-    }
-    
     toggleDebug() {
         this.isDebug = !this.isDebug;
         
         if (!this.isDebug) {
-            // document.querySelector('#info-container').style.display = 'none';
             this.fpsStats.domElement.style.display = 'none';
+            document.querySelector('#info-container').style.display = 'none';
         } else {
-            // document.querySelector('#info-container').style.display = '';
             this.fpsStats.domElement.style.display = '';
+            document.querySelector('#info-container').style.display = '';
         }
         
         this.ar.toggleDebug(this.isDebug);
@@ -196,10 +118,6 @@ class App {
     }
     
     registerEvents() {
-        window.addEventListener('resize', () => {
-            this.resize();
-        });
-        
         document.querySelector('#btn-add').addEventListener('click', () => {
             this.addObject();
         });
@@ -208,37 +126,18 @@ class App {
             this.toggleDebug();
         });
         
-        document.querySelector('#btn-stop').addEventListener('click', () => {
-            this.ar.stop();
-        });
-        
-        document.querySelector('#btn-watch').addEventListener('click', () => {
-            this.watchAR();
-        });
-        
         document.querySelector('#btn-reset').addEventListener('click', () => {
             this.reset();
         });
 
-        document.querySelector('#btn-snapdebug').addEventListener('click', () => {
-            document.querySelector('#info-snapdebug').value = document.querySelector('#info-location').value;
-        });
-        document.querySelector('#input-fov').addEventListener('change', (e) => {
-            this.fov = e.target.value;
-        });
-        
-        // temporal solution
+        // <temporal solution>
         window.onStartRecording = () => {
             document.querySelector('#btn-reset').style.display = 'none';
-            
             document.querySelector('#btn-debug').style.display = 'none';
-            
         }
         window.onStopRecording = () => {
             document.querySelector('#btn-reset').style.display = '';
-            
             document.querySelector('#btn-debug').style.display = '';
-            
         }
         
         window.didMoveBackground = () => {
@@ -247,7 +146,14 @@ class App {
         window.willEnterForeground = () => {
             this.onARWillEnterForeground();
         }
-
+        
+        document.querySelector('#btn-snapdebug').addEventListener('click', () => {
+            document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
+        });
+        document.querySelector('#input-fov').addEventListener('change', (e) => {
+            this.fov = e.target.value;
+        });
+        // </temporal solution>
     }
     
     requestAnimationFrame() {
@@ -276,21 +182,11 @@ class App {
     }
     
     render(time) {
-        if (!this.initialARData) {
-            return;
-        }
         let deltaTime = Math.max(0.001, Math.min(this.clock.getDelta(), 1));
         
         if (this.isDebug) {
             this.fpsStats.begin();
         }
-        //~ this.cameraControls.update(deltaTime);
-        
-        // this.camera.position.set(
-        //     this.diffLocation.x,
-        //     this.camera.position.y,
-        //     this.diffLocation.z
-        // );
         
         this.engine.render(this.scene, this.camera);
         
@@ -314,17 +210,10 @@ class App {
         
         //~ const axisHelper = new THREE.AxisHelper(45);
         //~ cubeMesh.add(axisHelper);
-        //~ cubeMesh.position.x = 0;
-        //~ cubeMesh.position.y = 3;
-        //~ cubeMesh.position.z = -3;
         
         cubeMesh.matrixAutoUpdate = false;
 
-
-        // info.transform[12] = 0;
         info.transform[13] += 0.2 / 2;
-        // info.transform[14] = -2;
-        // info.transform[14] -= 0.2 / 2;
         cubeMesh.matrix.fromArray(info.transform);
         
         this.scene.add(cubeMesh);
@@ -340,74 +229,40 @@ class App {
             this.cleanScene();
             this.isWatchingAR = false;
         });
-        
-        console.log('onARDidMoveBackground');
     }
     
     onARWillEnterForeground() {
         this.watchAR();
-        console.log('onARWillEnterForeground');
     }
     
     onARInit(deviceId) {
-        
         this.deviceId = deviceId;
         this.isARReady = true;
-        
         this.watchAR();
     }
     
     onARWatch(data) {
-        if (!this.initialARData) {
-            this.initialARData = this.ar.rawARData;
-            this.userLocation = this.geo2Cartesian(this.initialARData.location);
-            this.initialLocation = {
-                x: this.userLocation.x,
-                y: this.userLocation.y,
-                z: this.userLocation.z
-            }
-
-            //~ this.run();
-            
-        } else {
-            this.userLocation = this.geo2Cartesian(this.getARData('location'));
-            this.diffLocation.x = this.userLocation.x - this.initialLocation.x;
-            this.diffLocation.y = this.userLocation.y - this.initialLocation.y;
-            this.diffLocation.z = this.userLocation.z - this.initialLocation.z;
-        }
-        
         const cameraProjectionMatrix = this.getARData('projection_camera');
         const cameraTransformMatrix = this.getARData('camera_transform');
         if (cameraProjectionMatrix && cameraTransformMatrix) {
-
-            // cameraProjectionMatrix[0] = 0.9942156119758434;
-            // cameraProjectionMatrix[5] = 1.7674940162428914;
-
-            let aspect = 1.775;
-            let fovy = this.fov;
-            // cameraProjectionMatrix[0] = 1.2017212380551212;
-            // cameraProjectionMatrix[5] = 2.13305519754784;
-
-            cameraProjectionMatrix[5] = 1 / Math.tan(Math.PI * fovy / 360);
-            cameraProjectionMatrix[0] = cameraProjectionMatrix[5] / aspect;
-
-            // if (!this.applied)
-                this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
-            // this.applied = true;
+            
+            if (this.fov) {
+                let aspect = 1.775;
+                aspect = this.width / this.height;
+                cameraProjectionMatrix[5] = 1 / Math.tan(Math.PI * this.fov / 360);
+                cameraProjectionMatrix[0] = cameraProjectionMatrix[5] / aspect;
+            }
+            
+            this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
 
             this.camera.matrix.fromArray(cameraTransformMatrix);
-            // this.camera.updateMatrixWorld(true);
         }
         
         const arObjects = this.getARData('objects');
         if (arObjects && arObjects.forEach) {
             arObjects.forEach(info => {
-                if (info.name !== 'obj-0') {
-                    return;
-                }
-                
+                // is it needed?
                 const mesh = this.scene.getObjectByName(info.name);
-                //~ mesh.matrixAutoUpdate = false;
                 // mesh.matrix.fromArray(info.transform);
             });
         }
@@ -421,21 +276,8 @@ class App {
     
     logDebugData(data) {
         const date = (new Date()).toTimeString();
-        document.querySelector('#info-deviceId').textContent = this.deviceId;
         
-        const arObjects = data.objects;
-        let obj1Info = null;
-        
-        if (arObjects && arObjects.length) {
-            
-            for (let i = 0; i < arObjects.length; i++) {
-                if (arObjects[i].name == 'obj-0') {
-                    obj1Info = arObjects[i];
-                    break;
-                }
-            }
-        }
-        
+        // show data in debug layer
         const objPositions = [];
         this.scene.children.forEach(child => {
             if (child.name.substr(0, 3) !== 'obj') {
@@ -443,7 +285,8 @@ class App {
             }
             objPositions.push(child.getWorldPosition());
         });
-        document.querySelector('#info-location').value = 
+        
+        document.querySelector('#info-debug').value = 
             'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
             'S:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
@@ -453,19 +296,11 @@ class App {
             })
             + "\n---\n" +
             'Positions:' + JSON.stringify(objPositions) + "\n---\n" +
-            'FirstObjectData:' + JSON.stringify(obj1Info) + "\n---\n" +
             JSON.stringify(data) + ':' + date;
     }
     
-    geo2Cartesian(location) {
-        let x = EARTH_RADIUS * Math.cos(location.latitude) * Math.sin(location.longitude);
-        let y = EARTH_RADIUS * Math.cos(location.latitude) * Math.cos(location.longitude);
-        let z = EARTH_RADIUS * Math.sin(location.latitude);
-        return {x: x, y: y, z: z};
-    }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    console.log('loaded');
     window.app = new App('app-canvas');
 });
