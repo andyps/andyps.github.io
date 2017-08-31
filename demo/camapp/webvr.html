@@ -25,6 +25,15 @@
         right: 10px;
         text-align: center;
     }
+    #ui {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        z-index: 100;
+    }
+    .enabled {
+        border: 1px solid red;
+    }
     </style>
     <script src="vendor/three.js"></script>
     <script src="vendor/stats.js"></script>
@@ -32,6 +41,10 @@
 </head>
 <body>
 <div id="msg">Any message</div>
+
+<div id="ui">
+    <button id="btn-togglevr">ToggleVR</button>
+</div>
 <canvas id="app">Browser not supported</canvas>
 </body>
 </html>
