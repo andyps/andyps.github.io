@@ -119,7 +119,11 @@ class App {
     }
     
     loadUrl(url) {
-        this.ar.loadUrl(url);
+        this.ar.stop(() => {
+            this.cleanScene();
+            this.isWatchingAR = false;
+            this.ar.loadUrl(url);
+        });
     }
     
     registerEvents() {
