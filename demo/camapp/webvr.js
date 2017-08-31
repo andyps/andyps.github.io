@@ -53,7 +53,7 @@ class App {
             
             this.vr.display = displays[0];
             
-            this.showMsg('Devices: ' + displays.length + ', Device info: ' + this.vr.displayName + JSON.stringify(this.vr.display));
+            this.showMsg('Devices: ' + displays.length + ', Device info: ' + this.vr.display.displayName + JSON.stringify(this.vr.display));
         });
     }
 }
