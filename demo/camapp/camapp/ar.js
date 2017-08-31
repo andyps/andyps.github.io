@@ -38,6 +38,12 @@ class AR {
         this.userCallbacks.onAddObject(data);
     }
     
+    loadUrl(url) {
+        window.webkit.messageHandlers.loadUrl.postMessage({
+            url
+        });
+    }
+    
     getDeviceId() {
         return this.deviceId;
     }

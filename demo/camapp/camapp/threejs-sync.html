@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
     <title>Camera App Three.js</title>
     
     <link href="app.css" rel="stylesheet" type="text/css" charset="utf-8" >
@@ -25,7 +25,11 @@
 <a href="#" class="debug" id="btn-debug" title="Debug Mode"></a>
 <span id="info-objectsCnt">0</span>
 
+<div id="message" style="display: none;">Any message</div>
 <div id="info-container" style="display: none;">
+    <div id="changeurl-container">
+        <input type="text" id="info-url" value="" size="80"><button id="btn-url">Load</button>
+    </div>
     <div>
         <button id="btn-snapdebug">Snap</button>
         <input type="number" value="37.94" id="input-fov">

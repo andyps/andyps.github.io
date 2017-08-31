@@ -13,6 +13,11 @@ class webkitSimulatorMessageHandler {
     postMessage(data) {
         console.log('webkitSimulatorMessageHandler:postMessage', this.name, data);
         
+        if (this.name === 'loadUrl') {
+            location.href = data.url;
+            return;
+        }
+        
         if (this.name === 'stopAR') {
             //~ clearInterval(this.simulator.watchARIntervalId);
             navigator.geolocation.clearWatch(this.simulator.watchARIntervalId);
@@ -102,7 +107,8 @@ class webkitSimulator {
             addObject: new webkitSimulatorMessageHandler(this, 'addObject'),
             showDebug: new webkitSimulatorMessageHandler(this, 'showDebug'),
             didMoveBackground: new webkitSimulatorMessageHandler(this, 'didMoveBackground'),
-            willEnterForeground: new webkitSimulatorMessageHandler(this, 'willEnterForeground')
+            willEnterForeground: new webkitSimulatorMessageHandler(this, 'willEnterForeground'),
+            loadUrl: new webkitSimulatorMessageHandler(this, 'loadUrl')
         };
     }
 }

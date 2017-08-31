@@ -15,6 +15,7 @@ class App {
         
         this.ar = new AR(this.onARInit.bind(this));
         
+        document.querySelector('#info-url').value = location ? location.href : '';
         this.registerEvents();
     }
     
@@ -117,6 +118,10 @@ class App {
         });
     }
     
+    loadUrl(url) {
+        this.ar.loadUrl(url);
+    }
+    
     registerEvents() {
         document.querySelector('#btn-add').addEventListener('click', () => {
             this.addObject();
@@ -124,6 +129,10 @@ class App {
         
         document.querySelector('#btn-debug').addEventListener('click', () => {
             this.toggleDebug();
+        });
+        
+        document.querySelector('#btn-url').addEventListener('click', () => {
+            this.loadUrl(document.querySelector('#info-url').value);
         });
         
         document.querySelector('#btn-reset').addEventListener('click', () => {
@@ -146,7 +155,17 @@ class App {
         window.willEnterForeground = () => {
             this.onARWillEnterForeground();
         }
-        
+            
+        window.arkitInterrupted = () => {
+            this.showMessage('arkitInterrupted');
+        }
+        window.arkitInterruptionEnded = () => {
+            this.showMessage('arkitInterruptionEnded');
+        }
+        document.querySelector('#message').onclick = function() {
+            this.style.display = 'none';
+        }
+
         document.querySelector('#btn-snapdebug').addEventListener('click', () => {
             document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
         });
@@ -156,6 +175,11 @@ class App {
         // </temporal solution>
     }
     
+    showMessage(txt) {
+        document.querySelector('#message').textContent = txt;
+        document.querySelector('#message').style.display = 'block';
+    }
+
     requestAnimationFrame() {
         window.requestAnimationFrame(this.render.bind(this));
     }

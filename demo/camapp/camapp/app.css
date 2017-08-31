@@ -78,6 +78,24 @@ canvas {
 #info-container {
     position: fixed;
     right: 0px;
-    top: 0px;
+    top: 30px;
     color: gray;
+}
+#changeurl-container {
+    position: fixed;
+    right: 0px;
+    left: 0px;
+    top: 0px;
+    text-align: center;
+}
+#message {
+    display: none;
+    border: 1px solid red;
+    position: absolute;
+    top: 0px;
+    left: 10px;
+    right: 10px;
+    text-align: center;
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.9);
 }
