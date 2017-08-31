@@ -189,7 +189,19 @@ class App {
             this.disableVR();
         }
     }
-    
+    addVREventListeners() {
+        window.addEventListener('vrdisplayactivate', () => {
+            console.log('vrdisplayactivate');
+            this.showMsg('vrdisplayActivate');
+            if (!this.isVREnabled) this.enableVR();
+        });
+
+        window.addEventListener('vrdisplaydeactivate', () => {
+            console.log('vrdisplaydeactivate');
+            this.showMsg('vrdisplayDeactivate');
+            if (this.isVREnabled) this.disableVR();
+        });
+    }
     initVR() {
         this.vr = {};
         
@@ -215,6 +227,7 @@ class App {
             
             this.ready = true;
             
+            this.addVREventListeners();
             this.run();
         });
     }
