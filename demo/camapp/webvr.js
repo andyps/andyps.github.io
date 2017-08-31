@@ -38,6 +38,10 @@ class App {
     
     initVR() {
         this.vr = {};
+        if (!navigator.getVRDisplays) {
+            this.showMsg('WebVR is not supported');
+            return;
+        }
         navigator.getVRDisplays().then(displays => {
             
             displays = displays.filter(display => display.capabilities.canPresent);
