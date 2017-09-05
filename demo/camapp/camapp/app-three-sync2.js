@@ -139,19 +139,25 @@ class App {
     }
 
     reset() {
-        this.ar.stop(() => {
+        const onStop = () => {
+            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT_NAME, onStop);
             this.cleanScene();
             this.isWatchingAR = false;
             this.watchAR();
-        });
+        };
+        this.ar.addEventListener(ARKitWrapper.STOP_EVENT_NAME, onStop);
+        this.ar.stop();
     }
     
     loadUrl(url) {
-        this.ar.stop(() => {
+        const loadUrl = () => {
+            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT_NAME, loadUrl);
             this.cleanScene();
             this.isWatchingAR = false;
             this.ar.loadUrl(url);
-        });
+        };
+        this.ar.addEventListener(ARKitWrapper.STOP_EVENT_NAME, loadUrl);
+        this.ar.stop();
     }
     
     registerUIEvents() {
@@ -163,7 +169,8 @@ class App {
             this.toggleDebug();
         });
         
-        document.querySelector('#btn-url').addEventListener('click', () => {
+        document.querySelector('#btn-url').addEventListener('click', e => {
+            e.target.disabled = true;
             this.loadUrl(document.querySelector('#info-url').value);
         });
         
@@ -253,10 +260,13 @@ class App {
     }
     
     onARDidMoveBackground() {
-        this.ar.stop(() => {
+        const onStopByMoving2Back = () => {
+            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT_NAME, onStopByMoving2Back);
             this.cleanScene();
             this.isWatchingAR = false;
-        });
+        };
+        this.ar.addEventListener(ARKitWrapper.STOP_EVENT_NAME, onStopByMoving2Back);
+        this.ar.stop();
     }
     
     onARWillEnterForeground() {

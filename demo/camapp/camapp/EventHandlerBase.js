@@ -15,12 +15,12 @@ export default class EventHandlerBase {
         listeners.push(listener)
     }
 
-    removeEventListener(type, listener){
+    removeEventListener(type, currentListener){
         let listeners = this._listeners.get(type)
         if(Array.isArray(listeners) === false){
             return
         }
-        for(let i; i < listeners.length; i++){
+        for(let i = 0; i < listeners.length; i++){
             if(listeners[i] === currentListener){
                 listeners.splice(i, 1)
                 return
