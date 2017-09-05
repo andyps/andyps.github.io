@@ -23,7 +23,6 @@ class App {
         this.ar.waitForInit().then(this.onARInit.bind(this));
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT_NAME, this.onARWatch.bind(this));
         this.ar.addEventListener(ARKitWrapper.ADD_OBJECT_NAME, this.onARAddObject.bind(this));
-        this.ar.addEventListener(ARKitWrapper.STOP_EVENT_NAME, this.onARAddObject.bind(this));
         
         // <temporal solution>
         window.onStartRecording = () => {
