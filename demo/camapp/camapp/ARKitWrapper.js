@@ -192,16 +192,6 @@ export default class ARKitWrapper extends EventHandlerBase {
     }
     
     /*
-     * Will be removed soon
-     * Send a loadUrl message to ARKit to load another webpage
-     */
-    loadUrl(url) {
-        window.webkit.messageHandlers.loadUrl.postMessage({
-            url
-        });
-    }
-
-    /*
     Called during instance creation to send a message to ARKit to initialize and create a device ID
     Usually results in ARKit calling back to _onInit with a deviceId
     */
@@ -283,7 +273,6 @@ export default class ARKitWrapper extends EventHandlerBase {
         this._globalCallbacksMap[callbackName] = name
         const self = this
         window[name] = function(deviceData) {
-            console.log(callbackName)
             self['_' + callbackName](deviceData)
         }
     }

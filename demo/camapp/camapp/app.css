@@ -83,13 +83,6 @@ canvas {
     top: 30px;
     color: gray;
 }
-#changeurl-container {
-    position: fixed;
-    right: 0px;
-    
-    top: 0px;
-    text-align: center;
-}
 #message {
     display: none;
     border: 1px solid red;

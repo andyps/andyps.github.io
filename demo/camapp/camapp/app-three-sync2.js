@@ -10,8 +10,6 @@ class App {
         
         this.cubesNum = 0;
         
-        document.querySelector('#info-url').value = location ? location.href : '';
-        
         this.initAR();
         
         this.registerUIEvents();
@@ -143,16 +141,6 @@ class App {
         this.ar.stop();
     }
     
-    loadUrl(url) {
-        const loadUrl = () => {
-            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT_NAME, loadUrl);
-            this.cleanScene();
-            this.ar.loadUrl(url);
-        };
-        this.ar.addEventListener(ARKitWrapper.STOP_EVENT_NAME, loadUrl);
-        this.ar.stop();
-    }
-    
     registerUIEvents() {
         document.querySelector('#btn-add').addEventListener('click', () => {
             this.addObject();
@@ -160,11 +148,6 @@ class App {
         
         document.querySelector('#btn-debug').addEventListener('click', () => {
             this.toggleDebug();
-        });
-        
-        document.querySelector('#btn-url').addEventListener('click', e => {
-            e.target.disabled = true;
-            this.loadUrl(document.querySelector('#info-url').value);
         });
         
         document.querySelector('#btn-reset').addEventListener('click', () => {
