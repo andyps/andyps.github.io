@@ -1,24 +1,48 @@
-const PI_180 = Math.PI / 180;
+import ARKitWrapper from './platform/ARKitWrapper.js'
 
 class App {
     constructor(canvasId) {
         this.isDebug = false;
-        this.isARReady = false;
-        this.isWatchingAR = false;
         this.deviceId = null;
         
         this.clock = new THREE.Clock();
         this.initScene(canvasId);
         
         this.cubesNum = 0;
-        this.cubeProto = null;
         
-        this.ar = new AR(this.onARInit.bind(this));
+        this.initAR();
         
-        document.querySelector('#info-url').value = location ? location.href : '';
-        this.registerEvents();
+        this.registerUIEvents();
     }
-    
+    initAR() {
+        this.ar = ARKitWrapper.GetOrCreate();
+        this.ar.waitForInit().then(this.onARInit.bind(this));
+        this.ar.addEventListener(ARKitWrapper.WATCH_EVENT_NAME, this.onARWatch.bind(this));
+        this.ar.addEventListener(ARKitWrapper.ADD_OBJECT_NAME, this.onARAddObject.bind(this));
+        
+        // <temporal solution>
+        window.onStartRecording = () => {
+            document.querySelector('#btn-reset').style.display = 'none';
+            document.querySelector('#btn-debug').style.display = 'none';
+        }
+        window.onStopRecording = () => {
+            document.querySelector('#btn-reset').style.display = '';
+            document.querySelector('#btn-debug').style.display = '';
+        }
+        window.didMoveBackground = () => {
+            this.onARDidMoveBackground();
+        }
+        window.willEnterForeground = () => {
+            this.onARWillEnterForeground();
+        }
+        window.arkitInterrupted = () => {
+            this.showMessage('arkitInterrupted');
+        }
+        window.arkitInterruptionEnded = () => {
+            this.showMessage('arkitInterruptionEnded');
+        }
+        // </temporal solution>
+    }
     run() {
         let render = (time) => {
             this.render(time);
@@ -35,11 +59,8 @@ class App {
         return cubeMesh;
     }
     addObject() {
-        if (!this.isARReady) {
-            return;
-        }
         const name = 'obj-' + this.cubesNum;
-        this.ar.addObject(name, 0, 0, -1, this.onARAddObject.bind(this));
+        this.ar.addObject(name, 0, 0, -1);
     }
 
     initScene(canvasId) {
@@ -90,7 +111,7 @@ class App {
             document.querySelector('#info-container').style.display = '';
         }
         
-        this.ar.toggleDebug(this.isDebug);
+        this.ar.setDebugDisplay(this.isDebug);
     }
     
     cleanScene() {
@@ -111,22 +132,16 @@ class App {
     }
 
     reset() {
-        this.ar.stop(() => {
+        const onStop = () => {
+            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT_NAME, onStop);
             this.cleanScene();
-            this.isWatchingAR = false;
             this.watchAR();
-        });
+        };
+        this.ar.addEventListener(ARKitWrapper.STOP_EVENT_NAME, onStop);
+        this.ar.stop();
     }
     
-    loadUrl(url) {
-        this.ar.stop(() => {
-            this.cleanScene();
-            this.isWatchingAR = false;
-            this.ar.loadUrl(url);
-        });
-    }
-    
-    registerEvents() {
+    registerUIEvents() {
         document.querySelector('#btn-add').addEventListener('click', () => {
             this.addObject();
         });
@@ -135,48 +150,16 @@ class App {
             this.toggleDebug();
         });
         
-        document.querySelector('#btn-url').addEventListener('click', () => {
-            this.loadUrl(document.querySelector('#info-url').value);
-        });
-        
         document.querySelector('#btn-reset').addEventListener('click', () => {
             this.reset();
         });
 
-        // <temporal solution>
-        window.onStartRecording = () => {
-            document.querySelector('#btn-reset').style.display = 'none';
-            document.querySelector('#btn-debug').style.display = 'none';
-        }
-        window.onStopRecording = () => {
-            document.querySelector('#btn-reset').style.display = '';
-            document.querySelector('#btn-debug').style.display = '';
-        }
-        
-        window.didMoveBackground = () => {
-            this.onARDidMoveBackground();
-        }
-        window.willEnterForeground = () => {
-            this.onARWillEnterForeground();
-        }
-            
-        window.arkitInterrupted = () => {
-            this.showMessage('arkitInterrupted');
-        }
-        window.arkitInterruptionEnded = () => {
-            this.showMessage('arkitInterruptionEnded');
-        }
         document.querySelector('#message').onclick = function() {
             this.style.display = 'none';
         }
-
         document.querySelector('#btn-snapdebug').addEventListener('click', () => {
             document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
         });
-        document.querySelector('#input-fov').addEventListener('change', (e) => {
-            this.fov = e.target.value;
-        });
-        // </temporal solution>
     }
     
     showMessage(txt) {
@@ -189,24 +172,14 @@ class App {
     }
     
     watchAR() {
-        if (!this.isARReady || this.isWatchingAR) {
-            return;
-        }
-
-        this.isWatchingAR = true;
-        
-        this.ar.watch(
-            {
-                location: true,
-                camera: true,
-                objects: true,
-                debug: this.isDebug,
-                h_plane: true,
-                hit_test_result: 'hit_test_plane'
-                
-            },
-            this.onARWatch.bind(this)
-        );
+        this.ar.watch({
+            location: true,
+            camera: true,
+            objects: true,
+            debug: this.isDebug,
+            h_plane: true,
+            hit_test_result: 'hit_test_plane'
+        });
     }
     
     render(time) {
@@ -223,17 +196,8 @@ class App {
         }
     }
     
-    getARData(key, data) {
-        if (!data) {
-            data = this.ar.rawARData;
-        }
-        if (data && typeof(data[key]) != 'undefined') {
-            return data[key];
-        }
-        return null;
-    }
-    
-    onARAddObject(info) {
+    onARAddObject(e) {
+        const info = e.detail;
         const cubeMesh = this.createCube(info.name);
         
         //~ const axisHelper = new THREE.AxisHelper(45);
@@ -253,40 +217,33 @@ class App {
     }
     
     onARDidMoveBackground() {
-        this.ar.stop(() => {
+        const onStopByMoving2Back = () => {
+            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT_NAME, onStopByMoving2Back);
             this.cleanScene();
-            this.isWatchingAR = false;
-        });
+        };
+        this.ar.addEventListener(ARKitWrapper.STOP_EVENT_NAME, onStopByMoving2Back);
+        this.ar.stop();
     }
     
     onARWillEnterForeground() {
         this.watchAR();
     }
     
-    onARInit(deviceId) {
-        this.deviceId = deviceId;
-        this.isARReady = true;
+    onARInit() {
+        this.deviceId = this.ar.deviceId;
         this.watchAR();
     }
     
-    onARWatch(data) {
-        const cameraProjectionMatrix = this.getARData('projection_camera');
-        const cameraTransformMatrix = this.getARData('camera_transform');
+    onARWatch() {
+        const cameraProjectionMatrix = this.ar.getData('projection_camera');
+        const cameraTransformMatrix = this.ar.getData('camera_transform');
         if (cameraProjectionMatrix && cameraTransformMatrix) {
-            
-            if (this.fov) {
-                let aspect = 1.775;
-                aspect = this.width / this.height;
-                cameraProjectionMatrix[5] = 1 / Math.tan(Math.PI * this.fov / 360);
-                cameraProjectionMatrix[0] = cameraProjectionMatrix[5] / aspect;
-            }
-            
             this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
 
             this.camera.matrix.fromArray(cameraTransformMatrix);
         }
         
-        const arObjects = this.getARData('objects');
+        const arObjects = this.ar.getData('objects');
         if (arObjects && arObjects.forEach) {
             arObjects.forEach(info => {
                 // is it needed?
@@ -296,13 +253,14 @@ class App {
         }
         
         if (this.isDebug) {
-            this.logDebugData(data);
+            this.logDebugData();
         }
         
         this.requestAnimationFrame();
     }
     
-    logDebugData(data) {
+    logDebugData() {
+        let data = this.ar.getData();
         const date = (new Date()).toTimeString();
         
         // show data in debug layer
@@ -319,8 +277,7 @@ class App {
             'S:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
-                p: window.devicePixelRatio, cw: this.canvas.width, ch: this.canvas.height,
-                fovy: this.fov
+                p: window.devicePixelRatio, cw: this.canvas.width, ch: this.canvas.height
             })
             + "\n---\n" +
             'Positions:' + JSON.stringify(objPositions) + "\n---\n" +

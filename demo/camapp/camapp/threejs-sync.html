@@ -10,12 +10,11 @@
     <script src="vendor/three.js"></script>
     <script src="vendor/stats.js"></script> 
     
-    <script src="EventHandlerBase.js" type="module"></script>
-    <script src="ARKitWrapper.js" type="module"></script>
+    <script src="fill/EventHandlerBase.js" type="module"></script>
+    <script src="platform/ARKitWrapper.js" type="module"></script>
     
-    <script src="ar.js"></script>
     <script src="utils.js"></script>
-    <script src="app-three-sync.js"></script>
+    <script src="app-three-sync.js" type="module"></script>
 
     <script src="webkit-simulator.js"></script>
 </head>
@@ -30,12 +29,8 @@
 
 <div id="message" style="display: none;">Any message</div>
 <div id="info-container" style="display: none;">
-    <div id="changeurl-container">
-        <input type="text" id="info-url" value="" size="50"><button id="btn-url">Load</button>
-    </div>
     <div>
         <button id="btn-snapdebug">Snap</button>
-        <input type="number" value="37.94" id="input-fov">
         <br>
         <textarea tabindex="-1" readonly id="info-debug" rows="10" cols="40"></textarea>
         <br>
