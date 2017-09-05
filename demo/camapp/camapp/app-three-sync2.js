@@ -12,15 +12,42 @@ class App {
         
         this.cubesNum = 0;
         
-        this.ar = ARKitWrapper.GetOrCreate();
+        document.querySelector('#info-url').value = location ? location.href : '';
         
+        this.initAR();
+        
+        this.registerUIEvents();
+    }
+    initAR() {
+        this.ar = ARKitWrapper.GetOrCreate();
         this.ar.waitForInit().then(this.onARInit.bind(this));
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT_NAME, this.onARWatch.bind(this));
+        this.ar.addEventListener(ARKitWrapper.ADD_OBJECT_NAME, this.onARAddObject.bind(this));
+        this.ar.addEventListener(ARKitWrapper.STOP_EVENT_NAME, this.onARAddObject.bind(this));
         
-        document.querySelector('#info-url').value = location ? location.href : '';
-        this.registerEvents();
+        // <temporal solution>
+        window.onStartRecording = () => {
+            document.querySelector('#btn-reset').style.display = 'none';
+            document.querySelector('#btn-debug').style.display = 'none';
+        }
+        window.onStopRecording = () => {
+            document.querySelector('#btn-reset').style.display = '';
+            document.querySelector('#btn-debug').style.display = '';
+        }
+        window.didMoveBackground = () => {
+            this.onARDidMoveBackground();
+        }
+        window.willEnterForeground = () => {
+            this.onARWillEnterForeground();
+        }
+        window.arkitInterrupted = () => {
+            this.showMessage('arkitInterrupted');
+        }
+        window.arkitInterruptionEnded = () => {
+            this.showMessage('arkitInterruptionEnded');
+        }
+        // </temporal solution>
     }
-    
     run() {
         let render = (time) => {
             this.render(time);
@@ -41,7 +68,7 @@ class App {
             return;
         }
         const name = 'obj-' + this.cubesNum;
-        this.ar.addObject(name, 0, 0, -1, this.onARAddObject.bind(this));
+        this.ar.addObject(name, 0, 0, -1);
     }
 
     initScene(canvasId) {
@@ -92,7 +119,7 @@ class App {
             document.querySelector('#info-container').style.display = '';
         }
         
-        this.ar.toggleDebug(this.isDebug);
+        this.ar.setDebugDisplay(this.isDebug);
     }
     
     cleanScene() {
@@ -128,7 +155,7 @@ class App {
         });
     }
     
-    registerEvents() {
+    registerUIEvents() {
         document.querySelector('#btn-add').addEventListener('click', () => {
             this.addObject();
         });
@@ -145,40 +172,15 @@ class App {
             this.reset();
         });
 
-        // <temporal solution>
-        window.onStartRecording = () => {
-            document.querySelector('#btn-reset').style.display = 'none';
-            document.querySelector('#btn-debug').style.display = 'none';
-        }
-        window.onStopRecording = () => {
-            document.querySelector('#btn-reset').style.display = '';
-            document.querySelector('#btn-debug').style.display = '';
-        }
-        
-        window.didMoveBackground = () => {
-            this.onARDidMoveBackground();
-        }
-        window.willEnterForeground = () => {
-            this.onARWillEnterForeground();
-        }
-            
-        window.arkitInterrupted = () => {
-            this.showMessage('arkitInterrupted');
-        }
-        window.arkitInterruptionEnded = () => {
-            this.showMessage('arkitInterruptionEnded');
-        }
         document.querySelector('#message').onclick = function() {
             this.style.display = 'none';
         }
-
         document.querySelector('#btn-snapdebug').addEventListener('click', () => {
             document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
         });
-        document.querySelector('#input-fov').addEventListener('change', (e) => {
+        document.querySelector('#input-fov').addEventListener('change', e => {
             this.fov = e.target.value;
         });
-        // </temporal solution>
     }
     
     showMessage(txt) {
@@ -196,19 +198,15 @@ class App {
         }
 
         this.isWatchingAR = true;
-        
-        this.ar.watch(
-            {
-                location: true,
-                camera: true,
-                objects: true,
-                debug: this.isDebug,
-                h_plane: true,
-                hit_test_result: 'hit_test_plane'
-                
-            },
-            this.onARWatch.bind(this)
-        );
+
+        this.ar.watch({
+            location: true,
+            camera: true,
+            objects: true,
+            debug: this.isDebug,
+            h_plane: true,
+            hit_test_result: 'hit_test_plane'
+        });
     }
     
     render(time) {
@@ -235,7 +233,8 @@ class App {
         return null;
     }
     
-    onARAddObject(info) {
+    onARAddObject(e) {
+        const info = e.detail;
         const cubeMesh = this.createCube(info.name);
         
         //~ const axisHelper = new THREE.AxisHelper(45);
@@ -268,12 +267,12 @@ class App {
     onARInit() {
         this.deviceId = this.ar.deviceId;
         this.isARReady = true;
-        //~ this.watchAR();
+        this.watchAR();
     }
     
-    onARWatch(data) {
-        const cameraProjectionMatrix = this.getARData('projection_camera');
-        const cameraTransformMatrix = this.getARData('camera_transform');
+    onARWatch() {
+        const cameraProjectionMatrix = this.ar.getData('projection_camera');
+        const cameraTransformMatrix = this.ar.getData('camera_transform');
         if (cameraProjectionMatrix && cameraTransformMatrix) {
             
             if (this.fov) {
@@ -288,7 +287,7 @@ class App {
             this.camera.matrix.fromArray(cameraTransformMatrix);
         }
         
-        const arObjects = this.getARData('objects');
+        const arObjects = this.ar.getData('objects');
         if (arObjects && arObjects.forEach) {
             arObjects.forEach(info => {
                 // is it needed?
@@ -298,13 +297,14 @@ class App {
         }
         
         if (this.isDebug) {
-            this.logDebugData(data);
+            this.logDebugData();
         }
         
         this.requestAnimationFrame();
     }
     
-    logDebugData(data) {
+    logDebugData() {
+        let data = this.ar.getData();
         const date = (new Date()).toTimeString();
         
         // show data in debug layer
