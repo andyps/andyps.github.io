@@ -117,6 +117,10 @@ export default class ARKitWrapper extends EventHandlerBase {
     Sends an addObject message to ARKit
     */
     addObject(name, x, y, z) {
+        if (!this._isInitialized) {
+            return false
+        }
+        
         window.webkit.messageHandlers.addObject.postMessage({
             name: name,
             x: x,

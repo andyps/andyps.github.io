@@ -3,8 +3,6 @@ import ARKitWrapper from './ARKitWrapper.js'
 class App {
     constructor(canvasId) {
         this.isDebug = false;
-        this.isARReady = false;
-        this.isWatchingAR = false;
         this.deviceId = null;
         
         this.clock = new THREE.Clock();
@@ -63,9 +61,6 @@ class App {
         return cubeMesh;
     }
     addObject() {
-        if (!this.isARReady) {
-            return;
-        }
         const name = 'obj-' + this.cubesNum;
         this.ar.addObject(name, 0, 0, -1);
     }
@@ -142,7 +137,6 @@ class App {
         const onStop = () => {
             this.ar.removeEventListener(ARKitWrapper.STOP_EVENT_NAME, onStop);
             this.cleanScene();
-            this.isWatchingAR = false;
             this.watchAR();
         };
         this.ar.addEventListener(ARKitWrapper.STOP_EVENT_NAME, onStop);
@@ -153,7 +147,6 @@ class App {
         const loadUrl = () => {
             this.ar.removeEventListener(ARKitWrapper.STOP_EVENT_NAME, loadUrl);
             this.cleanScene();
-            this.isWatchingAR = false;
             this.ar.loadUrl(url);
         };
         this.ar.addEventListener(ARKitWrapper.STOP_EVENT_NAME, loadUrl);
@@ -184,9 +177,6 @@ class App {
         document.querySelector('#btn-snapdebug').addEventListener('click', () => {
             document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
         });
-        document.querySelector('#input-fov').addEventListener('change', e => {
-            this.fov = e.target.value;
-        });
     }
     
     showMessage(txt) {
@@ -199,12 +189,6 @@ class App {
     }
     
     watchAR() {
-        if (!this.isARReady || this.isWatchingAR) {
-            return;
-        }
-
-        this.isWatchingAR = true;
-
         this.ar.watch({
             location: true,
             camera: true,
@@ -227,16 +211,6 @@ class App {
         if (this.isDebug) {
             this.fpsStats.end();
         }
-    }
-    
-    getARData(key, data) {
-        if (!data) {
-            data = this.ar.rawARData;
-        }
-        if (data && typeof(data[key]) != 'undefined') {
-            return data[key];
-        }
-        return null;
     }
     
     onARAddObject(e) {
@@ -263,7 +237,6 @@ class App {
         const onStopByMoving2Back = () => {
             this.ar.removeEventListener(ARKitWrapper.STOP_EVENT_NAME, onStopByMoving2Back);
             this.cleanScene();
-            this.isWatchingAR = false;
         };
         this.ar.addEventListener(ARKitWrapper.STOP_EVENT_NAME, onStopByMoving2Back);
         this.ar.stop();
@@ -275,7 +248,6 @@ class App {
     
     onARInit() {
         this.deviceId = this.ar.deviceId;
-        this.isARReady = true;
         this.watchAR();
     }
     
@@ -283,14 +255,6 @@ class App {
         const cameraProjectionMatrix = this.ar.getData('projection_camera');
         const cameraTransformMatrix = this.ar.getData('camera_transform');
         if (cameraProjectionMatrix && cameraTransformMatrix) {
-            
-            if (this.fov) {
-                let aspect = 1.775;
-                aspect = this.width / this.height;
-                cameraProjectionMatrix[5] = 1 / Math.tan(Math.PI * this.fov / 360);
-                cameraProjectionMatrix[0] = cameraProjectionMatrix[5] / aspect;
-            }
-            
             this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
 
             this.camera.matrix.fromArray(cameraTransformMatrix);
@@ -330,8 +294,7 @@ class App {
             'S:' + JSON.stringify({
                 w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
                 sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
-                p: window.devicePixelRatio, cw: this.canvas.width, ch: this.canvas.height,
-                fovy: this.fov
+                p: window.devicePixelRatio, cw: this.canvas.width, ch: this.canvas.height
             })
             + "\n---\n" +
             'Positions:' + JSON.stringify(objPositions) + "\n---\n" +
