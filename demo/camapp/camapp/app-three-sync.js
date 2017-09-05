@@ -286,6 +286,13 @@ class App {
     
 }
 
+window.onerror = function(messageOrEvent, source, lineno, colno, error) {
+    document.body.textContent = JSON.stringify({
+        lineno: lineno,
+        message: messageOrEvent
+    });
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     window.app = new App('app-canvas');
 });
