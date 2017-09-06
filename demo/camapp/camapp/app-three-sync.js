@@ -162,7 +162,6 @@ class App {
     }
     
     showMessage(txt) {
-        return;
         document.querySelector('#message').textContent = txt;
         document.querySelector('#message').style.display = 'block';
     }
@@ -272,16 +271,7 @@ class App {
             objPositions.push(child.getWorldPosition());
         });
         
-        document.querySelector('#info-debug').value = 
-            'Camera:' + JSON.stringify(this.camera.getWorldPosition()) + "\n---\n" +
-            'S:' + JSON.stringify({
-                w: window.innerWidth, h: window.innerHeight, a: window.innerWidth / window.innerHeight,
-                sw: screen.width, sh: screen.height, sa: screen.width / screen.height,
-                p: window.devicePixelRatio, cw: this.canvas.width, ch: this.canvas.height
-            })
-            + "\n---\n" +
-            'Positions:' + JSON.stringify(objPositions) + "\n---\n" +
-            JSON.stringify(data) + ':' + date;
+        document.querySelector('#info-debug').value = JSON.stringify(data) + ':' + date;
     }
     
 }
