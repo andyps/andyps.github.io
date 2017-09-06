@@ -65,10 +65,6 @@ class App {
 
     initScene(canvasId) {
         this.canvas = document.getElementById(canvasId);
-        if (!Utils.isWebGLSupported(this.canvas)) {
-            this.showError('Unfortunately your browser is not supported');
-            return;
-        }
 
         this.scene = new THREE.Scene();
         this.engine = new THREE.WebGLRenderer({
