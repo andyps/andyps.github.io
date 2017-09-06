@@ -9,6 +9,7 @@ class App {
         this.initScene(canvasId);
         
         this.cubesNum = 0;
+
         
         this.initAR();
         
@@ -161,6 +162,7 @@ class App {
     }
     
     showMessage(txt) {
+        return;
         document.querySelector('#message').textContent = txt;
         document.querySelector('#message').style.display = 'block';
     }
@@ -285,10 +287,12 @@ class App {
 }
 
 window.onerror = function(messageOrEvent, source, lineno, colno, error) {
-    document.body.textContent = JSON.stringify({
+    let err = JSON.stringify({
         lineno: lineno,
         message: messageOrEvent
     });
+    document.querySelector('#message').textContent = err;
+    document.querySelector('#message').style.display = 'block';
 }
 
 window.addEventListener('DOMContentLoaded', () => {
