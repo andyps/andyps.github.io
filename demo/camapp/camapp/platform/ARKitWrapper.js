@@ -42,6 +42,37 @@ export default class ARKitWrapper extends EventHandlerBase {
 		for(let i=0; i < callbackNames.length; i++){
 			this._generateGlobalCallback(callbackNames[i], i)
 		}
+
+		window.onStartRecording = () => {
+			this.dispatchEvent(new CustomEvent(ARKitWrapper.RECORD_START, {
+				source: this
+			}))
+		}
+		window.onStopRecording = () => {
+			this.dispatchEvent(new CustomEvent(ARKitWrapper.RECORD_STOP, {
+				source: this
+			}))
+		}
+		window.didMoveBackground = () => {
+			this.dispatchEvent(new CustomEvent(ARKitWrapper.DID_MOVE_BACKGROUND, {
+				source: this
+			}))
+		}
+		window.willEnterForeground = () => {
+			this.dispatchEvent(new CustomEvent(ARKitWrapper.WILL_ENTER_FOREGROUND, {
+				source: this
+			}))
+		}
+		window.arkitInterrupted = () => {
+			this.dispatchEvent(new CustomEvent(ARKitWrapper.INTERRUPTED, {
+				source: this
+			}))
+		}
+		window.arkitInterruptionEnded = () => {
+			this.dispatchEvent(new CustomEvent(ARKitWrapper.INTERRUPTION_ENDED, {
+				source: this
+			}))
+		}
 	}
 
 	static GetOrCreate(){
@@ -282,3 +313,9 @@ ARKitWrapper.INIT_EVENT_NAME = 'arkit-init'
 ARKitWrapper.WATCH_EVENT_NAME = 'arkit-watch'
 ARKitWrapper.STOP_EVENT_NAME = 'arkit-stop'
 ARKitWrapper.ADD_OBJECT_NAME = 'arkit-add-object'
+ARKitWrapper.RECORD_START = 'arkit-record-start'
+ARKitWrapper.RECORD_STOP = 'arkit-record-stop'
+ARKitWrapper.DID_MOVE_BACKGROUND = 'arkit-did-move-background'
+ARKitWrapper.WILL_ENTER_FOREGROUND = 'arkit-will-enter-foreground'
+ARKitWrapper.INTERRUPTED = 'arkit-interrupted'
+ARKitWrapper.INTERRUPTION_ENDED = 'arkit-interruption-ended'
