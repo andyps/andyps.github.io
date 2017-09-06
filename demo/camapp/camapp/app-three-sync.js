@@ -21,29 +21,29 @@ class App {
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT_NAME, this.onARWatch.bind(this));
         this.ar.addEventListener(ARKitWrapper.ADD_OBJECT_NAME, this.onARAddObject.bind(this));
         
-        this.ar.addEventListener(ARKitWrapper.RECORD_START, () => {
+        this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
             document.querySelector('#btn-reset').style.display = 'none';
             document.querySelector('#btn-debug').style.display = 'none';
         });
         
-        this.ar.addEventListener(ARKitWrapper.RECORD_STOP, () => {
+        this.ar.addEventListener(ARKitWrapper.RECORD_STOP_EVENT, () => {
             document.querySelector('#btn-reset').style.display = '';
             document.querySelector('#btn-debug').style.display = '';
         });
         
-        this.ar.addEventListener(ARKitWrapper.DID_MOVE_BACKGROUND, () => {
+        this.ar.addEventListener(ARKitWrapper.DID_MOVE_BACKGROUND_EVENT, () => {
             this.onARDidMoveBackground();
         });
         
-        this.ar.addEventListener(ARKitWrapper.WILL_ENTER_FOREGROUND, () => {
+        this.ar.addEventListener(ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT, () => {
             this.onARWillEnterForeground();
         });
         
-        this.ar.addEventListener(ARKitWrapper.INTERRUPTED, () => {
+        this.ar.addEventListener(ARKitWrapper.INTERRUPTED_EVENT, () => {
             this.showMessage('arkitInterrupted');
         });
         
-        this.ar.addEventListener(ARKitWrapper.INTERRUPTION_ENDED, () => {
+        this.ar.addEventListener(ARKitWrapper.INTERRUPTION_ENDED_EVENT, () => {
             this.showMessage('arkitInterruptionEnded');
         });
     }

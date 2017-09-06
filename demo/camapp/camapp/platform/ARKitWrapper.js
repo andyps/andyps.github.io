@@ -38,38 +38,38 @@ export default class ARKitWrapper extends EventHandlerBase {
 
 		this._globalCallbacksMap = {} // Used to map a window.ARCallback? method name to an ARKitWrapper.on* method name
 		// Set up the window.ARCallback? methods that the ARKit bridge depends on
-		let callbackNames = ['onInit', 'onWatch', 'onStop', 'onAddObject']
+		let callbackNames = ['onInit', 'onWatch', 'onStop', 'onAddObject', 'onHitTest']
 		for(let i=0; i < callbackNames.length; i++){
 			this._generateGlobalCallback(callbackNames[i], i)
 		}
 
 		window.onStartRecording = () => {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.RECORD_START, {
+			this.dispatchEvent(new CustomEvent(ARKitWrapper.RECORD_START_EVENT, {
 				source: this
 			}))
 		}
 		window.onStopRecording = () => {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.RECORD_STOP, {
+			this.dispatchEvent(new CustomEvent(ARKitWrapper.RECORD_STOP_EVENT, {
 				source: this
 			}))
 		}
 		window.didMoveBackground = () => {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.DID_MOVE_BACKGROUND, {
+			this.dispatchEvent(new CustomEvent(ARKitWrapper.DID_MOVE_BACKGROUND_EVENT, {
 				source: this
 			}))
 		}
 		window.willEnterForeground = () => {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.WILL_ENTER_FOREGROUND, {
+			this.dispatchEvent(new CustomEvent(ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT, {
 				source: this
 			}))
 		}
 		window.arkitInterrupted = () => {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.INTERRUPTED, {
+			this.dispatchEvent(new CustomEvent(ARKitWrapper.INTERRUPTED_EVENT, {
 				source: this
 			}))
 		}
 		window.arkitInterruptionEnded = () => {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.INTERRUPTION_ENDED, {
+			this.dispatchEvent(new CustomEvent(ARKitWrapper.INTERRUPTION_ENDED_EVENT, {
 				source: this
 			}))
 		}
@@ -159,7 +159,28 @@ export default class ARKitWrapper extends EventHandlerBase {
 			callback: this._globalCallbacksMap.onAddObject
 		})
 	}
+    /*
+    Sends a hitTest message to ARKit to get hit testing results
+    x, y - screen coordinates
+    */
+	hitTest(x, y) {
+		window.webkit.messageHandlers.hitTest.postMessage({
+			x: x,
+			y: y,
+			callback: this._globalCallbacksMap.onHitTest
+		})
+	}
 
+	addAnchor(name, x, y, z) {
+		window.webkit.messageHandlers.addAnchor.postMessage({
+			name: name,
+			x: x,
+			y: y,
+			z: z,
+			callback: this._globalCallbacksMap.onAddObject
+		})
+	}
+    
 	/*
 	If this instance is currently watching, send the stopAR message to ARKit to request that it stop sending data on onWatch
 	*/
@@ -284,7 +305,10 @@ export default class ARKitWrapper extends EventHandlerBase {
 
 	/*
 	Callback from ARKit for when it does the work initiated by sending the addObject message from JS
-	data: { ? }
+	data: {
+		name - the anchor's name,
+		transform - anchor transformation matrix
+	}
 	*/
 	_onAddObject(data) {
 		this.dispatchEvent(new CustomEvent(ARKitWrapper.ADD_OBJECT_NAME, {
@@ -292,7 +316,22 @@ export default class ARKitWrapper extends EventHandlerBase {
 			detail: data
 		}))
 	}
-	
+
+	/*
+	Callback from ARKit for when it does the work initiated by sending the hitTest message from JS
+	data: {
+		status: plain | point | null,
+		position: {x, y, z} - position of the point or the center of detected plain,
+		hitPosition: {x, y, z} - if it is a plain its a position where exactly the hit was (not the center of plane)
+	}
+	*/
+	_onHitTest(data) {
+		this.dispatchEvent(new CustomEvent(ARKitWrapper.HIT_TEST_EVENT, {
+			source: this,
+			detail: data
+		}))
+	}
+
 	/*
 	The ARKit iOS app depends on several callbacks on `window`. This method sets them up.
 	They end up as window.ARCallback? where ? is an integer.
@@ -313,9 +352,10 @@ ARKitWrapper.INIT_EVENT_NAME = 'arkit-init'
 ARKitWrapper.WATCH_EVENT_NAME = 'arkit-watch'
 ARKitWrapper.STOP_EVENT_NAME = 'arkit-stop'
 ARKitWrapper.ADD_OBJECT_NAME = 'arkit-add-object'
-ARKitWrapper.RECORD_START = 'arkit-record-start'
-ARKitWrapper.RECORD_STOP = 'arkit-record-stop'
-ARKitWrapper.DID_MOVE_BACKGROUND = 'arkit-did-move-background'
-ARKitWrapper.WILL_ENTER_FOREGROUND = 'arkit-will-enter-foreground'
-ARKitWrapper.INTERRUPTED = 'arkit-interrupted'
-ARKitWrapper.INTERRUPTION_ENDED = 'arkit-interruption-ended'
+ARKitWrapper.RECORD_START_EVENT = 'arkit-record-start'
+ARKitWrapper.RECORD_STOP_EVENT = 'arkit-record-stop'
+ARKitWrapper.DID_MOVE_BACKGROUND_EVENT = 'arkit-did-move-background'
+ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT = 'arkit-will-enter-foreground'
+ARKitWrapper.INTERRUPTED_EVENT = 'arkit-interrupted'
+ARKitWrapper.INTERRUPTION_ENDED_EVENT = 'arkit-interruption-ended'
+ARKitWrapper.HIT_TEST_EVENT = 'arkit-hit-test'
