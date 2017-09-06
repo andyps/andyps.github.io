@@ -65,7 +65,9 @@ class App {
 
     initScene(canvasId) {
         this.canvas = document.getElementById(canvasId);
-
+        // use webgl1
+        this.canvas.getContext('webgl');
+        
         this.scene = new THREE.Scene();
         this.engine = new THREE.WebGLRenderer({
             antialias: true,
