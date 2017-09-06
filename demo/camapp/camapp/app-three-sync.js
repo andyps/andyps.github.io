@@ -276,17 +276,6 @@ class App {
     
 }
 
-window.onerror = function(messageOrEvent, source, lineno, colno, error) {
-    let err = JSON.stringify({
-        lineno: lineno,
-        message: messageOrEvent,
-        colno: colno,
-        source: source
-    });
-    document.querySelector('#message').textContent = err;
-    document.querySelector('#message').style.display = 'block';
-}
-
 window.addEventListener('DOMContentLoaded', () => {
     window.app = new App('app-canvas');
 });
