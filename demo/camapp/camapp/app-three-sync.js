@@ -19,8 +19,8 @@ class App {
     initAR() {
         this.ar = ARKitWrapper.GetOrCreate();
         this.ar.waitForInit().then(this.onARInit.bind(this));
-        this.ar.addEventListener(ARKitWrapper.WATCH_EVENT_NAME, this.onARWatch.bind(this));
-        this.ar.addEventListener(ARKitWrapper.ADD_OBJECT_NAME, this.onARAddObject.bind(this));
+        this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
+        
         this.ar.addEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, this.onARAddObject.bind(this));
         this.ar.addEventListener(ARKitWrapper.HIT_TEST_EVENT, this.onARHitTest.bind(this));
         
@@ -66,8 +66,7 @@ class App {
         return cubeMesh;
     }
     addObject() {
-        const name = this.generateCubeName();
-        this.ar.addObject(name, 0, 0, -1);
+
     }
     generateCubeName() {
         const name = 'obj-' + this.cubesNames;
@@ -143,11 +142,11 @@ class App {
 
     reset() {
         const onStop = () => {
-            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT_NAME, onStop);
+            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT, onStop);
             this.cleanScene();
             this.watchAR();
         };
-        this.ar.addEventListener(ARKitWrapper.STOP_EVENT_NAME, onStop);
+        this.ar.addEventListener(ARKitWrapper.STOP_EVENT, onStop);
         this.ar.stop();
     }
     
@@ -265,10 +264,10 @@ class App {
     
     onARDidMoveBackground() {
         const onStopByMoving2Back = () => {
-            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT_NAME, onStopByMoving2Back);
+            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT, onStopByMoving2Back);
             this.cleanScene();
         };
-        this.ar.addEventListener(ARKitWrapper.STOP_EVENT_NAME, onStopByMoving2Back);
+        this.ar.addEventListener(ARKitWrapper.STOP_EVENT, onStopByMoving2Back);
         this.ar.stop();
     }
     

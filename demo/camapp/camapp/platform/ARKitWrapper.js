@@ -8,8 +8,8 @@ ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the instance,
 
 	if(ARKitWrapper.HasARKit()){
 		let arKitWrapper = ARKitWrapper.GetOrCreate()
-		arKitWrapper.addEventListener(ARKitWrapper.INIT_EVENT_NAME, ev => { console.log('ARKit initialized', ev) })
-		arKitWrapper.addEventListener(ARKitWrapper.WATCH_EVENT_NAME, ev => { console.log('ARKit update', ev) })
+		arKitWrapper.addEventListener(ARKitWrapper.INIT_EVENT, ev => { console.log('ARKit initialized', ev) })
+		arKitWrapper.addEventListener(ARKitWrapper.WATCH_EVENT, ev => { console.log('ARKit update', ev) })
 		arKitWrapper.watch({
 			location: boolean,
 			camera: boolean,
@@ -38,7 +38,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 
 		this._globalCallbacksMap = {} // Used to map a window.ARCallback? method name to an ARKitWrapper.on* method name
 		// Set up the window.ARCallback? methods that the ARKit bridge depends on
-		let callbackNames = ['onInit', 'onWatch', 'onStop', 'onAddObject', 'onHitTest', 'onAddAnchor']
+		let callbackNames = ['onInit', 'onWatch', 'onStop', 'onHitTest', 'onAddAnchor']
 		for(let i=0; i < callbackNames.length; i++){
 			this._generateGlobalCallback(callbackNames[i], i)
 		}
@@ -102,10 +102,10 @@ export default class ARKitWrapper extends EventHandlerBase {
 				return
 			}
 			let callback = () => {
-				this.removeEventListener(ARKitWrapper.INIT_EVENT_NAME, callback, false)
+				this.removeEventListener(ARKitWrapper.INIT_EVENT, callback, false)
 				resolve()
 			}
-			this.addEventListener(ARKitWrapper.INIT_EVENT_NAME, callback, false)
+			this.addEventListener(ARKitWrapper.INIT_EVENT, callback, false)
 		})
 	}
 
@@ -147,21 +147,6 @@ export default class ARKitWrapper extends EventHandlerBase {
 		return null
 	}
 
-	/*
-	Sends an addObject message to ARKit
-	*/
-	addObject(name, x, y, z) {
-		if (!this._isInitialized) {
-			return false
-		}
-		window.webkit.messageHandlers.addObject.postMessage({
-			name: name,
-			x: x,
-			y: y,
-			z: z,
-			callback: this._globalCallbacksMap.onAddObject
-		})
-	}
     /*
     Sends a hitTest message to ARKit to get hit testing results
     x, y - screen coordinates normalized to 0..1
@@ -271,7 +256,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	_onInit(deviceId) {
 		this._deviceId = deviceId
 		this._isInitialized = true
-		this.dispatchEvent(new CustomEvent(ARKitWrapper.INIT_EVENT_NAME, {
+		this.dispatchEvent(new CustomEvent(ARKitWrapper.INIT_EVENT, {
 			source: this
 		}))
 	}
@@ -298,7 +283,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	*/
 	_onWatch(data) {
 		this._rawARData = data
-		this.dispatchEvent(new CustomEvent(ARKitWrapper.WATCH_EVENT_NAME, {
+		this.dispatchEvent(new CustomEvent(ARKitWrapper.WATCH_EVENT, {
 			source: this,
 			detail: this._rawARData
 		}))
@@ -309,22 +294,8 @@ export default class ARKitWrapper extends EventHandlerBase {
 	*/
 	_onStop() {
 		this._isWatching = false
-		this.dispatchEvent(new CustomEvent(ARKitWrapper.STOP_EVENT_NAME, {
+		this.dispatchEvent(new CustomEvent(ARKitWrapper.STOP_EVENT, {
 			source: this
-		}))
-	}
-
-	/*
-	Callback from ARKit for when it does the work initiated by sending the addObject message from JS
-	data: {
-		name - the anchor's name,
-		transform - anchor transformation matrix
-	}
-	*/
-	_onAddObject(data) {
-		this.dispatchEvent(new CustomEvent(ARKitWrapper.ADD_OBJECT_NAME, {
-			source: this,
-			detail: data
 		}))
 	}
 
@@ -373,10 +344,9 @@ export default class ARKitWrapper extends EventHandlerBase {
 }
 
 // ARKitWrapper event names:
-ARKitWrapper.INIT_EVENT_NAME = 'arkit-init'
-ARKitWrapper.WATCH_EVENT_NAME = 'arkit-watch'
-ARKitWrapper.STOP_EVENT_NAME = 'arkit-stop'
-ARKitWrapper.ADD_OBJECT_NAME = 'arkit-add-object'
+ARKitWrapper.INIT_EVENT = 'arkit-init'
+ARKitWrapper.WATCH_EVENT = 'arkit-watch'
+ARKitWrapper.STOP_EVENT = 'arkit-stop'
 ARKitWrapper.ADD_ANCHOR_EVENT = 'arkit-add-anchor'
 ARKitWrapper.RECORD_START_EVENT = 'arkit-record-start'
 ARKitWrapper.RECORD_STOP_EVENT = 'arkit-record-stop'
