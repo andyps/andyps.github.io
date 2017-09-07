@@ -126,7 +126,6 @@ export default class ARKitWrapper extends EventHandlerBase {
 
 	/*
 	returns
-
 		{
 			name: DOMString,
 			transform: [4x4 column major affine transform]
@@ -148,32 +147,33 @@ export default class ARKitWrapper extends EventHandlerBase {
 		return null
 	}
 
-    /*
-    Sends a hitTest message to ARKit to get hit testing results
-    x, y - screen coordinates normalized to 0..1
-    */
-	hitTest(x, y) {
+	/*
+	Sends a hitTest message to ARKit to get hit testing results
+	x, y - screen coordinates normalized to 0..1
+	types - bit mask of hit testing types
+	*/
+	hitTest(x, y, types = ARKitWrapper.HIT_TEST_TYPE_ALL) {
 		if (!this._isInitialized) {
 			return false
 		}
 		window.webkit.messageHandlers.hitTest.postMessage({
 			x: x,
 			y: y,
+			types: types,
 			callback: this._globalCallbacksMap.onHitTest
 		})
 	}
+
 	/*
 	Sends an addAnchor message to ARKit
 	*/
-	addAnchor(name, x, y, z) {
+	addAnchor(name, transform) {
 		if (!this._isInitialized) {
 			return false
 		}
 		window.webkit.messageHandlers.addAnchor.postMessage({
 			name: name,
-			x: x,
-			y: y,
-			z: z,
+			transform: transform,
 			callback: this._globalCallbacksMap.onAddAnchor
 		})
 	}
@@ -338,11 +338,6 @@ export default class ARKitWrapper extends EventHandlerBase {
 
 	/*
 	Callback from ARKit for when it does the work initiated by sending the hitTest message from JS
-	data: {
-		status: plain | point | null,
-		position: {x, y, z} - position of the point or the center of detected plain,
-		hitPosition: {x, y, z} - if it is a plain its a position where exactly the hit was (not the center of plane)
-	}
 	*/
 	_onHitTest(data) {
 		this.dispatchEvent(new CustomEvent(ARKitWrapper.HIT_TEST_EVENT, {
@@ -378,3 +373,9 @@ ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT = 'arkit-will-enter-foreground'
 ARKitWrapper.INTERRUPTED_EVENT = 'arkit-interrupted'
 ARKitWrapper.INTERRUPTION_ENDED_EVENT = 'arkit-interruption-ended'
 ARKitWrapper.HIT_TEST_EVENT = 'arkit-hit-test'
+
+ARKitWrapper.HIT_TEST_TYPE_ALL = 0
+ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT = 1
+ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLAIN = 2
+ARKitWrapper.HIT_TEST_TYPE_ESTIMATED_HORIZONTAL_PLANE = 4
+ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT = 8

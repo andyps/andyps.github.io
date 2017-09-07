@@ -228,25 +228,24 @@ class App {
         }
     }
     onARHitTest(e) {
-        const info = e.detail;
-        const name = this.generateCubeName();
-        if (info.status) {
-            // if hit testing is positive
-            this.ar.addAnchor(
-                name,
-                info.position.x,
-                info.position.y,
-                info.position.z
-            );
-        } else {
-            // if hit testing is negative put object in arbitrary position
-            this.ar.addAnchor(
-                name,
-                0,
-                0,
-                -1
-            );
+        let info;
+        if (Array.isArray(e.detail) && e.detail.length > 0) {
+            info = e.detail[0];
         }
+        const name = this.generateCubeName();
+        let transform;
+        if (info) {
+            // if hit testing is positive
+            transform = info.worldTransform;
+        } else {
+            transform = new THREE.Matrix4();
+            // if hit testing is negative put object in arbitrary position
+            transform.makeTranslation(0, 0, -1);
+        }
+        this.ar.addAnchor(
+            name,
+            transform
+        );
     }
     onARAddObject(e) {
         const info = e.detail;
