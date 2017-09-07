@@ -9,6 +9,7 @@ class App {
         this.initScene(canvasId);
         
         this.cubesNum = 0;
+        this.cubesNames = 0;
 
         
         this.initAR();
@@ -20,6 +21,8 @@ class App {
         this.ar.waitForInit().then(this.onARInit.bind(this));
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT_NAME, this.onARWatch.bind(this));
         this.ar.addEventListener(ARKitWrapper.ADD_OBJECT_NAME, this.onARAddObject.bind(this));
+        this.ar.addEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, this.onARAddObject.bind(this));
+        this.ar.addEventListener(ARKitWrapper.HIT_TEST_EVENT, this.onARHitTest.bind(this));
         
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
             document.querySelector('#btn-reset').style.display = 'none';
@@ -27,8 +30,8 @@ class App {
         });
         
         this.ar.addEventListener(ARKitWrapper.RECORD_STOP_EVENT, () => {
-            document.querySelector('#btn-reset').style.display = '';
-            document.querySelector('#btn-debug').style.display = '';
+            // document.querySelector('#btn-reset').style.display = '';
+            // document.querySelector('#btn-debug').style.display = '';
         });
         
         this.ar.addEventListener(ARKitWrapper.DID_MOVE_BACKGROUND_EVENT, () => {
@@ -40,11 +43,11 @@ class App {
         });
         
         this.ar.addEventListener(ARKitWrapper.INTERRUPTED_EVENT, () => {
-            this.showMessage('arkitInterrupted');
+            // this.showMessage('arkitInterrupted');
         });
         
         this.ar.addEventListener(ARKitWrapper.INTERRUPTION_ENDED_EVENT, () => {
-            this.showMessage('arkitInterruptionEnded');
+            // this.showMessage('arkitInterruptionEnded');
         });
     }
     run() {
@@ -63,10 +66,14 @@ class App {
         return cubeMesh;
     }
     addObject() {
-        const name = 'obj-' + this.cubesNum;
+        const name = this.generateCubeName();
         this.ar.addObject(name, 0, 0, -1);
     }
-
+    generateCubeName() {
+        const name = 'obj-' + this.cubesNames;
+        this.cubesNames++;
+        return name;
+    }
     initScene(canvasId) {
         this.canvas = document.getElementById(canvasId);
         // use webgl1
@@ -130,6 +137,7 @@ class App {
         });
         
         this.cubesNum = 0;
+        this.cubesNames = 0;
         document.querySelector('#info-objectsCnt').textContent = 0;
     }
 
@@ -164,13 +172,20 @@ class App {
         });
         
         this.canvas.addEventListener('click', e => {
-            console.log('click', e.clientX, e.clientY, window.innerWidth, window.innerHeight);
+            let normX = e.clientX / window.innerWidth;
+            let normY = e.clientY / window.innerHeight;
+            
             this.showMessage(JSON.stringify({
                 x: e.clientX,
                 y: e.clientY,
                 w: window.innerWidth,
-                h: window.innerHeight
+                h: window.innerHeight,
+                normX: normX,
+                normY: normY
             }));
+            
+            
+            this.ar.hitTest(normX, normY);
         });
     }
     
@@ -207,7 +222,30 @@ class App {
             this.fpsStats.end();
         }
     }
-    
+    onARHitTest(e) {
+        const info = e.detail;
+        const name = this.generateCubeName();
+        console.log('info.status', info.status, e);
+        if (info.status) {
+            // if hit testing is positive
+            console.log('hit position');
+            this.ar.addAnchor(
+                name,
+                info.position.x,
+                info.position.y,
+                info.position.z
+            );
+        } else {
+            // if hit testing is negative put object in arbitrary position
+            console.log('arbitrary position');
+            this.ar.addAnchor(
+                name,
+                0,
+                0,
+                -1
+            );
+        }
+    }
     onARAddObject(e) {
         const info = e.detail;
         const cubeMesh = this.createCube(info.name);

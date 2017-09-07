@@ -64,7 +64,7 @@ class webkitSimulatorMessageHandler {
                 console.log('this.simulator.watchARIntervalId', this.simulator.watchARIntervalId);
             } else {
                 setTimeout(() => {
-                    if (this.name === 'addObject') {
+                    if (this.name === 'addObject' || this.name === 'addAnchor') {
                         data.transform = [
                             0.9914429783821106,
                             -0.10326667129993439,
@@ -88,6 +88,12 @@ class webkitSimulatorMessageHandler {
                         ];
                         window[data.callback](data);
                         return;
+                    } else if (this.name === 'hitTest') {
+                        data.status = 'plain'; // plain | point | null
+                        data.position = {x: 0, y: 1, z: -1};
+                        data.hitPosition = {x: -1, y: 1, z: -1};
+                        window[data.callback](data);
+                        return;
                     }
                     window[data.callback]('data callback simulator: ' + this.name);
                 }, 3000);
@@ -105,6 +111,8 @@ class webkitSimulator {
             watchAR: new webkitSimulatorMessageHandler(this, 'watchAR'),
             stopAR: new webkitSimulatorMessageHandler(this, 'stopAR'),
             addObject: new webkitSimulatorMessageHandler(this, 'addObject'),
+            addAnchor: new webkitSimulatorMessageHandler(this, 'addAnchor'),
+            hitTest: new webkitSimulatorMessageHandler(this, 'hitTest'),
             showDebug: new webkitSimulatorMessageHandler(this, 'showDebug'),
             didMoveBackground: new webkitSimulatorMessageHandler(this, 'didMoveBackground'),
             willEnterForeground: new webkitSimulatorMessageHandler(this, 'willEnterForeground'),

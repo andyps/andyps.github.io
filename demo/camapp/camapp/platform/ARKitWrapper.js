@@ -38,7 +38,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 
 		this._globalCallbacksMap = {} // Used to map a window.ARCallback? method name to an ARKitWrapper.on* method name
 		// Set up the window.ARCallback? methods that the ARKit bridge depends on
-		let callbackNames = ['onInit', 'onWatch', 'onStop', 'onAddObject', 'onHitTest']
+		let callbackNames = ['onInit', 'onWatch', 'onStop', 'onAddObject', 'onHitTest', 'onAddAnchor']
 		for(let i=0; i < callbackNames.length; i++){
 			this._generateGlobalCallback(callbackNames[i], i)
 		}
@@ -135,7 +135,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	*/
 	getObject(name){
 		if (!this._isInitialized) {
-			return false
+			return null
 		}
 		const objects = this.getKey('objects')
 		if(objects === null) return null
@@ -151,6 +151,9 @@ export default class ARKitWrapper extends EventHandlerBase {
 	Sends an addObject message to ARKit
 	*/
 	addObject(name, x, y, z) {
+		if (!this._isInitialized) {
+			return false
+		}
 		window.webkit.messageHandlers.addObject.postMessage({
 			name: name,
 			x: x,
@@ -164,20 +167,28 @@ export default class ARKitWrapper extends EventHandlerBase {
     x, y - screen coordinates normalized to 0..1
     */
 	hitTest(x, y) {
+		if (!this._isInitialized) {
+			return false
+		}
 		window.webkit.messageHandlers.hitTest.postMessage({
 			x: x,
 			y: y,
 			callback: this._globalCallbacksMap.onHitTest
 		})
 	}
-
+	/*
+	Sends an addAnchor message to ARKit
+	*/
 	addAnchor(name, x, y, z) {
+		if (!this._isInitialized) {
+			return false
+		}
 		window.webkit.messageHandlers.addAnchor.postMessage({
 			name: name,
 			x: x,
 			y: y,
 			z: z,
-			callback: this._globalCallbacksMap.onAddObject
+			callback: this._globalCallbacksMap.onAddAnchor
 		})
 	}
     
@@ -318,6 +329,20 @@ export default class ARKitWrapper extends EventHandlerBase {
 	}
 
 	/*
+	Callback from ARKit for when it does the work initiated by sending the addAnchor message from JS
+	data: {
+		name - the anchor's name,
+		transform - anchor transformation matrix
+	}
+	*/
+	_onAddAnchor(data) {
+		this.dispatchEvent(new CustomEvent(ARKitWrapper.ADD_ANCHOR_EVENT, {
+			source: this,
+			detail: data
+		}))
+	}
+
+	/*
 	Callback from ARKit for when it does the work initiated by sending the hitTest message from JS
 	data: {
 		status: plain | point | null,
@@ -352,6 +377,7 @@ ARKitWrapper.INIT_EVENT_NAME = 'arkit-init'
 ARKitWrapper.WATCH_EVENT_NAME = 'arkit-watch'
 ARKitWrapper.STOP_EVENT_NAME = 'arkit-stop'
 ARKitWrapper.ADD_OBJECT_NAME = 'arkit-add-object'
+ARKitWrapper.ADD_ANCHOR_EVENT = 'arkit-add-anchor'
 ARKitWrapper.RECORD_START_EVENT = 'arkit-record-start'
 ARKitWrapper.RECORD_STOP_EVENT = 'arkit-record-stop'
 ARKitWrapper.DID_MOVE_BACKGROUND_EVENT = 'arkit-did-move-background'
