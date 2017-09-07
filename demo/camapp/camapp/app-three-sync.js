@@ -162,6 +162,16 @@ class App {
         document.querySelector('#btn-snapdebug').addEventListener('click', () => {
             document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
         });
+        
+        this.canvas.addEventListener('click', e => {
+            console.log('click', e.clientX, e.clientY, window.innerWidth, window.innerHeight);
+            this.showMessage(JSON.stringify({
+                x: e.clientX,
+                y: e.clientY,
+                w: window.innerWidth,
+                h: window.innerHeight
+            }));
+        });
     }
     
     showMessage(txt) {

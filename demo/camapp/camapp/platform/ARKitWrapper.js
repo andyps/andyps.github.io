@@ -161,7 +161,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	}
     /*
     Sends a hitTest message to ARKit to get hit testing results
-    x, y - screen coordinates
+    x, y - screen coordinates normalized to 0..1
     */
 	hitTest(x, y) {
 		window.webkit.messageHandlers.hitTest.postMessage({
