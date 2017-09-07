@@ -17,10 +17,12 @@ class App {
     }
     initAR() {
         this.ar = ARKitWrapper.GetOrCreate({
-            mic: true,
-            rec: true,
-            browser: true,
-            debug: true
+            ui: {
+                mic: true,
+                rec: true,
+                browser: true,
+                debug: true
+            }
         });
         this.ar.waitForInit().then(this.onARInit.bind(this));
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
