@@ -266,8 +266,10 @@ export default class ARKitWrapper extends EventHandlerBase {
 	*/
 	_sendInit(options){
 		// get device id
-		options.callback = this._globalCallbacksMap.onInit;
-		window.webkit.messageHandlers.initAR.postMessage(options)
+		window.webkit.messageHandlers.initAR.postMessage({
+			options: options,
+			callback: this._globalCallbacksMap.onInit
+		})
 	}
 
 	/*
