@@ -75,10 +75,11 @@ export default class ARKitWrapper extends EventHandlerBase {
 		}
 	}
 
-	static GetOrCreate(){
+	static GetOrCreate(options = null){
 		if(typeof ARKitWrapper.GLOBAL_INSTANCE === 'undefined'){
 			ARKitWrapper.GLOBAL_INSTANCE = new ARKitWrapper()
-			ARKitWrapper.GLOBAL_INSTANCE._sendInit()
+			options = (options && typeof(options) == 'object') ? options : {}
+			ARKitWrapper.GLOBAL_INSTANCE._sendInit(options)
 		} 
 		return ARKitWrapper.GLOBAL_INSTANCE
 	}
@@ -239,14 +240,34 @@ export default class ARKitWrapper extends EventHandlerBase {
 	}
 
 	/*
+	Sends a setUIOptions message to ARKit to set ui options (show or hide ui elements)
+	options: {
+		mic: boolean,
+		rec: boolean,
+		browser: boolean,
+		debug: boolean
+	}
+	*/
+	setUIOptions(options) {
+		window.webkit.messageHandlers.setUIOptions.postMessage(options)
+	}
+
+	/*
 	Called during instance creation to send a message to ARKit to initialize and create a device ID
 	Usually results in ARKit calling back to _onInit with a deviceId
+	options: {
+		ui: {
+			mic: boolean,
+			rec: boolean,
+			browser: boolean,
+			debug: boolean
+		}
+	}
 	*/
-	_sendInit(){
+	_sendInit(options){
 		// get device id
-		window.webkit.messageHandlers.initAR.postMessage({
-			callback: this._globalCallbacksMap.onInit
-		})
+		options.callback = this._globalCallbacksMap.onInit;
+		window.webkit.messageHandlers.initAR.postMessage(options)
 	}
 
 	/*

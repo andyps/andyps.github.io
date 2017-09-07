@@ -11,13 +11,17 @@ class App {
         this.cubesNum = 0;
         this.cubesNames = 0;
 
-        
         this.initAR();
         
         this.registerUIEvents();
     }
     initAR() {
-        this.ar = ARKitWrapper.GetOrCreate();
+        this.ar = ARKitWrapper.GetOrCreate({
+            mic: true,
+            rec: true,
+            browser: true,
+            debug: true
+        });
         this.ar.waitForInit().then(this.onARInit.bind(this));
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
         
