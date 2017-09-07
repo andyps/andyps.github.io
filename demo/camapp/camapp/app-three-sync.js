@@ -225,10 +225,8 @@ class App {
     onARHitTest(e) {
         const info = e.detail;
         const name = this.generateCubeName();
-        console.log('info.status', info.status, e);
         if (info.status) {
             // if hit testing is positive
-            console.log('hit position');
             this.ar.addAnchor(
                 name,
                 info.position.x,
@@ -237,7 +235,6 @@ class App {
             );
         } else {
             // if hit testing is negative put object in arbitrary position
-            console.log('arbitrary position');
             this.ar.addAnchor(
                 name,
                 0,
