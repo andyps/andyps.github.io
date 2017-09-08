@@ -1,5 +1,6 @@
 import ARKitWrapper from './platform/ARKitWrapper.js'
 
+const CUBE_SIZE = 0.1;
 class App {
     constructor(canvasId) {
         this.isDebug = false;
@@ -28,7 +29,7 @@ class App {
                 plane: true,
                 warnings: true,
                 anchors: true,
-                debug: true
+                debug: this.isDebug
             }
         });
         this.ar.waitForInit().then(this.onARInit.bind(this));
@@ -71,8 +72,8 @@ class App {
         render();
     }
     createCube(name) {
-        let geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-        let material = new THREE.MeshLambertMaterial({color: 0x7d4db2, reflectivity: 0, wireframe: false});
+        let geometry = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
+        let material = new THREE.MeshLambertMaterial({color: 0x7d4db2, reflectivity: 0, wireframe: false, opacity: 0.8});
         let cubeMesh = new THREE.Mesh(geometry, material);
         cubeMesh.name = name;
         
@@ -187,18 +188,21 @@ class App {
             let normX = e.clientX / window.innerWidth;
             let normY = e.clientY / window.innerHeight;
             
-            this.showMessage(JSON.stringify({
-                x: e.clientX,
-                y: e.clientY,
-                w: window.innerWidth,
-                h: window.innerHeight,
-                normX: normX,
-                normY: normY
-            }));
-            
-            
             this.ar.hitTest(normX, normY);
         });
+        
+        window.showDebug = (options) => {
+            let isOn = false;
+            if (options && options.debug == "1") isOn = true;
+            this.isDebug = isOn;
+            
+            if (!this.isDebug) {
+                this.fpsStats.domElement.style.display = 'none';
+            } else {
+                this.fpsStats.domElement.style.display = '';
+            }
+
+        }
     }
     
     showMessage(txt) {
@@ -236,14 +240,16 @@ class App {
     }
     onARHitTest(e) {
         let info;
+
         if (Array.isArray(e.detail) && e.detail.length > 0) {
             info = e.detail[0];
         }
-        const name = this.generateCubeName();
+
+        let name = this.generateCubeName();
         let transform;
         if (info) {
             // if hit testing is positive
-            transform = info.worldTransform;
+            transform = info.world_transform;
         } else {
             transform = new THREE.Matrix4();
             // if hit testing is negative put object in arbitrary position
@@ -261,10 +267,10 @@ class App {
         
         //~ const axisHelper = new THREE.AxisHelper(45);
         //~ cubeMesh.add(axisHelper);
-        
+
         cubeMesh.matrixAutoUpdate = false;
 
-        info.transform[13] += 0.2 / 2;
+        info.transform[13] += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(info.transform);
         
         this.scene.add(cubeMesh);
