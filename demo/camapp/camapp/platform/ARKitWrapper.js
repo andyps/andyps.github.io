@@ -349,8 +349,8 @@ export default class ARKitWrapper extends EventHandlerBase {
 	data: [
 		{
 			type: hitTestType,
-			worldTransform: matrix4x4 - specifies the position and orientation relative to WCS,
-			localTransform: matrix4x4 - the position and orientation of the hit test result relative to the nearest anchor or feature point,
+			world_transform: matrix4x4 - specifies the position and orientation relative to WCS,
+			local_transform: matrix4x4 - the position and orientation of the hit test result relative to the nearest anchor or feature point,
 			anchor: {uuid, transform, ...} - the anchor representing the detected surface, if any
 		},
 		...

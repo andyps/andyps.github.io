@@ -244,7 +244,7 @@ this.showMessage(JSON.stringify(e.detail));
         let transform;
         if (info) {
             // if hit testing is positive
-            transform = info.worldTransform;
+            transform = info.world_transform;
         } else {
             transform = new THREE.Matrix4();
             // if hit testing is negative put object in arbitrary position
