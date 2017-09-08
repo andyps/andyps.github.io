@@ -236,7 +236,6 @@ class App {
     }
     onARHitTest(e) {
         let info;
-this.showMessage(JSON.stringify(e.detail));
         if (Array.isArray(e.detail) && e.detail.length > 0) {
             info = e.detail[0];
         }

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <title>Camera App Three.js</title>
+    
+    <link href="app.css" rel="stylesheet" type="text/css" charset="utf-8" >
+    
+    <script src="vendor/three.js"></script>
+    <script src="vendor/stats.js"></script> 
+    
+    <script src="fill/EventHandlerBase.js" type="module"></script>
+    <script src="platform/ARKitWrapper.js" type="module"></script>
+    
+    <script src="test.js" type="module"></script>
+</head>
+<body>
+<canvas id="app-canvas" oncontextmenu="return false;">Browser not supported</canvas>
+
+<a href="#" class="reset" title="reset" id="btn-reset" style="display: none;"></a>
+<a href="#" class="mic" title="mic" style="display: none;"></a>
+<a href="#" class="object3d" id="btn-add" title="Add Object" style="display: none;"></a>
+<a href="#" class="debug" id="btn-debug" title="Debug Mode" style="display: none;"></a>
+<span id="info-objectsCnt" style="display: none;">0</span>
+
+<div id="message" style="display: none;">Any message</div>
+<div id="info-container" style="display: none;">
+    <div>
+        <button id="btn-snapdebug">Snap</button>
+        <br>
+        <textarea tabindex="-1" readonly id="info-debug" rows="10" cols="40"></textarea>
+        <br>
+        <textarea tabindex="-1" readonly id="info-snapdebug" rows="10" cols="40"></textarea>
+    </div>
+</div>
+</body>
+</html>
