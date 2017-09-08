@@ -242,7 +242,8 @@ class App {
         }
 this.showMessage(JSON.stringify(
 {
-info: info
+isarray: Array.isArray(e.detail),
+len: e.detail.length
 
 }
 ));
