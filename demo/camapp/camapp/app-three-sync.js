@@ -242,9 +242,7 @@ class App {
         }
 this.showMessage(JSON.stringify(
 {
-isarray: Array.isArray(e.detail),
-len: e.detail.length
-
+isarray: Array.isArray(e.detail)
 }
 ));
         const name = this.generateCubeName();
