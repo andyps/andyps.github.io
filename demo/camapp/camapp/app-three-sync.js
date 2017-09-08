@@ -240,13 +240,15 @@ class App {
         if (Array.isArray(e.detail) && e.detail.length > 0) {
             info = e.detail[0];
         }
+
 this.showMessage(JSON.stringify(
 {
 isarray: Array.isArray(e.detail),
 type: typeof(e.detail)
 }
 ));
-        const name = this.generateCubeName();
+
+        let name = this.generateCubeName();
         let transform;
         if (info) {
             // if hit testing is positive
@@ -268,7 +270,12 @@ type: typeof(e.detail)
         
         //~ const axisHelper = new THREE.AxisHelper(45);
         //~ cubeMesh.add(axisHelper);
-        
+this.showMessage(JSON.stringify(
+{
+type: typeof(info),
+info: info
+}
+));
         cubeMesh.matrixAutoUpdate = false;
 
         info.transform[13] += 0.2 / 2;
