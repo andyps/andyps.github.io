@@ -1,5 +1,6 @@
 import ARKitWrapper from './platform/ARKitWrapper.js'
 
+const CUBE_SIZE = 0.05;
 class App {
     constructor(canvasId) {
         this.isDebug = false;
@@ -71,7 +72,7 @@ class App {
         render();
     }
     createCube(name) {
-        let geometry = new THREE.BoxGeometry(0.05, 0.05, 0.05);
+        let geometry = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
         let material = new THREE.MeshLambertMaterial({color: 0x7d4db2, reflectivity: 0, wireframe: false});
         let cubeMesh = new THREE.Mesh(geometry, material);
         cubeMesh.name = name;
@@ -256,7 +257,7 @@ class App {
 
         cubeMesh.matrixAutoUpdate = false;
 
-        //info.transform[13] += 0.2 / 2;
+        info.transform[13] += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(info.transform);
         
         this.scene.add(cubeMesh);
