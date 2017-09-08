@@ -325,7 +325,7 @@ info: info
             });
         }
         
-        if (this.isDebug) {
+        if (this.isDebug || true) {
             this.logDebugData();
         }
         
