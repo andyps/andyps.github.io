@@ -236,15 +236,14 @@ class App {
     }
     onARHitTest(e) {
         let info;
-this.showMessage(JSON.stringify(e.detail));
+
         if (Array.isArray(e.detail) && e.detail.length > 0) {
             info = e.detail[0];
         }
 this.showMessage(JSON.stringify(
 {
-detail: e.detail,
-info: info,
-one: e.detail[0]
+info: info
+
 }
 ));
         const name = this.generateCubeName();
