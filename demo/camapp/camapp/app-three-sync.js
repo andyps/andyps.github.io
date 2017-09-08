@@ -73,7 +73,7 @@ class App {
     }
     createCube(name) {
         let geometry = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
-        let material = new THREE.MeshLambertMaterial({color: 0x7d4db2, reflectivity: 0, wireframe: false, opacity: 0.5});
+        let material = new THREE.MeshLambertMaterial({color: 0x7d4db2, reflectivity: 0, wireframe: false, opacity: 0.8});
         let cubeMesh = new THREE.Mesh(geometry, material);
         cubeMesh.name = name;
         
