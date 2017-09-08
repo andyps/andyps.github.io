@@ -36,8 +36,8 @@ export default class ARKitWrapper extends EventHandlerBase {
 		this._isInitialized = false
 		this._rawARData = null
 
-		this._globalCallbacksMap = {} // Used to map a window.ARCallback? method name to an ARKitWrapper.on* method name
-		// Set up the window.ARCallback? methods that the ARKit bridge depends on
+		this._globalCallbacksMap = {} // Used to map a window.ARCallback method name to an ARKitWrapper.on* method name
+		// Set up the window.ARCallback methods that the ARKit bridge depends on
 		let callbackNames = ['onInit', 'onWatch', 'onStop', 'onHitTest', 'onAddAnchor']
 		for(let i=0; i < callbackNames.length; i++){
 			this._generateGlobalCallback(callbackNames[i], i)
@@ -127,20 +127,20 @@ export default class ARKitWrapper extends EventHandlerBase {
 	/*
 	returns
 		{
-			name: DOMString,
+			uuid: DOMString,
 			transform: [4x4 column major affine transform]
 		}
 
-	return null if object with `name` is not found
+	return null if object with `uuid` is not found
 	*/
-	getObject(name){
+	getObject(uuid){
 		if (!this._isInitialized) {
 			return null
 		}
 		const objects = this.getKey('objects')
 		if(objects === null) return null
 		for(const object of objects){
-			if(object.name === name){
+			if(object.uuid === uuid){
 				return object
 			}
 		}
@@ -159,7 +159,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 		window.webkit.messageHandlers.hitTest.postMessage({
 			x: x,
 			y: y,
-			types: types,
+			type: types,
 			callback: this._globalCallbacksMap.onHitTest
 		})
 	}
@@ -167,12 +167,12 @@ export default class ARKitWrapper extends EventHandlerBase {
 	/*
 	Sends an addAnchor message to ARKit
 	*/
-	addAnchor(name, transform) {
+	addAnchor(uuid, transform) {
 		if (!this._isInitialized) {
 			return false
 		}
 		window.webkit.messageHandlers.addAnchor.postMessage({
-			name: name,
+			uuid: uuid,
 			transform: transform,
 			callback: this._globalCallbacksMap.onAddAnchor
 		})
@@ -297,7 +297,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 			},
 			"objects":[
 				{
-					name: DOMString (unique UID),
+					uuid: DOMString (unique UID),
 					transform: [4x4 column major affine transform]
 				}, ...
 			]
@@ -325,7 +325,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	/*
 	Callback from ARKit for when it does the work initiated by sending the addAnchor message from JS
 	data: {
-		name - the anchor's name,
+		uuid - the anchor's uuid,
 		transform - anchor transformation matrix
 	}
 	*/
@@ -338,6 +338,17 @@ export default class ARKitWrapper extends EventHandlerBase {
 
 	/*
 	Callback from ARKit for when it does the work initiated by sending the hitTest message from JS
+	ARKit returns an array of hit results
+	data: [
+		{
+			type: hitTestType,
+			worldTransform: matrix4x4 - specifies the position and orientation relative to WCS,
+			localTransform: matrix4x4 - the position and orientation of the hit test result relative to the nearest anchor or feature point,
+			anchor: {uuid, transform, ...} - the anchor representing the detected surface, if any
+		},
+		...
+	]
+	@see https://developer.apple.com/documentation/arkit/arframe/2875718-hittest
 	*/
 	_onHitTest(data) {
 		this.dispatchEvent(new CustomEvent(ARKitWrapper.HIT_TEST_EVENT, {
@@ -374,8 +385,13 @@ ARKitWrapper.INTERRUPTED_EVENT = 'arkit-interrupted'
 ARKitWrapper.INTERRUPTION_ENDED_EVENT = 'arkit-interruption-ended'
 ARKitWrapper.HIT_TEST_EVENT = 'arkit-hit-test'
 
-ARKitWrapper.HIT_TEST_TYPE_ALL = 0
+// hit test types
 ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT = 1
-ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLAIN = 2
-ARKitWrapper.HIT_TEST_TYPE_ESTIMATED_HORIZONTAL_PLANE = 4
-ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT = 8
+ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE = 8
+ARKitWrapper.HIT_TEST_TYPE_ESTIMATED_HORIZONTAL_PLANE = 2
+ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT = 16
+
+ARKitWrapper.HIT_TEST_TYPE_ALL = ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT |
+    ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE |
+    ARKitWrapper.HIT_TEST_TYPE_ESTIMATED_HORIZONTAL_PLANE |
+    ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT

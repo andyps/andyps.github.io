@@ -241,6 +241,7 @@ class App {
             transform = new THREE.Matrix4();
             // if hit testing is negative put object in arbitrary position
             transform.makeTranslation(0, 0, -1);
+            transform = transform.toArray();
         }
         this.ar.addAnchor(
             name,
@@ -249,7 +250,7 @@ class App {
     }
     onARAddObject(e) {
         const info = e.detail;
-        const cubeMesh = this.createCube(info.name);
+        const cubeMesh = this.createCube(info.uuid);
         
         //~ const axisHelper = new THREE.AxisHelper(45);
         //~ cubeMesh.add(axisHelper);
@@ -298,7 +299,7 @@ class App {
         if (arObjects && arObjects.forEach) {
             arObjects.forEach(info => {
                 // is it needed?
-                const mesh = this.scene.getObjectByName(info.name);
+                const mesh = this.scene.getObjectByName(info.uuid);
                 // mesh.matrix.fromArray(info.transform);
             });
         }
