@@ -73,6 +73,11 @@ export default class ARKitWrapper extends EventHandlerBase {
 				source: this
 			}))
 		}
+		window.showDebug = (options) => {
+			let isOn = false;
+			if (options && options.debug) isOn = true;
+
+		}
 	}
 
 	static GetOrCreate(options = null){
