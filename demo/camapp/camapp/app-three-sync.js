@@ -256,7 +256,7 @@ class App {
 
         cubeMesh.matrixAutoUpdate = false;
 
-        info.transform[13] += 0.2 / 2;
+        //info.transform[13] += 0.2 / 2;
         cubeMesh.matrix.fromArray(info.transform);
         
         this.scene.add(cubeMesh);
