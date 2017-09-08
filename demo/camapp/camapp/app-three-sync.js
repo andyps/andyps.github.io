@@ -310,6 +310,13 @@ info: info
     onARWatch() {
         const cameraProjectionMatrix = this.ar.getData('projection_camera');
         const cameraTransformMatrix = this.ar.getData('camera_transform');
+this.showMessage(JSON.stringify(
+{
+type: typeof(cameraProjectionMatrix),
+type2: typeof(cameraTransformMatrix),
+info: cameraTransformMatrix
+}
+));
         if (cameraProjectionMatrix && cameraTransformMatrix) {
             this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
 
