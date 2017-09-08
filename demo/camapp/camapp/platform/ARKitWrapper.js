@@ -242,10 +242,17 @@ export default class ARKitWrapper extends EventHandlerBase {
 	/*
 	Sends a setUIOptions message to ARKit to set ui options (show or hide ui elements)
 	options: {
-		mic: boolean,
-		rec: boolean,
-		browser: boolean,
-		debug: boolean
+		browser: true,
+		points: true,
+		focus: true,
+		rec: true,
+		rec_time: true,
+		mic: true,
+		build: true,
+		plane: true,
+		warnings: true,
+		anchors: true,
+		debug: true
 	}
 	*/
 	setUIOptions(options) {

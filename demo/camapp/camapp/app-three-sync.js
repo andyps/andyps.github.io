@@ -18,9 +18,16 @@ class App {
     initAR() {
         this.ar = ARKitWrapper.GetOrCreate({
             ui: {
-                mic: true,
-                rec: true,
                 browser: true,
+                points: true,
+                focus: true,
+                rec: true,
+                rec_time: true,
+                mic: true,
+                build: true,
+                plane: true,
+                warnings: true,
+                anchors: true,
                 debug: true
             }
         });
