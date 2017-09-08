@@ -240,6 +240,13 @@ this.showMessage(JSON.stringify(e.detail));
         if (Array.isArray(e.detail) && e.detail.length > 0) {
             info = e.detail[0];
         }
+this.showMessage(JSON.stringify(
+{
+detail: e.detail,
+info: info,
+one: e.detail[0]
+}
+));
         const name = this.generateCubeName();
         let transform;
         if (info) {
