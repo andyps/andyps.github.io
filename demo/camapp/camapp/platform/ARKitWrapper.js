@@ -197,7 +197,6 @@ export default class ARKitWrapper extends EventHandlerBase {
 			location: boolean,
 			camera: boolean,
 			objects: boolean,
-			debug: boolean,
 			h_plane: boolean,
 			hit_test_result: 'hit_test_plane'
 		}
@@ -216,7 +215,6 @@ export default class ARKitWrapper extends EventHandlerBase {
 				location: true,
 				camera: true,
 				objects: true,
-				debug: false,
 				h_plane: true,
 				hit_test_result: 'hit_test_plane'
 			}
@@ -264,10 +262,17 @@ export default class ARKitWrapper extends EventHandlerBase {
 	Usually results in ARKit calling back to _onInit with a deviceId
 	options: {
 		ui: {
-			mic: boolean,
-			rec: boolean,
-			browser: boolean,
-			debug: boolean
+			browser: true,
+			points: true,
+			focus: true,
+			rec: true,
+			rec_time: true,
+			mic: true,
+			build: true,
+			plane: true,
+			warnings: true,
+			anchors: true,
+			debug: true
 		}
 	}
 	*/

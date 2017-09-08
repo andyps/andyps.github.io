@@ -28,7 +28,7 @@ class App {
                 plane: true,
                 warnings: true,
                 anchors: true,
-                debug: true
+                debug: this.isDebug
             }
         });
         this.ar.waitForInit().then(this.onARInit.bind(this));
@@ -187,16 +187,6 @@ class App {
             let normX = e.clientX / window.innerWidth;
             let normY = e.clientY / window.innerHeight;
             
-            this.showMessage(JSON.stringify({
-                x: e.clientX,
-                y: e.clientY,
-                w: window.innerWidth,
-                h: window.innerHeight,
-                normX: normX,
-                normY: normY
-            }));
-            
-            
             this.ar.hitTest(normX, normY);
         });
     }
@@ -241,13 +231,6 @@ class App {
             info = e.detail[0];
         }
 
-this.showMessage(JSON.stringify(
-{
-isarray: Array.isArray(e.detail),
-type: typeof(e.detail)
-}
-));
-
         let name = this.generateCubeName();
         let transform;
         if (info) {
@@ -270,12 +253,7 @@ type: typeof(e.detail)
         
         //~ const axisHelper = new THREE.AxisHelper(45);
         //~ cubeMesh.add(axisHelper);
-this.showMessage(JSON.stringify(
-{
-type: typeof(info),
-info: info
-}
-));
+
         cubeMesh.matrixAutoUpdate = false;
 
         info.transform[13] += 0.2 / 2;
@@ -310,13 +288,6 @@ info: info
     onARWatch() {
         const cameraProjectionMatrix = this.ar.getData('projection_camera');
         const cameraTransformMatrix = this.ar.getData('camera_transform');
-this.showMessage(JSON.stringify(
-{
-type: typeof(cameraProjectionMatrix),
-type2: typeof(cameraTransformMatrix),
-info: cameraTransformMatrix
-}
-));
         if (cameraProjectionMatrix && cameraTransformMatrix) {
             this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
 
