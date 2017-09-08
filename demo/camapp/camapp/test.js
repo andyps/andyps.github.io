@@ -3,7 +3,7 @@ import ARKitWrapper from './platform/ARKitWrapper.js'
 const CUBE_SIZE = 0.1;
 class App {
     constructor(canvasId) {
-        this.isDebug = false;
+        this.isDebug = true;
         this.deviceId = null;
         
         this.clock = new THREE.Clock();
@@ -167,6 +167,39 @@ class App {
     registerUIEvents() {
         document.querySelector('#btn-add').addEventListener('click', () => {
             this.addObject();
+        });          
+        
+        document.querySelector('#btn-set-options').addEventListener('click', () => {
+            const frm = document.querySelector('#form-options');
+            let options = {
+                browser: frm.elements['opt-browser'].checked,
+                points: frm.elements['opt-points'].checked,
+                focus: frm.elements['opt-focus'].checked,
+                rec: frm.elements['opt-rec'].checked,
+                rec_time: frm.elements['opt-rec_time'].checked,
+                mic: frm.elements['opt-mic'].checked,
+                build: frm.elements['opt-build'].checked,
+                plane: frm.elements['opt-plane'].checked,
+                warnings: frm.elements['opt-warnings'].checked,
+                anchors: frm.elements['opt-anchors'].checked,
+                debug: frm.elements['opt-debug'].checked
+            };
+            this.isDebug = options.debug;
+            this.ar.setUIOptions(options);
+        });          
+        
+        document.querySelector('#btn-options').addEventListener('click', () => {
+            document.querySelector('#area-options').style.display = '';
+            document.querySelector('#info-debug').style.display = 'none';
+            document.querySelector('#info-snapdebug').style.display = 'none';
+            
+            const frm = document.querySelector('#form-options');
+            frm.elements['opt-debug'].checked = this.isDebug;
+        });        
+        
+        
+        document.querySelector('#btn-stop').addEventListener('click', () => {
+            this.ar.stop();
         });
         
         document.querySelector('#btn-debug').addEventListener('click', () => {
@@ -241,6 +274,8 @@ class App {
     onARHitTest(e) {
         let info;
 
+        this.showMessage(JSON.stringify(e.detail));
+        
         if (Array.isArray(e.detail) && e.detail.length > 0) {
             info = e.detail[0];
         }
