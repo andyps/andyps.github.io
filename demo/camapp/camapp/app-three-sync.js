@@ -190,6 +190,19 @@ class App {
             
             this.ar.hitTest(normX, normY);
         });
+        
+		window.showDebug = (options) => {
+			let isOn = false;
+			if (options && options.debug) isOn = true;
+            this.isDebug = isOn;
+            
+            if (!this.isDebug) {
+                this.fpsStats.domElement.style.display = 'none';
+            } else {
+                this.fpsStats.domElement.style.display = '';
+            }
+
+		}
     }
     
     showMessage(txt) {
@@ -304,7 +317,7 @@ class App {
             });
         }
         
-        if (this.isDebug || true) {
+        if (this.isDebug) {
             this.logDebugData();
         }
         
