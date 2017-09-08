@@ -191,9 +191,9 @@ class App {
             this.ar.hitTest(normX, normY);
         });
         
-		window.showDebug = (options) => {
-			let isOn = false;
-			if (options && options.debug) isOn = true;
+        window.showDebug = (options) => {
+            let isOn = false;
+            if (options && options.debug == "1") isOn = true;
             this.isDebug = isOn;
             
             if (!this.isDebug) {
@@ -202,7 +202,7 @@ class App {
                 this.fpsStats.domElement.style.display = '';
             }
 
-		}
+        }
     }
     
     showMessage(txt) {
