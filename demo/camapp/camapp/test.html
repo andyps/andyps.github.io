@@ -39,8 +39,9 @@
         <br>
         <textarea tabindex="-1" readonly id="info-snapdebug" rows="10" cols="40"></textarea>
         
-        <div id="area-options" style="display: none;">
+        <div id="area-options" style="display: none; overflow: auto; height: 300px;">
             <form id="form-options">
+                <input type="button" value="Send" id="btn-set-options"><br>
                 browser<input type="checkbox" name="opt-browser" checked><br>
                 points<input type="checkbox" name="opt-points" checked><br>
                 focus<input type="checkbox" name="opt-focus" checked><br>
@@ -51,8 +52,8 @@
                 plane<input type="checkbox" name="opt-plane" checked><br>
                 warnings<input type="checkbox" name="opt-warnings" checked><br>
                 anchors<input type="checkbox" name="opt-anchors" checked><br>
-                debug<input type="checkbox" name="opt-debug" checked><br>
-                <input type="button" value="Send" id="btn-set-options">
+                debug<input type="checkbox" name="opt-debug" checked>
+                
             </form>
         </div>
     </div>
