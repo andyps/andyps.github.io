@@ -200,6 +200,12 @@ class App {
         
         document.querySelector('#btn-stop').addEventListener('click', () => {
             this.ar.stop();
+        });        
+        
+        document.querySelector('#btn-testMemoryWarningOnShot').addEventListener('click', () => {
+            window.webkit.messageHandlers.testMemoryWarningOnShot.postMessage({
+                test: true
+            });
         });
         
         document.querySelector('#btn-debug').addEventListener('click', () => {
