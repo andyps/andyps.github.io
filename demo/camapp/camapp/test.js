@@ -119,6 +119,8 @@ class App {
         this.fpsStats = new Stats();
         this.fpsStats.setMode(0);
         this.fpsStats.domElement.style.display = 'none';
+        this.fpsStats.domElement.style.left = 'auto';
+        this.fpsStats.domElement.style.right = '0px';
         document.body.appendChild(this.fpsStats.domElement);
     }
     
