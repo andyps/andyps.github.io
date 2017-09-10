@@ -29,7 +29,8 @@ class App {
                 plane: true,
                 warnings: true,
                 anchors: true,
-                debug: this.isDebug
+                debug: this.isDebug,
+                debug_button: true
             }
         });
         this.ar.waitForInit().then(this.onARInit.bind(this));
@@ -184,7 +185,8 @@ class App {
                 plane: frm.elements['opt-plane'].checked,
                 warnings: frm.elements['opt-warnings'].checked,
                 anchors: frm.elements['opt-anchors'].checked,
-                debug: frm.elements['opt-debug'].checked
+                debug: frm.elements['opt-debug'].checked,
+                debug_button: frm.elements['opt-debug_button'].checked
             };
             this.isDebug = options.debug;
             this.ar.setUIOptions(options);
