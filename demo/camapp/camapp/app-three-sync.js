@@ -220,10 +220,7 @@ class App {
         this.ar.watch({
             location: true,
             camera: true,
-            objects: true,
-            debug: this.isDebug,
-            h_plane: true,
-            hit_test_result: 'hit_test_plane'
+            objects: true
         });
     }
     
@@ -308,15 +305,6 @@ class App {
             this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
 
             this.camera.matrix.fromArray(cameraTransformMatrix);
-        }
-        
-        const arObjects = this.ar.getData('objects');
-        if (arObjects && arObjects.forEach) {
-            arObjects.forEach(info => {
-                // is it needed?
-                const mesh = this.scene.getObjectByName(info.uuid);
-                // mesh.matrix.fromArray(info.transform);
-            });
         }
         
         if (this.isDebug) {

@@ -233,6 +233,8 @@ class App {
         });
         
         window.showDebug = (options) => {
+            this.showMessage(JSON.stringify(options));
+            
             let isOn = false;
             if (options && options.debug == "1") isOn = true;
             this.isDebug = isOn;
@@ -259,10 +261,7 @@ class App {
         this.ar.watch({
             location: true,
             camera: true,
-            objects: true,
-            debug: this.isDebug,
-            h_plane: true,
-            hit_test_result: 'hit_test_plane'
+            objects: true
         });
     }
     
@@ -297,8 +296,6 @@ class App {
         }
         let name = this.generateCubeName();
         let transform;
-        
-        this.showMessage(JSON.stringify(info));
         
         if (info) {
             // if hit testing is positive
@@ -360,7 +357,7 @@ class App {
 
             this.camera.matrix.fromArray(cameraTransformMatrix);
         }
-        
+        /*
         const arObjects = this.ar.getData('objects');
         if (arObjects && arObjects.forEach) {
             arObjects.forEach(info => {
@@ -369,7 +366,7 @@ class App {
                 // mesh.matrix.fromArray(info.transform);
             });
         }
-        
+        */
         if (this.isDebug) {
             this.logDebugData();
         }
