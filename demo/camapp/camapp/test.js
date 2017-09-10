@@ -189,6 +189,9 @@ class App {
                 statistics: frm.elements['opt-statistics'].checked
             };
             this.isDebug = options.debug;
+            
+            this.showMessage(JSON.stringify(options));
+            
             this.ar.setUIOptions(options);
         });          
         
