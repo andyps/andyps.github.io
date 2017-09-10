@@ -284,8 +284,16 @@ class App {
 
         this.showMessage(JSON.stringify(e.detail));
         
-        if (Array.isArray(e.detail) && e.detail.length > 0) {
-            info = e.detail[0];
+        if (Array.isArray(e.detail) && e.detail.length) {
+            // search for planes
+            let result = e.detail.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
+            if (result.length) {
+                // sort by distance
+                result = result.sort((a, b) => a.distance - b.distance);
+                info = result[0];
+            } else {
+                info = e.detail[0];
+            }
         }
 
         let name = this.generateCubeName();
