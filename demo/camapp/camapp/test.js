@@ -196,11 +196,7 @@ class App {
             document.querySelector('#area-options').style.display = '';
             document.querySelector('#info-debug').style.display = 'none';
             document.querySelector('#info-snapdebug').style.display = 'none';
-            
-            const frm = document.querySelector('#form-options');
-            frm.elements['opt-statistics'].checked = this.isDebug;
         });        
-        
         
         document.querySelector('#btn-stop').addEventListener('click', () => {
             this.ar.stop();
@@ -246,8 +242,6 @@ class App {
             } else {
                 this.fpsStats.domElement.style.display = '';
             }
-            
-            document.querySelector('#form-options').elements['opt-statistics'].checked = this.isDebug;
         }
     }
     
