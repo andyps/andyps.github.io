@@ -28,7 +28,7 @@ class App {
                 build: true,
                 plane: true,
                 warnings: true,
-                anchors: true,
+                anchors: false,
                 debug: this.isDebug,
                 debug_button: true
             }
