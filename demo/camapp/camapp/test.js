@@ -29,8 +29,8 @@ class App {
                 plane: true,
                 warnings: true,
                 anchors: false,
-                debug: this.isDebug,
-                debug_button: true
+                debug: true,
+                statistics: this.isDebug
             }
         });
         this.ar.waitForInit().then(this.onARInit.bind(this));
@@ -186,7 +186,7 @@ class App {
                 warnings: frm.elements['opt-warnings'].checked,
                 anchors: frm.elements['opt-anchors'].checked,
                 debug: frm.elements['opt-debug'].checked,
-                debug_button: frm.elements['opt-debug_button'].checked
+                statistics: frm.elements['opt-statistics'].checked
             };
             this.isDebug = options.debug;
             this.ar.setUIOptions(options);
@@ -198,7 +198,7 @@ class App {
             document.querySelector('#info-snapdebug').style.display = 'none';
             
             const frm = document.querySelector('#form-options');
-            frm.elements['opt-debug'].checked = this.isDebug;
+            frm.elements['opt-statistics'].checked = this.isDebug;
         });        
         
         
@@ -246,7 +246,8 @@ class App {
             } else {
                 this.fpsStats.domElement.style.display = '';
             }
-
+            
+            document.querySelector('#form-options').elements['opt-statistics'].checked = this.isDebug;
         }
     }
     

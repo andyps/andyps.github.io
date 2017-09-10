@@ -29,8 +29,8 @@ class App {
                 plane: true,
                 warnings: true,
                 anchors: false,
-                debug: this.isDebug,
-                debug_button: true
+                debug: true,
+                statistics: this.isDebug
             }
         });
         this.ar.waitForInit().then(this.onARInit.bind(this));
