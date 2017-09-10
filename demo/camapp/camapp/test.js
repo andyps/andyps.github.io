@@ -295,9 +295,11 @@ class App {
                 info = e.detail[0];
             }
         }
-
         let name = this.generateCubeName();
         let transform;
+        
+        this.showMessage(JSON.stringify(info));
+        
         if (info) {
             // if hit testing is positive
             transform = info.world_transform;
