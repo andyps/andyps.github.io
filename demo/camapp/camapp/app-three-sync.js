@@ -272,49 +272,17 @@ class App {
                 info = e.detail[0];
             }
         }
-
-        this.showMessage(JSON.stringify({
-            numberPlaneResult: planeResults.length,
-            numberAll: info ? e.detail.length : 0,
-            info: info ? {
-                type: info.type,
-                distance: info.distance,
-                world_transform: info.world_transform
-            } : null
-        }));
         
-
         let name = this.generateCubeName();
         let transform;
-        let cameraPos;
         if (info) {
             // if hit testing is positive
             transform = info.world_transform;
-        } else {
-            transform = new THREE.Matrix4();
-            
-            cameraPos = new THREE.Vector3();
-            cameraPos.setFromMatrixPosition(this.camera.matrix);
-            
-            // if hit testing is negative put object in arbitrary position
-            transform.makeTranslation(cameraPos.x, cameraPos.y, cameraPos.z - 1);
-            transform = transform.toArray();
+            this.ar.addAnchor(
+                name,
+                transform
+            );
         }
-        this.ar.addAnchor(
-            name,
-            transform
-        );
-        
-        this.showMessage(JSON.stringify({
-            cameraPos: typeof(cameraPos) != 'undefined' ? {x: cameraPos.x, y: cameraPos.y, z: cameraPos.z} : null,
-            numberPlaneResult: planeResults.length,
-            numberAll: info ? e.detail.length : 0,
-            info: info ? {
-                type: info.type,
-                distance: info.distance,
-                world_transform: info.world_transform
-            } : null
-        }));
     }
     onARAddObject(e) {
         const info = e.detail;
