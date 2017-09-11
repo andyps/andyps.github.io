@@ -318,17 +318,18 @@ class App {
         let name = this.generateCubeName();
         let transform;
         
+        let cameraPos;
         if (info) {
             // if hit testing is positive
             transform = info.world_transform;
         } else {
             transform = new THREE.Matrix4();
 
-            let v = new THREE.Vector3();
-            v.setFromMatrixPosition(this.camera.matrix);
+            cameraPos = new THREE.Vector3();
+            cameraPos.setFromMatrixPosition(this.camera.matrix);
             
             // if hit testing is negative put object in arbitrary position
-            transform.makeTranslation(v.x, v.y, v.z - 1);
+            transform.makeTranslation(cameraPos.x, cameraPos.y, cameraPos.z - 1);
             transform = transform.toArray();
         }
         this.ar.addAnchor(
@@ -337,7 +338,7 @@ class App {
         );
         
         this.showMessage(JSON.stringify({
-            v: typeof(v) != 'undefined' ? {x: v.x, y: v.y, z: v.z} : null,
+            cameraPos: typeof(cameraPos) != 'undefined' ? {x: cameraPos.x, y: cameraPos.y, z: cameraPos.z} : null,
             numberPlaneResult: planeResults.length,
             numberAll: info ? e.detail.length : 0,
             info: info ? {
