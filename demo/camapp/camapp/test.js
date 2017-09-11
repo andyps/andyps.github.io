@@ -282,6 +282,8 @@ class App {
         let info;
         let planeResults = [];
         
+        document.querySelector('#info-snapdebug').value = JSON.stringify(e.detail);
+        
         if (Array.isArray(e.detail) && e.detail.length) {
             // search for planes
             planeResults = e.detail.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
