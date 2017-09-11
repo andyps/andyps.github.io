@@ -303,6 +303,17 @@ class App {
             name,
             transform
         );
+        
+        this.showMessage(JSON.stringify({
+            v: v ? {x: v.x, y: v.y, z: v.z} : null,
+            numberPlaneResult: planeResults.length,
+            numberAll: info ? e.detail.length : 0,
+            info: info ? {
+                type: info.type,
+                distance: info.distance,
+                world_transform: info.world_transform
+            } : null
+        }));
     }
     onARAddObject(e) {
         const info = e.detail;
