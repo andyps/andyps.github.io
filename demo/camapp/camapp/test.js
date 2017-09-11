@@ -281,17 +281,36 @@ class App {
     onARHitTest(e) {
         let info;
         let planeResults = [];
-        
+        let planeExistingUsingExtentResults = [];
+        let planeExistingResults = [];
+
         document.querySelector('#info-snapdebug').value = JSON.stringify(e.detail);
         
         if (Array.isArray(e.detail) && e.detail.length) {
             // search for planes
             planeResults = e.detail.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
-            if (planeResults.length) {
-                // sort by distance
+            
+            planeExistingUsingExtentResults = planeResults.filter(
+                hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT
+            );
+            planeExistingResults = planeResults.filter(
+                hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE
+            );
+            
+            if (planeExistingUsingExtentResults.length) {
+                // existing planes using extent first
+                planeExistingUsingExtentResults = planeExistingUsingExtentResults.sort((a, b) => a.distance - b.distance);
+                info = planeExistingUsingExtentResults[0];
+            } else if (planeExistingResults.length) {
+                // then other existing planes
+                planeExistingResults = planeExistingResults.sort((a, b) => a.distance - b.distance);
+                info = planeExistingResults[0];
+            } else if (planeResults.length) {
+                // other types except feature points
                 planeResults = planeResults.sort((a, b) => a.distance - b.distance);
                 info = planeResults[0];
             } else {
+                // feature points if any
                 info = e.detail[0];
             }
         }
