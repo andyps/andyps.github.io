@@ -319,7 +319,7 @@ class App {
         let transform;
         
         let cameraPos;
-        if (info) {
+        if (info && false) {
             // if hit testing is positive
             transform = info.world_transform;
         } else {
