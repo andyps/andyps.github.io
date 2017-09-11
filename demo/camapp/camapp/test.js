@@ -294,7 +294,7 @@ class App {
             }
         }
         
-        this.showMessage({
+        this.showMessage(JSON.stringify({
             numberPlaneResult: planeResults.length,
             numberAll: info ? e.detail.length : 0,
             info: {
@@ -302,7 +302,7 @@ class App {
                 distance: info.distance,
                 world_transform: info.world_transform
             }
-        });
+        }));
         
         let name = this.generateCubeName();
         let transform;
