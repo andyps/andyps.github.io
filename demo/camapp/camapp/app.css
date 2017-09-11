@@ -79,7 +79,7 @@ canvas {
 #info-container {
     z-index: 0;
     position: fixed;
-    right: 0px;
+    right: 30px;
     top: 30px;
     color: gray;
 }
