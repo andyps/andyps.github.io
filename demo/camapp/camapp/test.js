@@ -280,20 +280,29 @@ class App {
     }
     onARHitTest(e) {
         let info;
+        let planeResults = [];
         
         if (Array.isArray(e.detail) && e.detail.length) {
             // search for planes
-            let result = e.detail.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
-            if (result.length) {
+            planeResults = e.detail.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
+            if (planeResults.length) {
                 // sort by distance
-                result = result.sort((a, b) => a.distance - b.distance);
-                info = result[0];
+                planeResults = planeResults.sort((a, b) => a.distance - b.distance);
+                info = planeResults[0];
             } else {
                 info = e.detail[0];
             }
         }
         
-        this.showMessage(JSON.stringify(info));
+        this.showMessage({
+            numberPlaneResult: planeResults.length,
+            numberAll: info ? e.detail.length : 0,
+            info: {
+                type: info.type,
+                distance: info.distance,
+                world_transform: info.world_transform
+            }
+        });
         
         let name = this.generateCubeName();
         let transform;
