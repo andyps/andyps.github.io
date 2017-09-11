@@ -335,7 +335,7 @@ class App {
             transform = new THREE.Matrix4();
 
             let v = new THREE.Vector3();
-            v.setFromMatrixPosition(this.camera.projectionMatrix);
+            v.setFromMatrixPosition(this.camera.matrix);
             
             // if hit testing is negative put object in arbitrary position
             transform.makeTranslation(v.x, v.y, v.z - 1);

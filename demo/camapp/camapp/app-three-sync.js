@@ -291,8 +291,12 @@ class App {
             transform = info.world_transform;
         } else {
             transform = new THREE.Matrix4();
+            
+            let v = new THREE.Vector3();
+            v.setFromMatrixPosition(this.camera.matrix);
+            
             // if hit testing is negative put object in arbitrary position
-            transform.makeTranslation(0, 0, -1);
+            transform.makeTranslation(v.x, v.y, v.z - 1);
             transform = transform.toArray();
         }
         this.ar.addAnchor(
