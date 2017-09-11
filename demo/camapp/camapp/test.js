@@ -318,11 +318,11 @@ class App {
         this.showMessage(JSON.stringify({
             numberPlaneResult: planeResults.length,
             numberAll: info ? e.detail.length : 0,
-            info: {
+            info: info ? {
                 type: info.type,
                 distance: info.distance,
                 world_transform: info.world_transform
-            }
+            } : null
         }));
         
         let name = this.generateCubeName();
