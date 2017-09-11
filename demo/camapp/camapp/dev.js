@@ -325,9 +325,12 @@ class App {
         let cameraPos;
         
         this.raycaster.setFromCamera(
-            {x: this.mousePos.x, y: this.mousePos.ndcY},
+            {x: this.mousePos.x, y: this.mousePos.y},
             this.camera
         );
+        console.log('ray origin', this.raycaster.ray.origin);
+        console.log('dir', this.raycaster.ray.direction);
+        console.log('mousePos', this.mousePos);
         
         let newPos;
         if (info && false) {
@@ -339,8 +342,8 @@ class App {
             cameraPos = new THREE.Vector3();
             cameraPos.setFromMatrixPosition(this.camera.matrix);
             
-            newPos = this.raycaster.origin.clone();
-            newPos.add(this.raycaster.direction);
+            newPos = this.raycaster.ray.origin.clone();
+            newPos.add(this.raycaster.ray.direction);
             
             // if hit testing is negative put object in arbitrary position
             //~ transform.makeTranslation(cameraPos.x, cameraPos.y, cameraPos.z - 1);
