@@ -337,7 +337,7 @@ class App {
         );
         
         this.showMessage(JSON.stringify({
-            v: v ? {x: v.x, y: v.y, z: v.z} : null,
+            v: typeof(v) != 'undefined' ? {x: v.x, y: v.y, z: v.z} : null,
             numberPlaneResult: planeResults.length,
             numberAll: info ? e.detail.length : 0,
             info: info ? {
