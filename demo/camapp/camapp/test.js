@@ -280,8 +280,6 @@ class App {
     }
     onARHitTest(e) {
         let info;
-
-        this.showMessage(JSON.stringify(e.detail));
         
         if (Array.isArray(e.detail) && e.detail.length) {
             // search for planes
@@ -294,6 +292,9 @@ class App {
                 info = e.detail[0];
             }
         }
+        
+        this.showMessage(JSON.stringify(info));
+        
         let name = this.generateCubeName();
         let transform;
         
