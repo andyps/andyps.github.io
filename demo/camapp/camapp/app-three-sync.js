@@ -14,6 +14,7 @@ class App {
 
         this.initAR();
         
+        this.raycaster = new THREE.Raycaster();
         this.registerUIEvents();
     }
     initAR() {
@@ -63,6 +64,16 @@ class App {
         
         this.ar.addEventListener(ARKitWrapper.INTERRUPTION_ENDED_EVENT, () => {
             // this.showMessage('arkitInterruptionEnded');
+        });
+        
+        this.ar.addEventListener(ARKitWrapper.SHOW_DEBUG_EVENT, e => {
+            const options = e.detail;
+            this.isDebug = options.debug == 1;
+            if (!this.isDebug) {
+                this.fpsStats.domElement.style.display = 'none';
+            } else {
+                this.fpsStats.domElement.style.display = '';
+            }
         });
     }
     run() {
@@ -187,25 +198,15 @@ class App {
             document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
         });
         
+        this.tapPos = {x: 0, y: 0};
         this.canvas.addEventListener('click', e => {
             let normX = e.clientX / window.innerWidth;
             let normY = e.clientY / window.innerHeight;
             
+            this.tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
+            
             this.ar.hitTest(normX, normY);
         });
-        
-        window.showDebug = (options) => {
-            let isOn = false;
-            if (options && options.debug == "1") isOn = true;
-            this.isDebug = isOn;
-            
-            if (!this.isDebug) {
-                this.fpsStats.domElement.style.display = 'none';
-            } else {
-                this.fpsStats.domElement.style.display = '';
-            }
-
-        }
     }
     
     showMessage(txt) {
@@ -278,11 +279,24 @@ class App {
         if (info) {
             // if hit testing is positive
             transform = info.world_transform;
-            this.ar.addAnchor(
-                name,
-                transform
+        } else {
+            // if hit testing is negative put object at distance 1m from camera
+            this.raycaster.setFromCamera(
+                {x: this.tapPos.x, y: this.tapPos.y},
+                this.camera
             );
+            
+            let objPos = this.raycaster.ray.origin.clone();
+            objPos.add(this.raycaster.ray.direction);
+            transform = new THREE.Matrix4();
+            transform.makeTranslation(objPos.x, objPos.y, objPos.z);
+            transform = transform.toArray();
         }
+        
+        this.ar.addAnchor(
+            name,
+            transform
+        );
     }
     onARAddObject(e) {
         const info = e.detail;

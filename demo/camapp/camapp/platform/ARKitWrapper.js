@@ -73,6 +73,12 @@ export default class ARKitWrapper extends EventHandlerBase {
 				source: this
 			}))
 		}
+		window.showDebug = (options) => {
+			this.dispatchEvent(new CustomEvent(ARKitWrapper.SHOW_DEBUG_EVENT, {
+				source: this,
+				detail: options
+			}))
+		}
 	}
 
 	static GetOrCreate(options = null){
@@ -396,6 +402,7 @@ ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT = 'arkit-will-enter-foreground'
 ARKitWrapper.INTERRUPTED_EVENT = 'arkit-interrupted'
 ARKitWrapper.INTERRUPTION_ENDED_EVENT = 'arkit-interruption-ended'
 ARKitWrapper.HIT_TEST_EVENT = 'arkit-hit-test'
+ARKitWrapper.SHOW_DEBUG_EVENT = 'arkit-show-debug'
 
 // hit test types
 ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT = 1
