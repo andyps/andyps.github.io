@@ -1,0 +1,19 @@
+{
+  "name": "arkitjs",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha tests"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "stats.js": "^0.17.0",
+    "three": "^0.84.0"
+  },
+  "devDependencies": {
+    "mocha": "^3.5.3"
+  }
+}
