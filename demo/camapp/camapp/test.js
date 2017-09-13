@@ -295,8 +295,8 @@ class App {
         let planeExistingResults = [];
 
         document.querySelector('#info-snapdebug').value = 'onhittest:' + JSON.stringify(e);
-        
-        if (Array.isArray(e.detail) && e.detail.length) {
+
+        if (typeof(e) == 'object' && Array.isArray(e.detail) && e.detail.length) {
             // search for planes
             planeResults = e.detail.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
             
@@ -344,7 +344,7 @@ class App {
             transform = transform.toArray();
         }
         
-        document.querySelector('#info-snapdebug').value = 'all:\n' + JSON.stringify(e.detail) + '\n\n'
+        document.querySelector('#info-snapdebug').value = 'all:\n' + JSON.stringify(info ? e.detail : null) + '\n\n'
             + 'selected:\n' + (info ? JSON.stringify(info) : 'empty');
 
         this.ar.addAnchor(

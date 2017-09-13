@@ -245,7 +245,7 @@ class App {
         let planeExistingUsingExtentResults = [];
         let planeExistingResults = [];
         
-        if (Array.isArray(e.detail) && e.detail.length) {
+        if (typeof(e) == 'object' && Array.isArray(e.detail) && e.detail.length) {
             // search for planes
             planeResults = e.detail.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
             
@@ -273,7 +273,7 @@ class App {
                 info = e.detail[0];
             }
         }
-        
+
         let name = this.generateCubeName();
         let transform;
         if (info) {
