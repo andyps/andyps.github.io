@@ -248,6 +248,12 @@ class App {
             
             this.tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
             
+            this.showMessage('hitTest ' + JSON.stringify({
+                x: normX,
+                y: normY,
+                tap: this.tapPos
+            }));
+            
             this.ar.hitTest(normX, normY);
         });
     }
@@ -338,6 +344,11 @@ class App {
             transform = transform.toArray();
         }
         
+        document.querySelector('#info-snapdebug').value = JSON.stringify({
+            all: e.detail,
+            selected: info ? info : 'empty'
+        });
+
         this.ar.addAnchor(
             name,
             transform
