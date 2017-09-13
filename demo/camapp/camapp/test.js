@@ -344,10 +344,8 @@ class App {
             transform = transform.toArray();
         }
         
-        document.querySelector('#info-snapdebug').value = JSON.stringify({
-            all: e.detail,
-            selected: info ? info : 'empty'
-        });
+        document.querySelector('#info-snapdebug').value = 'all:\n' + JSON.stringify(e.detail) + '\n\n'
+            + 'selected:\n' + info ? JSON.stringify(info) : 'empty';
 
         this.ar.addAnchor(
             name,
