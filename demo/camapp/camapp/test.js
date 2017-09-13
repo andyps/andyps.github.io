@@ -345,7 +345,7 @@ class App {
         }
         
         document.querySelector('#info-snapdebug').value = 'all:\n' + JSON.stringify(e.detail) + '\n\n'
-            + 'selected:\n' + info ? JSON.stringify(info) : 'empty';
+            + 'selected:\n' + (info ? JSON.stringify(info) : 'empty');
 
         this.ar.addAnchor(
             name,
