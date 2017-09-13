@@ -294,7 +294,7 @@ class App {
         let planeExistingUsingExtentResults = [];
         let planeExistingResults = [];
 
-        document.querySelector('#info-snapdebug').value = JSON.stringify(e.detail);
+        document.querySelector('#info-snapdebug').value = 'onhittest:' + JSON.stringify(e);
         
         if (Array.isArray(e.detail) && e.detail.length) {
             // search for planes
