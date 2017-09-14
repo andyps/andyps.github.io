@@ -20,7 +20,6 @@ class App {
     initAR() {
         this.ar = ARKitWrapper.GetOrCreate({
             ui: {
-                browser: false,
                 points: true,
                 focus: true,
                 rec: true,
