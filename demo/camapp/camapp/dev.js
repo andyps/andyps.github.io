@@ -18,22 +18,23 @@ class App {
         this.raycaster = new THREE.Raycaster();
     }
     initAR() {
-        this.ar = ARKitWrapper.GetOrCreate({
-            ui: {
-                browser: true,
-                points: true,
-                focus: true,
-                rec: true,
-                rec_time: true,
-                mic: true,
-                build: true,
-                plane: true,
-                warnings: true,
-                anchors: false,
-                debug: true,
-                statistics: this.isDebug
-            }
-        });
+        //~ this.ar = ARKitWrapper.GetOrCreate({
+            //~ ui: {
+                //~ browser: true,
+                //~ points: true,
+                //~ focus: true,
+                //~ rec: true,
+                //~ rec_time: true,
+                //~ mic: true,
+                //~ build: true,
+                //~ plane: true,
+                //~ warnings: true,
+                //~ anchors: false,
+                //~ debug: true,
+                //~ statistics: this.isDebug
+            //~ }
+        //~ });
+        this.ar = ARKitWrapper.GetOrCreate();
         this.ar.waitForInit().then(this.onARInit.bind(this));
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
         
