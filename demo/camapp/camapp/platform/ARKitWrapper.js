@@ -14,9 +14,7 @@ ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the instance,
 			location: boolean,
 			camera: boolean,
 			objects: boolean,
-			debug: boolean,
-			h_plane: boolean,
-			hit_test_result: 'hit_test_plane'
+			light_intensity: boolean
 		})
 	}
 
@@ -42,7 +40,9 @@ export default class ARKitWrapper extends EventHandlerBase {
 		for(let i=0; i < callbackNames.length; i++){
 			this._generateGlobalCallback(callbackNames[i], i)
 		}
-
+		/**
+		* @todo DO NOT MESS GLOBAL SPACE!!!
+		*/
 		window.onStartRecording = () => {
 			this.dispatchEvent(new CustomEvent(ARKitWrapper.RECORD_START_EVENT, {
 				source: this
@@ -203,8 +203,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 			location: boolean,
 			camera: boolean,
 			objects: boolean,
-			h_plane: boolean,
-			hit_test_result: 'hit_test_plane'
+			light_intensity: boolean
 		}
 	*/
 	watch(options=null) {
@@ -221,8 +220,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 				location: true,
 				camera: true,
 				objects: true,
-				h_plane: true,
-				hit_test_result: 'hit_test_plane'
+				light_intensity: true
 			}
 		}
 		
@@ -235,28 +233,20 @@ export default class ARKitWrapper extends EventHandlerBase {
 	}
 
 	/*
-	Sends a showDebug message to ARKit to indicate whether the Metal layer should show debug info like detected planes
-	*/
-	setDebugDisplay(showDebug) {
-		window.webkit.messageHandlers.showDebug.postMessage({
-			debug: showDebug
-		})
-	}
-
-	/*
 	Sends a setUIOptions message to ARKit to set ui options (show or hide ui elements)
 	options: {
-		browser: true,
-		points: true,
-		focus: true,
-		rec: true,
-		rec_time: true,
-		mic: true,
-		build: true,
-		plane: true,
-		warnings: true,
-		anchors: true,
-		debug: true
+		browser: boolean,
+		points: boolean,
+		focus: boolean,
+		rec: boolean,
+		rec_time: boolean,
+		mic: boolean,
+		build: boolean,
+		plane: boolean,
+		warnings: boolean,
+		anchors: boolean,
+		debug: boolean,
+		statistics: boolean
 	}
 	*/
 	setUIOptions(options) {
@@ -268,17 +258,18 @@ export default class ARKitWrapper extends EventHandlerBase {
 	Usually results in ARKit calling back to _onInit with a deviceId
 	options: {
 		ui: {
-			browser: true,
-			points: true,
-			focus: true,
-			rec: true,
-			rec_time: true,
-			mic: true,
-			build: true,
-			plane: true,
-			warnings: true,
-			anchors: true,
-			debug: true
+			browser: boolean,
+			points: boolean,
+			focus: boolean,
+			rec: boolean,
+			rec_time: boolean,
+			mic: boolean,
+			build: boolean,
+			plane: boolean,
+			warnings: boolean,
+			anchors: boolean,
+			debug: boolean,
+			statistics: boolean
 		}
 	}
 	*/
@@ -362,6 +353,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 			type: hitTestType,
 			world_transform: matrix4x4 - specifies the position and orientation relative to WCS,
 			local_transform: matrix4x4 - the position and orientation of the hit test result relative to the nearest anchor or feature point,
+			distance: distance to the detected plane,
 			anchor: {uuid, transform, ...} - the anchor representing the detected surface, if any
 		},
 		...

@@ -89,9 +89,6 @@ class App {
         
         return cubeMesh;
     }
-    addObject() {
-
-    }
     generateCubeName() {
         const name = 'obj-' + this.cubesNames;
         this.cubesNames++;
@@ -134,20 +131,6 @@ class App {
         document.body.appendChild(this.fpsStats.domElement);
     }
     
-    toggleDebug() {
-        this.isDebug = !this.isDebug;
-        
-        if (!this.isDebug) {
-            this.fpsStats.domElement.style.display = 'none';
-            document.querySelector('#info-container').style.display = 'none';
-        } else {
-            this.fpsStats.domElement.style.display = '';
-            document.querySelector('#info-container').style.display = '';
-        }
-        
-        this.ar.setDebugDisplay(this.isDebug);
-    }
-    
     cleanScene() {
         let children2Remove = [];
 
@@ -163,39 +146,9 @@ class App {
         
         this.cubesNum = 0;
         this.cubesNames = 0;
-        document.querySelector('#info-objectsCnt').textContent = 0;
     }
 
-    reset() {
-        const onStop = () => {
-            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT, onStop);
-            this.cleanScene();
-            this.watchAR();
-        };
-        this.ar.addEventListener(ARKitWrapper.STOP_EVENT, onStop);
-        this.ar.stop();
-    }
-    
     registerUIEvents() {
-        document.querySelector('#btn-add').addEventListener('click', () => {
-            this.addObject();
-        });
-        
-        document.querySelector('#btn-debug').addEventListener('click', () => {
-            this.toggleDebug();
-        });
-        
-        document.querySelector('#btn-reset').addEventListener('click', () => {
-            this.reset();
-        });
-
-        document.querySelector('#message').onclick = function() {
-            this.style.display = 'none';
-        }
-        document.querySelector('#btn-snapdebug').addEventListener('click', () => {
-            document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
-        });
-        
         this.tapPos = {x: 0, y: 0};
         this.canvas.addEventListener('click', e => {
             let normX = e.clientX / window.innerWidth;
@@ -205,11 +158,6 @@ class App {
             
             this.ar.hitTest(normX, normY);
         });
-    }
-    
-    showMessage(txt) {
-        document.querySelector('#message').textContent = txt;
-        document.querySelector('#message').style.display = 'block';
     }
 
     requestAnimationFrame() {
@@ -309,8 +257,6 @@ class App {
         this.cubesNum++;
 
         this.requestAnimationFrame();
-        
-        document.querySelector('#info-objectsCnt').textContent = this.cubesNum;
     }
     
     onARDidMoveBackground() {
@@ -340,29 +286,8 @@ class App {
             this.camera.matrix.fromArray(cameraTransformMatrix);
         }
         
-        if (this.isDebug) {
-            this.logDebugData();
-        }
-        
         this.requestAnimationFrame();
     }
-    
-    logDebugData() {
-        let data = this.ar.getData();
-        const date = (new Date()).toTimeString();
-        
-        // show data in debug layer
-        const objPositions = [];
-        this.scene.children.forEach(child => {
-            if (child.name.substr(0, 3) !== 'obj') {
-                return;
-            }
-            objPositions.push(child.getWorldPosition());
-        });
-        
-        document.querySelector('#info-debug').value = JSON.stringify(data) + ':' + date;
-    }
-    
 }
 
 window.addEventListener('DOMContentLoaded', () => {
