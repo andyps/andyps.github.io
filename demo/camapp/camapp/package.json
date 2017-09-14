@@ -5,7 +5,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "test": "npm run build:test && mocha tests/build/testBundle.js",
+    "test": "npm run build:test && nyc --reporter=html mocha tests/build/testBundle.js",
     "build:test": "webpack tests tests/build/testBundle.js --target node"
   },
   "author": "",
@@ -17,6 +17,7 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "mocha": "^3.5.3",
+    "nyc": "^11.2.1",
     "webpack": "^3.5.6"
   }
 }
