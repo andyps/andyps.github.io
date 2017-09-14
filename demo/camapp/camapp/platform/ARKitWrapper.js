@@ -34,31 +34,30 @@ export default class ARKitWrapper extends EventHandlerBase {
 		this._isInitialized = false
 		this._rawARData = null
 
-		this._globalCallbacksMap = {} // Used to map a window.ARCallback method name to an ARKitWrapper.on* method name
-		// Set up the window.ARCallback methods that the ARKit bridge depends on
+		this._globalCallbacksMap = {} // Used to map a window.arkitCallback method name to an ARKitWrapper.on* method name
+		// Set up the window.arkitCallback methods that the ARKit bridge depends on
 		let callbackNames = ['onInit', 'onWatch', 'onStop', 'onHitTest', 'onAddAnchor']
 		for(let i=0; i < callbackNames.length; i++){
 			this._generateGlobalCallback(callbackNames[i], i)
 		}
-		/**
-		* @todo DO NOT MESS GLOBAL SPACE!!!
-		*/
-		window.onStartRecording = () => {
+
+		// these functions will be called by arkit
+		window.arkitStartRecording = () => {
 			this.dispatchEvent(new CustomEvent(ARKitWrapper.RECORD_START_EVENT, {
 				source: this
 			}))
 		}
-		window.onStopRecording = () => {
+		window.arkitStopRecording = () => {
 			this.dispatchEvent(new CustomEvent(ARKitWrapper.RECORD_STOP_EVENT, {
 				source: this
 			}))
 		}
-		window.didMoveBackground = () => {
+		window.arkitDidMoveBackground = () => {
 			this.dispatchEvent(new CustomEvent(ARKitWrapper.DID_MOVE_BACKGROUND_EVENT, {
 				source: this
 			}))
 		}
-		window.willEnterForeground = () => {
+		window.arkitWillEnterForeground = () => {
 			this.dispatchEvent(new CustomEvent(ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT, {
 				source: this
 			}))
@@ -73,7 +72,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 				source: this
 			}))
 		}
-		window.showDebug = (options) => {
+		window.arkitShowDebug = (options) => {
 			this.dispatchEvent(new CustomEvent(ARKitWrapper.SHOW_DEBUG_EVENT, {
 				source: this,
 				detail: options
@@ -369,11 +368,11 @@ export default class ARKitWrapper extends EventHandlerBase {
 
 	/*
 	The ARKit iOS app depends on several callbacks on `window`. This method sets them up.
-	They end up as window.ARCallback? where ? is an integer.
-	You can map window.ARCallback? to ARKitWrapper instance methods using _globalCallbacksMap
+	They end up as window.arkitCallback? where ? is an integer.
+	You can map window.arkitCallback? to ARKitWrapper instance methods using _globalCallbacksMap
 	*/
 	_generateGlobalCallback(callbackName, num) {
-		const name = 'ARCallback' + num
+		const name = 'arkitCallback' + num
 		this._globalCallbacksMap[callbackName] = name
 		const self = this
 		window[name] = function(deviceData) {
