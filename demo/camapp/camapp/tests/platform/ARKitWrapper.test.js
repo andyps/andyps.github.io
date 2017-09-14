@@ -155,4 +155,54 @@ describe('ARKitWrapper', function() {
         assert.equal(instance.isWatching, false, 'should be false after stop');
     });
 
+    it('should create functions available for arkit', function() {
+        window.webkit = new ARKitInterfaceMock();
+        ARKitWrapper.GetOrCreate();
+        
+        assert.ok(typeof(window.arkitStartRecording) == 'function');
+        assert.ok(typeof(window.arkitStopRecording) == 'function');
+        assert.ok(typeof(window.arkitDidMoveBackground) == 'function');
+        assert.ok(typeof(window.arkitWillEnterForeground) == 'function');
+        assert.ok(typeof(window.arkitInterrupted) == 'function');
+        assert.ok(typeof(window.arkitInterruptionEnded) == 'function');
+        assert.ok(typeof(window.arkitShowDebug) == 'function');
+    });
+    
+    it('should global arkit events work', function() {
+        window.webkit = new ARKitInterfaceMock();
+        const instance = ARKitWrapper.GetOrCreate();
+        let callbacks = 0;
+        
+        instance.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
+            callbacks++;
+        });
+        instance.addEventListener(ARKitWrapper.RECORD_STOP_EVENT, () => {
+            callbacks++;
+        });
+        instance.addEventListener(ARKitWrapper.DID_MOVE_BACKGROUND_EVENT, () => {
+            callbacks++;
+        });
+        instance.addEventListener(ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT, () => {
+            callbacks++;
+        });
+        instance.addEventListener(ARKitWrapper.INTERRUPTED_EVENT, () => {
+            callbacks++;
+        });
+        instance.addEventListener(ARKitWrapper.INTERRUPTION_ENDED_EVENT, () => {
+            callbacks++;
+        });
+        instance.addEventListener(ARKitWrapper.SHOW_DEBUG_EVENT, () => {
+            callbacks++;
+        });
+
+        window.arkitStartRecording();
+        window.arkitStopRecording();
+        window.arkitDidMoveBackground();
+        window.arkitWillEnterForeground();
+        window.arkitInterrupted();
+        window.arkitInterruptionEnded();
+        window.arkitShowDebug();
+        
+        assert.equal(callbacks, 7, 'expected number of calls does not match');
+    });
 })
