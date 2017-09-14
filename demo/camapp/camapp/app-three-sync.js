@@ -98,13 +98,12 @@ class App {
     }
     initScene(canvasId) {
         this.canvas = document.getElementById(canvasId);
-        // use webgl1
-        this.canvas.getContext('webgl');
         
         this.scene = new THREE.Scene();
         this.engine = new THREE.WebGLRenderer({
             antialias: true,
-            canvas: this.canvas
+            canvas: this.canvas,
+            alpha: true
         });
         this.width = window.innerWidth;
         this.height = window.innerHeight;
