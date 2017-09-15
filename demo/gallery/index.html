@@ -38,6 +38,7 @@
         //~ e.preventDefault();
       });
       function statusCheck(msg) {
+        document.querySelector('.status-check').style.fontSize = '24px'
         document.querySelector('.status-check').innerHTML = msg
         var delay = setTimeout(function() {
           document.querySelector('.status-check').innerHTML = ''
