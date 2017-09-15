@@ -33,11 +33,12 @@
   <script>
     (function() {
       var moving = false;
+      var tapped = false;
       window.addEventListener('touchmove', function(e) {
-        e.preventDefault();
+        //~ e.preventDefault();
       });
-      function statusCheck() {
-        document.querySelector('.status-check').innerHTML = 'Model is added!'
+      function statusCheck(msg) {
+        document.querySelector('.status-check').innerHTML = msg
         var delay = setTimeout(function() {
           document.querySelector('.status-check').innerHTML = ''
         }, 2000)
@@ -48,18 +49,43 @@
         paginationClickable: false,
         spaceBetween: 5,
         onTouchStart: function(swiper, e) {
-          e.preventDefault();
+          //~ e.preventDefault();
           console.log('clientX', e, swiper.touches.currentX, swiper.touches.startX);
         },
         onSliderMove: function(swiper, e) {
           moving = true;
         },
+        onDoubleTap(swiper, e) {
+            //~ e.preventDefault();
+            console.log('double tap', tapped);
+            tapped = false;
+        },
+        onTap: function(swiper, e) {
+            console.log('tap', tapped);
+            if (tapped) {
+                console.log('already tapped');
+                //~ return;
+            }
+            tapped = true;
+            if (typeof(swiper.clickedIndex) == 'number') {
+                statusCheck('Model is added by tapping!' + swiper.clickedIndex)
+            }
+            swiper.clickedIndex = undefined;
+            //~ e.preventDefault();
+        },
         onTouchEnd: function(swiper, e) {
-          console.log('touchend', moving, e.clientX, swiper.touches.currentX, swiper.touches.startX);
-          e.preventDefault();
+          console.log(
+          'touchend', moving, e.clientX, swiper.touches.currentX, swiper.touches.startX,
+          swiper.clickedIndex, swiper.touches.currentY, swiper.height
+          );
+          //~ e.preventDefault();
           
-          if (!moving) {
-              statusCheck()
+          if (!moving 
+            && swiper.touches.currentX != swiper.touches.startX 
+            && swiper.touches.currentY < (window.innerHeight - swiper.height - 20)
+          ) {
+              console.log('DRAG!', swiper.clickedIndex);
+              statusCheck('Model is added by dragging!')
           }
           moving = false;
     }
