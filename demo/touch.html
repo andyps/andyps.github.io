@@ -32,11 +32,14 @@
         }
 
         document.addEventListener('touchstart', (e) => {
+            if (e.target.id == 'message') return;
             console.log('touchstart', e);
             showMessage('touchstart\n' + JSON.stringify(e));
         });
         document.addEventListener('touchend', (e) => {
+            if (e.target.id == 'message') return;
             console.log('touchend', e);
+            
             showMessage('touchend\n' + JSON.stringify(e));
         });
         
@@ -53,6 +56,24 @@
 </div>
 <div id="div3">
     div3
+</div>
+<div id="div4">
+    div4
+</div>
+<div id="div4">
+    div4
+</div>
+<div id="div5">
+    div5
+</div>
+<div id="div6">
+    div6
+</div>
+<div id="div7">
+    div7
+</div>
+<div id="div8">
+    div8
 </div>
 
 </body>

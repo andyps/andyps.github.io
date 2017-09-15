@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>gallery-native-demo</title>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="style.css">
+  
+  <style>
+  * {
+      touch-action: none;
+  }
+  </style>
+</head>
+<body>
+  <div class="status-check"></div>
+  <div class="swiper-container">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide"><img src="assets/thumbnail01.jpg" alt="Thumb"></div>
+      <div class="swiper-slide"><img src="assets/thumbnail02.jpg" alt="Thumb"></div>
+      <div class="swiper-slide"><img src="assets/thumbnail03.jpg" alt="Thumb"></div>
+      <div class="swiper-slide"><img src="assets/thumbnail04.jpg" alt="Thumb"></div>
+      <div class="swiper-slide"><img src="assets/thumbnail05.jpg" alt="Thumb"></div>
+      <div class="swiper-slide"><img src="assets/thumbnail06.jpg" alt="Thumb"></div>
+      <div class="swiper-slide"><img src="assets/thumbnail07.jpg" alt="Thumb"></div>
+      <div class="swiper-slide"><img src="assets/thumbnail08.jpg" alt="Thumb"></div>
+      <div class="swiper-slide"><img src="assets/thumbnail09.jpg" alt="Thumb"></div>
+      <div class="swiper-slide"><img src="assets/thumbnail010.jpg" alt="Thumb"></div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+  <script>
+    (function() {
+      var moving = false;
+      window.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+      });
+      function statusCheck() {
+        document.querySelector('.status-check').innerHTML = 'Model is added!'
+        var delay = setTimeout(function() {
+          document.querySelector('.status-check').innerHTML = ''
+        }, 2000)
+      }
+      var swiper = new Swiper('.swiper-container', {
+        slidesPerView: 6,
+        centeredSlides: false,
+        paginationClickable: false,
+        spaceBetween: 5,
+        onTouchStart: function(swiper, e) {
+          e.preventDefault();
+          console.log('clientX', e, swiper.touches.currentX, swiper.touches.startX);
+        },
+        onSliderMove: function(swiper, e) {
+          moving = true;
+        },
+        onTouchEnd: function(swiper, e) {
+          console.log('touchend', moving, e.clientX, swiper.touches.currentX, swiper.touches.startX);
+          e.preventDefault();
+          
+          if (!moving) {
+              statusCheck()
+          }
+          moving = false;
+    }
+  })
+  }())
+;
+  </script>
+</body>
+</html>
