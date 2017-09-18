@@ -2,20 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,user-scalable=no">
-  <title>gallery-native-demo</title>
-<!--
+  <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
--->
+  <title>gallery-native-demo</title>
   <link rel="stylesheet" href="style.css">
-  
-  <style>
-  * {
-      touch-action: none;
-      overflow: hidden !important;
-  }
-  </style>
 </head>
 <body>
   <div class="status-check"></div>
@@ -37,7 +27,6 @@
   <script>
     (function() {
       var moving = false;
-      var tapped = false;
       document.addEventListener('touchmove', function(e) {
         e.preventDefault();
       });
@@ -53,44 +42,23 @@
         centeredSlides: false,
         paginationClickable: false,
         spaceBetween: 5,
-        onTouchStart: function(swiper, e) {
-          //~ e.preventDefault();
-          console.log('clientX', e, swiper.touches.currentX, swiper.touches.startX, swiper.clickedIndex);
-        },
+        /**
+        @todo: prevent double tap
+        */
         onSliderMove: function(swiper, e) {
           moving = true;
         },
-        onDoubleTap(swiper, e) {
-            //~ e.preventDefault();
-            console.log('double tap', tapped);
-            tapped = false;
-        },
         onTap: function(swiper, e) {
-            console.log('tap', tapped);
-            if (tapped) {
-                console.log('already tapped');
-                //~ return;
-            }
-            tapped = true;
             if (typeof(swiper.clickedIndex) == 'number') {
-                statusCheck('Model is added by tapping!' + swiper.clickedIndex)
+              statusCheck('Model is added by tapping!' + swiper.clickedIndex)
             }
-            //~ swiper.clickedIndex = undefined;
-            //~ e.preventDefault();
         },
         onTouchEnd: function(swiper, e) {
-          console.log(
-          'touchend', moving, e.clientX, swiper.touches.currentX, swiper.touches.startX,
-          swiper.clickedIndex, swiper.touches.currentY, swiper.height
-          );
-          //~ e.preventDefault();
-          
           if (!moving 
             && swiper.touches.currentX != swiper.touches.startX 
             && swiper.touches.currentY < (window.innerHeight - swiper.height - 20)
           ) {
-              console.log('DRAG!', swiper.clickedIndex, swiper.previousIndex, swiper.activeIndex, swiper.realIndex);
-              statusCheck('Model is added by dragging!')
+            statusCheck('Model is added by dragging!')
           }
           moving = false;
     }
