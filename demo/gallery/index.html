@@ -38,8 +38,8 @@
     (function() {
       var moving = false;
       var tapped = false;
-      window.addEventListener('touchmove', function(e) {
-        //~ e.preventDefault();
+      document.addEventListener('touchmove', function(e) {
+        e.preventDefault();
       });
       function statusCheck(msg) {
         document.querySelector('.status-check').style.fontSize = '24px'
