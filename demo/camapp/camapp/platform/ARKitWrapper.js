@@ -174,6 +174,27 @@ export default class ARKitWrapper extends EventHandlerBase {
 		})
 	}
 
+	addObject(uuid, transform) {
+		return new Promise((resolve, reject) => {
+            if (!this._isInitialized) {
+                reject();
+                return;
+            }
+            
+			let callback = () => {
+				this.removeEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, callback, false)
+				resolve()
+			}
+			this.addEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, callback, false)
+
+            window.webkit.messageHandlers.addAnchor.postMessage({
+                uuid: uuid,
+                transform: transform,
+                callback: this._globalCallbacksMap.onAddAnchor
+            })
+		})
+	}
+
 	/*
 	Sends an addAnchor message to ARKit
 	*/

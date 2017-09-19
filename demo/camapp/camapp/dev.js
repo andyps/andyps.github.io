@@ -14,27 +14,25 @@ class App {
 
         this.initAR();
         
-        this.registerUIEvents();
         this.raycaster = new THREE.Raycaster();
+        this.registerUIEvents();
     }
     initAR() {
-        //~ this.ar = ARKitWrapper.GetOrCreate({
-            //~ ui: {
-                //~ browser: true,
-                //~ points: true,
-                //~ focus: true,
-                //~ rec: true,
-                //~ rec_time: true,
-                //~ mic: true,
-                //~ build: true,
-                //~ plane: true,
-                //~ warnings: true,
-                //~ anchors: false,
-                //~ debug: true,
-                //~ statistics: this.isDebug
-            //~ }
-        //~ });
-        this.ar = ARKitWrapper.GetOrCreate();
+        this.ar = ARKitWrapper.GetOrCreate({
+            ui: {
+                points: true,
+                focus: true,
+                rec: true,
+                rec_time: true,
+                mic: true,
+                build: true,
+                plane: true,
+                warnings: true,
+                anchors: false,
+                debug: true,
+                statistics: this.isDebug
+            }
+        });
         this.ar.waitForInit().then(this.onARInit.bind(this));
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
         
@@ -42,13 +40,11 @@ class App {
         this.ar.addEventListener(ARKitWrapper.HIT_TEST_EVENT, this.onARHitTest.bind(this));
         
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
-            document.querySelector('#btn-reset').style.display = 'none';
-            document.querySelector('#btn-debug').style.display = 'none';
+            // do something when recording is started
         });
         
         this.ar.addEventListener(ARKitWrapper.RECORD_STOP_EVENT, () => {
-            // document.querySelector('#btn-reset').style.display = '';
-            // document.querySelector('#btn-debug').style.display = '';
+            // do something when recording is stopped
         });
         
         this.ar.addEventListener(ARKitWrapper.DID_MOVE_BACKGROUND_EVENT, () => {
@@ -60,11 +56,21 @@ class App {
         });
         
         this.ar.addEventListener(ARKitWrapper.INTERRUPTED_EVENT, () => {
-            // this.showMessage('arkitInterrupted');
+            // do something on interruption event
         });
         
         this.ar.addEventListener(ARKitWrapper.INTERRUPTION_ENDED_EVENT, () => {
-            // this.showMessage('arkitInterruptionEnded');
+            // do something on interruption event ended
+        });
+        
+        this.ar.addEventListener(ARKitWrapper.SHOW_DEBUG_EVENT, e => {
+            const options = e.detail;
+            this.isDebug = options.debug == 1;
+            if (!this.isDebug) {
+                this.fpsStats.domElement.style.display = 'none';
+            } else {
+                this.fpsStats.domElement.style.display = '';
+            }
         });
     }
     run() {
@@ -82,9 +88,6 @@ class App {
         
         return cubeMesh;
     }
-    addObject() {
-
-    }
     generateCubeName() {
         const name = 'obj-' + this.cubesNames;
         this.cubesNames++;
@@ -92,13 +95,12 @@ class App {
     }
     initScene(canvasId) {
         this.canvas = document.getElementById(canvasId);
-        // use webgl1
-        //~ this.canvas.getContext('webgl');
         
         this.scene = new THREE.Scene();
         this.engine = new THREE.WebGLRenderer({
             antialias: true,
-            canvas: this.canvas
+            canvas: this.canvas,
+            alpha: true
         });
         this.width = window.innerWidth;
         this.height = window.innerHeight;
@@ -127,20 +129,6 @@ class App {
         document.body.appendChild(this.fpsStats.domElement);
     }
     
-    toggleDebug() {
-        this.isDebug = !this.isDebug;
-        
-        if (!this.isDebug) {
-            this.fpsStats.domElement.style.display = 'none';
-            document.querySelector('#info-container').style.display = 'none';
-        } else {
-            this.fpsStats.domElement.style.display = '';
-            document.querySelector('#info-container').style.display = '';
-        }
-        
-        this.ar.setDebugDisplay(this.isDebug);
-    }
-    
     cleanScene() {
         let children2Remove = [];
 
@@ -156,106 +144,18 @@ class App {
         
         this.cubesNum = 0;
         this.cubesNames = 0;
-        document.querySelector('#info-objectsCnt').textContent = 0;
     }
 
-    reset() {
-        const onStop = () => {
-            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT, onStop);
-            this.cleanScene();
-            this.watchAR();
-        };
-        this.ar.addEventListener(ARKitWrapper.STOP_EVENT, onStop);
-        this.ar.stop();
-    }
-    
     registerUIEvents() {
-        document.querySelector('#btn-add').addEventListener('click', () => {
-            this.addObject();
-        });          
-        
-        document.querySelector('#btn-set-options').addEventListener('click', () => {
-            const frm = document.querySelector('#form-options');
-            let options = {
-                browser: frm.elements['opt-browser'].checked,
-                points: frm.elements['opt-points'].checked,
-                focus: frm.elements['opt-focus'].checked,
-                rec: frm.elements['opt-rec'].checked,
-                rec_time: frm.elements['opt-rec_time'].checked,
-                mic: frm.elements['opt-mic'].checked,
-                build: frm.elements['opt-build'].checked,
-                plane: frm.elements['opt-plane'].checked,
-                warnings: frm.elements['opt-warnings'].checked,
-                anchors: frm.elements['opt-anchors'].checked,
-                debug: frm.elements['opt-debug'].checked,
-                statistics: frm.elements['opt-statistics'].checked
-            };
-            this.isDebug = options.debug;
-            
-            this.showMessage(JSON.stringify(options));
-            
-            this.ar.setUIOptions(options);
-        });          
-        
-        document.querySelector('#btn-options').addEventListener('click', () => {
-            document.querySelector('#area-options').style.display = '';
-            document.querySelector('#info-debug').style.display = 'none';
-            document.querySelector('#info-snapdebug').style.display = 'none';
-        });        
-        
-        document.querySelector('#btn-stop').addEventListener('click', () => {
-            this.ar.stop();
-        });        
-        
-        document.querySelector('#btn-testMemoryWarningOnShot').addEventListener('click', () => {
-            window.webkit.messageHandlers.testMemoryWarningOnShot.postMessage({
-                test: true
-            });
-        });
-        
-        document.querySelector('#btn-debug').addEventListener('click', () => {
-            this.toggleDebug();
-        });
-        
-        document.querySelector('#btn-reset').addEventListener('click', () => {
-            this.reset();
-        });
-
-        document.querySelector('#message').onclick = function() {
-            this.style.display = 'none';
-        }
-        document.querySelector('#btn-snapdebug').addEventListener('click', () => {
-            document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
-        });
-        
-        this.mousePos = null;
+        this.tapPos = {x: 0, y: 0};
         this.canvas.addEventListener('click', e => {
             let normX = e.clientX / window.innerWidth;
             let normY = e.clientY / window.innerHeight;
             
-            this.mousePos = {x: 2 * normX - 1, y: -2 * normY + 1};
+            this.tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
             
             this.ar.hitTest(normX, normY);
         });
-        
-        window.showDebug = (options) => {
-            this.showMessage(JSON.stringify(options));
-            
-            let isOn = false;
-            if (options && options.debug == "1") isOn = true;
-            this.isDebug = isOn;
-            
-            if (!this.isDebug) {
-                this.fpsStats.domElement.style.display = 'none';
-            } else {
-                this.fpsStats.domElement.style.display = '';
-            }
-        }
-    }
-    
-    showMessage(txt) {
-        document.querySelector('#message').textContent = txt;
-        document.querySelector('#message').style.display = 'block';
     }
 
     requestAnimationFrame() {
@@ -288,10 +188,8 @@ class App {
         let planeResults = [];
         let planeExistingUsingExtentResults = [];
         let planeExistingResults = [];
-
-        document.querySelector('#info-snapdebug').value = JSON.stringify(e.detail);
         
-        if (Array.isArray(e.detail) && e.detail.length) {
+        if (typeof(e) == 'object' && Array.isArray(e.detail) && e.detail.length) {
             // search for planes
             planeResults = e.detail.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
             
@@ -319,62 +217,35 @@ class App {
                 info = e.detail[0];
             }
         }
-        
+
         let name = this.generateCubeName();
         let transform;
-        
-        let cameraPos;
-        
-        this.raycaster.setFromCamera(
-            {x: this.mousePos.x, y: this.mousePos.y},
-            this.camera
-        );
-        console.log('ray origin', this.raycaster.ray.origin);
-        console.log('dir', this.raycaster.ray.direction);
-        console.log('mousePos', this.mousePos);
-        
-        let newPos;
-        if (info && false) {
+        if (info) {
             // if hit testing is positive
             transform = info.world_transform;
         } else {
+            // if hit testing is negative put object at distance 1m from camera
+            this.raycaster.setFromCamera(
+                {x: this.tapPos.x, y: this.tapPos.y},
+                this.camera
+            );
+            
+            let objPos = this.raycaster.ray.origin.clone();
+            objPos.add(this.raycaster.ray.direction);
             transform = new THREE.Matrix4();
-
-            cameraPos = new THREE.Vector3();
-            cameraPos.setFromMatrixPosition(this.camera.matrix);
-            
-            newPos = this.raycaster.ray.origin.clone();
-            newPos.add(this.raycaster.ray.direction);
-            
-            // if hit testing is negative put object in arbitrary position
-            //~ transform.makeTranslation(cameraPos.x, cameraPos.y, cameraPos.z - 1);
-            transform.makeTranslation(newPos.x, newPos.y, newPos.z);
+            transform.makeTranslation(objPos.x, objPos.y, objPos.z);
             transform = transform.toArray();
         }
+        
         this.ar.addAnchor(
             name,
             transform
         );
-        
-        this.showMessage(JSON.stringify({
-            newPos: newPos,
-            cameraPos: typeof(cameraPos) != 'undefined' ? {x: cameraPos.x, y: cameraPos.y, z: cameraPos.z} : null,
-            numberPlaneResult: planeResults.length,
-            numberAll: info ? e.detail.length : 0,
-            info: info ? {
-                type: info.type,
-                distance: info.distance,
-                world_transform: info.world_transform
-            } : null
-        }));
     }
     onARAddObject(e) {
         const info = e.detail;
         const cubeMesh = this.createCube(info.uuid);
         
-        //~ const axisHelper = new THREE.AxisHelper(45);
-        //~ cubeMesh.add(axisHelper);
-
         cubeMesh.matrixAutoUpdate = false;
 
         info.transform[13] += CUBE_SIZE / 2;
@@ -384,8 +255,6 @@ class App {
         this.cubesNum++;
 
         this.requestAnimationFrame();
-        
-        document.querySelector('#info-objectsCnt').textContent = this.cubesNum;
     }
     
     onARDidMoveBackground() {
@@ -414,39 +283,9 @@ class App {
 
             this.camera.matrix.fromArray(cameraTransformMatrix);
         }
-        /*
-        const arObjects = this.ar.getData('objects');
-        if (arObjects && arObjects.forEach) {
-            arObjects.forEach(info => {
-                // is it needed?
-                const mesh = this.scene.getObjectByName(info.uuid);
-                // mesh.matrix.fromArray(info.transform);
-            });
-        }
-        */
-        if (this.isDebug) {
-            this.logDebugData();
-        }
         
         this.requestAnimationFrame();
     }
-    
-    logDebugData() {
-        let data = this.ar.getData();
-        const date = (new Date()).toTimeString();
-        
-        // show data in debug layer
-        const objPositions = [];
-        this.scene.children.forEach(child => {
-            if (child.name.substr(0, 3) !== 'obj') {
-                return;
-            }
-            objPositions.push(child.getWorldPosition());
-        });
-        
-        document.querySelector('#info-debug').value = JSON.stringify(data) + ':' + date;
-    }
-    
 }
 
 window.addEventListener('DOMContentLoaded', () => {

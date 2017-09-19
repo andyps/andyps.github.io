@@ -3,9 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-    <title>Camera App Three.js</title>
+    <title>ARKit JS App Demo</title>
     
-    <link href="app.css" rel="stylesheet" type="text/css" charset="utf-8" >
+    <style>
+    html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0);
+    }
+    canvas {
+        touch-action: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+
+    </style>
     
     <script src="vendor/three.js"></script>
     <script src="vendor/stats.js"></script> 
@@ -14,51 +28,100 @@
     <script src="platform/ARKitWrapper.js" type="module"></script>
     
     <script src="dev.js" type="module"></script>
-
+    
     <script src="webkit-simulator.js"></script>
+    
+    <script type="module">
+        import EventHandlerBase from './fill/EventHandlerBase.js';
+        class testcls extends EventHandlerBase {
+            onEvent(type, data) {
+                this.dispatchEvent(new CustomEvent(type, {
+                    source: this,
+                    detail: data
+                }))
+            }
+            scheduleEvent(type, data) {
+                setTimeout(() => {
+                    this.onEvent(type, data);
+                }, 3000);
+            }
+            testpromise(isValid = true) {
+                return new Promise((resolve, reject) => {
+                    if (!isValid) {
+                        console.log('willreject');
+                        reject(new Error('Rejected!'));
+                        return 777;
+                    }
+
+                    let callback = e => {
+                        console.log('willresolve');
+                        this.removeEventListener('event1', callback, false)
+                        resolve(e)
+                    }
+                    this.addEventListener('event1', callback, false)
+                    
+                    this.scheduleEvent('event1', {x: 1, y: 2});
+                    
+                    return 888;
+                });
+            }
+        }
+        
+        window.testcls = testcls;
+        var tst = new testcls();
+        window.tst = tst;
+    </script>
+    <script>
+        function test3() {
+            tst.addEventListener('event1', e => {
+                console.log('l1', e);
+            }, false);
+            
+            tst.testpromise().then(e => {
+                console.log('l2-resolve', e);
+            }).catch(e => {
+                console.log('l2-catch', e);
+            });
+        }
+        function test1() {
+            if (!window.app) return; window.app.ar.addObject('uuid1', [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,1.5,-1,1]);
+        }
+        function testpromise(isValid) {
+            return new Promise((resolve, reject) => {
+                if (!isValid) {
+                    console.log('willreject');
+                    reject(new Error('Rejected!'));
+                    return 777;
+                }
+                
+                let callback = () => {
+                    console.log('willresolve');
+                    resolve('hello')
+                }
+                
+                setTimeout(() => {
+                    callback();
+                }, 3000);
+                
+                return 888;
+            });
+        }
+        function test2(isValid) {
+            testpromise(isValid).then(e => {
+                console.log('thenfired', e);
+            }).catch(e => {
+                console.log('catched', e);
+            });
+        }
+    </script>
 </head>
 <body>
-<canvas id="app-canvas" oncontextmenu="return false;">Browser not supported</canvas>
-
-<a href="#" class="reset" title="reset" id="btn-reset" style="display: none;"></a>
-<a href="#" class="mic" title="mic" style="display: none;"></a>
-<a href="#" class="object3d" id="btn-add" title="Add Object" style="display: none;"></a>
-<a href="#" class="debug" id="btn-debug" title="Debug Mode" style="display: none;"></a>
-<span id="info-objectsCnt" >0</span>
-
-<div id="message" style="display: none;">Any message</div>
-<div id="info-container">
-    <div>
-        <button id="btn-snapdebug">Snap</button>
-        <button id="btn-stop">Stop</button>
-        <button id="btn-options">Opts</button>
-        <br>
-        <button id="btn-testMemoryWarningOnShot">testMemoryWarningOnShot</button>
-        <br>
-        <textarea tabindex="-1" readonly id="info-debug" rows="10" cols="40"></textarea>
-        <br>
-        <textarea tabindex="-1" readonly id="info-snapdebug" rows="10" cols="40"></textarea>
-        
-        <div id="area-options" style="display: none; overflow: auto; height: 300px;">
-            <form id="form-options">
-                <input type="button" value="Send" id="btn-set-options"><br>
-                browser<input type="checkbox" name="opt-browser" checked>
-                points<input type="checkbox" name="opt-points" checked><br>
-                focus<input type="checkbox" name="opt-focus" checked><br>
-                rec<input type="checkbox" name="opt-rec" checked>
-                rec_time<input type="checkbox" name="opt-rec_time" checked><br>
-                debug<input type="checkbox" name="opt-debug" checked>
-                stats<input type="checkbox" name="opt-statistics" checked><br>
-                anchors<input type="checkbox" name="opt-anchors" checked><br>
-                plane<input type="checkbox" name="opt-plane" checked><br>
-                mic<input type="checkbox" name="opt-mic" checked>
-                build<input type="checkbox" name="opt-build" checked><br>
-                
-                warnings<input type="checkbox" name="opt-warnings" checked><br>
-                
-            </form>
-        </div>
-    </div>
+<div style="position: absolute; right: 0px; top: 0px;">
+    <button onclick="test1()">Test1</button>
+    <button onclick="test2(false)">Test2-invalid</button>
+    <button onclick="test2(true)">Test2-valid</button>
+    <button onclick="test3()">Test3</button>
 </div>
+<canvas id="app-canvas" oncontextmenu="return false;">Browser not supported</canvas>
 </body>
 </html>
