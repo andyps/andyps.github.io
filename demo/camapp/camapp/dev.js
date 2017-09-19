@@ -280,6 +280,7 @@ class App {
     }
     
     onARInit() {
+        console.log('init');
         this.deviceId = this.ar.deviceId;
         this.watchAR();
     }

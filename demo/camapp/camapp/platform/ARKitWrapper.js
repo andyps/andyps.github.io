@@ -175,42 +175,22 @@ export default class ARKitWrapper extends EventHandlerBase {
 	}
 
 	addObject(uuid, transform) {
-var div = document.createElement('div');
-div.innerHTML = '<b>lalal</b>';
-div.style.position = 'absolute';
-div.style.bottom = '0px';
-div.style.left = '0px';
-document.body.appendChild(div);
 		return new Promise((resolve, reject) => {
-            if (!this._isInitialized) {
-                reject();
-                return;
-            }
-	//~ _onAddAnchor(data) {
-		//~ this.dispatchEvent(new CustomEvent(ARKitWrapper.ADD_ANCHOR_EVENT, {
-			//~ source: this,
-			//~ detail: data
-		//~ }))
-	//~ }
+			if (!this._isInitialized) {
+				reject();
+				return;
+			}
 
 			let callback = (data) => {
-				//~ this.removeEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, callback, false)
+				this.removeEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, callback, false)
 				resolve(data)
 			}
-			//~ this.addEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, callback, false)
+			this.addEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, callback, false)
 
-            window[this._globalCallbacksMap.onAddAnchor] = (data) => {
-                data = {detail: data};
-                console.log('resolve');
-                resolve(data);
-            };
-
-
-
-            window.webkit.messageHandlers.addAnchor.postMessage({
-                uuid: uuid,
-                transform: transform,
-                callback: this._globalCallbacksMap.onAddAnchor
+			window.webkit.messageHandlers.addAnchor.postMessage({
+				uuid: uuid,
+				transform: transform,
+				callback: this._globalCallbacksMap.onAddAnchor
             })
 		})
 	}

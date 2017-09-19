@@ -43,9 +43,9 @@
             scheduleEvent(type, data) {
                 setTimeout(() => {
                     this.onEvent(type, data);
-                }, 3000);
+                }, 10000);
             }
-            testpromise(isValid = true) {
+            testpromise(isValid = true, num = 0) {
                 return new Promise((resolve, reject) => {
                     if (!isValid) {
                         console.log('willreject');
@@ -54,13 +54,16 @@
                     }
 
                     let callback = e => {
-                        console.log('willresolve');
+                        console.log('willresolve' + num, this._listeners.get('event1'));
                         this.removeEventListener('event1', callback, false)
+                        
+                        console.log('afterremove', this._listeners.get('event1'));
+                        
                         resolve(e)
                     }
                     this.addEventListener('event1', callback, false)
-                    
-                    this.scheduleEvent('event1', {x: 1, y: 2});
+                    window['ggg' + num] = callback;
+                    //~ this.scheduleEvent('event1', {x: 1, y: 2});
                     
                     return 888;
                 });
@@ -72,6 +75,17 @@
         window.tst = tst;
     </script>
     <script>
+        function test4() {
+            tst.testpromise(true, 1).then(e => console.log('p1'));
+            tst.testpromise(true, 2).then(e => console.log('p2'));
+            
+            tst.onEvent('event1', {x: 1, y: 2});
+            //~ setTimeout(() => {
+                //~ console.log('add another promise');
+                //~ tst.testpromise().then(e => console.log('p2'));
+                //~ tst.scheduleEvent('event1', {x: 1, y: 2});
+            //~ }, 5000);
+        }
         function test3() {
             tst.addEventListener('event1', e => {
                 console.log('l1', e);
@@ -121,6 +135,7 @@
     <button onclick="test2(false)">Test2-invalid</button>
     <button onclick="test2(true)">Test2-valid</button>
     <button onclick="test3()">Test3</button>
+    <button onclick="test4()">Test4</button>
 </div>
 <canvas id="app-canvas" oncontextmenu="return false;">Browser not supported</canvas>
 </body>
