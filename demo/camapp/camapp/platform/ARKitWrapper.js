@@ -175,6 +175,12 @@ export default class ARKitWrapper extends EventHandlerBase {
 	}
 
 	addObject(uuid, transform) {
+var div = document.createElement('div');
+div.innerHTML = '<b>lalal</b>';
+div.style.position = 'absolute';
+div.style.bottom = '0px';
+div.style.left = '0px';
+document.body.appendChild(div);
 		return new Promise((resolve, reject) => {
             if (!this._isInitialized) {
                 reject();
@@ -198,6 +204,7 @@ export default class ARKitWrapper extends EventHandlerBase {
                 console.log('resolve');
                 resolve(data);
             };
+
 
 
             window.webkit.messageHandlers.addAnchor.postMessage({
