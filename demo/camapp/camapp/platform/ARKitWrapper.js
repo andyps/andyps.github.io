@@ -180,12 +180,23 @@ export default class ARKitWrapper extends EventHandlerBase {
                 reject();
                 return;
             }
-            
-			let callback = () => {
+	//~ _onAddAnchor(data) {
+		//~ this.dispatchEvent(new CustomEvent(ARKitWrapper.ADD_ANCHOR_EVENT, {
+			//~ source: this,
+			//~ detail: data
+		//~ }))
+	//~ }
+
+			let callback = (data) => {
 				this.removeEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, callback, false)
-				resolve()
+				resolve(data)
 			}
 			this.addEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, callback, false)
+
+            //~ this._globalCallbacksMap.onAddAnchor = (data) => {
+                //~ resolve();
+            //~ };
+
 
             window.webkit.messageHandlers.addAnchor.postMessage({
                 uuid: uuid,

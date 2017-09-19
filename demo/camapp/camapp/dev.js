@@ -36,7 +36,7 @@ class App {
         this.ar.waitForInit().then(this.onARInit.bind(this));
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
         
-        this.ar.addEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, this.onARAddObject.bind(this));
+        //~ this.ar.addEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, this.onARAddObject.bind(this));
         this.ar.addEventListener(ARKitWrapper.HIT_TEST_EVENT, this.onARHitTest.bind(this));
         
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
@@ -237,10 +237,19 @@ class App {
             transform = transform.toArray();
         }
         
-        this.ar.addAnchor(
+        //~ this.ar.addAnchor(
+            //~ name,
+            //~ transform
+        //~ );
+        this.ar.addObject(
             name,
             transform
-        );
+        ).then(e => {
+            console.log('then', e);
+            this.onARAddObject(e);
+        }).catch(e => {
+            console.log('catch', e);
+        });
     }
     onARAddObject(e) {
         const info = e.detail;
