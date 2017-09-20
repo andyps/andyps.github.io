@@ -29,19 +29,8 @@
     <script src="dev.js" type="module"></script>
     
     <script src="webkit-simulator.js"></script>
-    <script>
-        function test5() {
-            window.app.ar.stop().then(info => {
-                console.log('afterstop', info);
-                document.querySelector('#btn5').style.color = 'red';
-            })
-        }
-    </script>
 </head>
 <body>
-<div style="position: absolute; right: 0px; top: 0px;">
-    <button id="btn5" onclick="test5()">Test5</button>
-</div>
 <canvas id="app-canvas" oncontextmenu="return false;">Browser not supported</canvas>
 </body>
 </html>
