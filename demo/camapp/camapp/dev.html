@@ -18,7 +18,6 @@
         touch-action: none;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     }
-
     </style>
     
     <script src="vendor/three.js"></script>
@@ -30,112 +29,18 @@
     <script src="dev.js" type="module"></script>
     
     <script src="webkit-simulator.js"></script>
-    
-    <script type="module">
-        import EventHandlerBase from './fill/EventHandlerBase.js';
-        class testcls extends EventHandlerBase {
-            onEvent(type, data) {
-                this.dispatchEvent(new CustomEvent(type, {
-                    source: this,
-                    detail: data
-                }))
-            }
-            scheduleEvent(type, data) {
-                setTimeout(() => {
-                    this.onEvent(type, data);
-                }, 10000);
-            }
-            testpromise(isValid = true, num = 0) {
-                return new Promise((resolve, reject) => {
-                    if (!isValid) {
-                        console.log('willreject');
-                        reject(new Error('Rejected!'));
-                        return 777;
-                    }
-
-                    let callback = e => {
-                        console.log('willresolve' + num, this._listeners.get('event1'));
-                        this.removeEventListener('event1', callback, false)
-                        
-                        console.log('afterremove', this._listeners.get('event1'));
-                        
-                        resolve(e)
-                    }
-                    this.addEventListener('event1', callback, false)
-                    window['ggg' + num] = callback;
-                    //~ this.scheduleEvent('event1', {x: 1, y: 2});
-                    
-                    return 888;
-                });
-            }
-        }
-        
-        window.testcls = testcls;
-        var tst = new testcls();
-        window.tst = tst;
-    </script>
     <script>
-        function test4() {
-            tst.testpromise(true, 1).then(e => console.log('p1'));
-            tst.testpromise(true, 2).then(e => console.log('p2'));
-            
-            tst.onEvent('event1', {x: 1, y: 2});
-            //~ setTimeout(() => {
-                //~ console.log('add another promise');
-                //~ tst.testpromise().then(e => console.log('p2'));
-                //~ tst.scheduleEvent('event1', {x: 1, y: 2});
-            //~ }, 5000);
-        }
-        function test3() {
-            tst.addEventListener('event1', e => {
-                console.log('l1', e);
-            }, false);
-            
-            tst.testpromise().then(e => {
-                console.log('l2-resolve', e);
-            }).catch(e => {
-                console.log('l2-catch', e);
-            });
-        }
-        function test1() {
-            if (!window.app) return; window.app.ar.addObject('uuid1', [1,0,0,0, 0,1,0,0, 0,0,1,0, 0,1.5,-1,1]);
-        }
-        function testpromise(isValid) {
-            return new Promise((resolve, reject) => {
-                if (!isValid) {
-                    console.log('willreject');
-                    reject(new Error('Rejected!'));
-                    return 777;
-                }
-                
-                let callback = () => {
-                    console.log('willresolve');
-                    resolve('hello')
-                }
-                
-                setTimeout(() => {
-                    callback();
-                }, 3000);
-                
-                return 888;
-            });
-        }
-        function test2(isValid) {
-            testpromise(isValid).then(e => {
-                console.log('thenfired', e);
-            }).catch(e => {
-                console.log('catched', e);
-            });
+        function test5() {
+            window.app.ar.stop().then(info => {
+                console.log('afterstop', info);
+                document.querySelector('#btn5').style.color = 'red';
+            })
         }
     </script>
 </head>
 <body>
 <div style="position: absolute; right: 0px; top: 0px;">
-    <button onclick="test1()">Test1</button>
-    <button onclick="test2(false)">Test2-invalid</button>
-    <button onclick="test2(true)">Test2-valid</button>
-    <button onclick="test3()">Test3</button>
-    <button onclick="test4()">Test4</button>
+    <button id="btn5" onclick="test5()">Test5</button>
 </div>
 <canvas id="app-canvas" oncontextmenu="return false;">Browser not supported</canvas>
 </body>
