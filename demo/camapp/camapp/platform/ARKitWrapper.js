@@ -187,7 +187,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	stop() {
 		return new Promise((resolve, reject) => {
 			if (!this._isWatching) {
-				resolve('***');
+				resolve();
 				return;
 			}
 			window.webkit.messageHandlers.stopAR.postMessage({

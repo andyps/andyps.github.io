@@ -338,7 +338,9 @@ class App {
         
         document.querySelector('#info-snapdebug').value = 'all:\n' + JSON.stringify(info ? data : null) + '\n\n'
             + 'selected:\n' + (info ? JSON.stringify(info) : 'empty');
-
+        
+        document.querySelector('#info-snapdebug').value += '\n\n---\n\n' + JSON.stringify(transform)
+        
         this.ar.addAnchor(
             name,
             transform
