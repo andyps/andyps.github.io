@@ -393,15 +393,12 @@ export default class ARKitWrapper extends EventHandlerBase {
 // ARKitWrapper event names:
 ARKitWrapper.INIT_EVENT = 'arkit-init'
 ARKitWrapper.WATCH_EVENT = 'arkit-watch'
-//~ ARKitWrapper.STOP_EVENT = 'arkit-stop'
-//~ ARKitWrapper.ADD_ANCHOR_EVENT = 'arkit-add-anchor'
 ARKitWrapper.RECORD_START_EVENT = 'arkit-record-start'
 ARKitWrapper.RECORD_STOP_EVENT = 'arkit-record-stop'
 ARKitWrapper.DID_MOVE_BACKGROUND_EVENT = 'arkit-did-move-background'
 ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT = 'arkit-will-enter-foreground'
 ARKitWrapper.INTERRUPTED_EVENT = 'arkit-interrupted'
 ARKitWrapper.INTERRUPTION_ENDED_EVENT = 'arkit-interruption-ended'
-//~ ARKitWrapper.HIT_TEST_EVENT = 'arkit-hit-test'
 ARKitWrapper.SHOW_DEBUG_EVENT = 'arkit-show-debug'
 
 // hit test types
