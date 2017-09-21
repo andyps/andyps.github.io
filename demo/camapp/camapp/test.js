@@ -36,9 +36,6 @@ class App {
         this.ar.waitForInit().then(this.onARInit.bind(this));
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
         
-        this.ar.addEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, this.onARAddObject.bind(this));
-        this.ar.addEventListener(ARKitWrapper.HIT_TEST_EVENT, this.onARHitTest.bind(this));
-        
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
             document.querySelector('#btn-reset').style.display = 'none';
             document.querySelector('#btn-debug').style.display = 'none';
@@ -149,7 +146,7 @@ class App {
             document.querySelector('#info-container').style.display = '';
         }
         
-        this.ar.setDebugDisplay(this.isDebug);
+        //~ this.ar.setDebugDisplay(this.isDebug);
     }
     
     cleanScene() {
@@ -171,13 +168,10 @@ class App {
     }
 
     reset() {
-        const onStop = () => {
-            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT, onStop);
+        this.ar.stop().then(() => {
             this.cleanScene();
             this.watchAR();
-        };
-        this.ar.addEventListener(ARKitWrapper.STOP_EVENT, onStop);
-        this.ar.stop();
+        });
     }
     
     registerUIEvents() {
@@ -251,8 +245,8 @@ class App {
                 y: normY,
                 tap: this.tapPos
             }));
-            
-            this.ar.hitTest(normX, normY);
+           
+            this.ar.hitTest(normX, normY).then(data => this.onARHitTest(data)); 
         });
     }
     
@@ -286,7 +280,7 @@ class App {
             this.fpsStats.end();
         }
     }
-    onARHitTest(e) {
+    onARHitTest(data) {
         let info;
         let planeResults = [];
         let planeExistingUsingExtentResults = [];
@@ -294,9 +288,9 @@ class App {
 
         document.querySelector('#info-snapdebug').value = 'onhittest:' + JSON.stringify(e);
 
-        if (typeof(e) == 'object' && Array.isArray(e.detail) && e.detail.length) {
+        if (Array.isArray(data) && data.length) {
             // search for planes
-            planeResults = e.detail.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
+            planeResults = data.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
             
             planeExistingUsingExtentResults = planeResults.filter(
                 hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT
@@ -319,7 +313,7 @@ class App {
                 info = planeResults[0];
             } else {
                 // feature points if any
-                info = e.detail[0];
+                info = data[0];
             }
         }
         
@@ -342,16 +336,15 @@ class App {
             transform = transform.toArray();
         }
         
-        document.querySelector('#info-snapdebug').value = 'all:\n' + JSON.stringify(info ? e.detail : null) + '\n\n'
+        document.querySelector('#info-snapdebug').value = 'all:\n' + JSON.stringify(info ? data : null) + '\n\n'
             + 'selected:\n' + (info ? JSON.stringify(info) : 'empty');
 
         this.ar.addAnchor(
             name,
             transform
-        );
+        ).then(info => this.onARAddObject(info));
     }
-    onARAddObject(e) {
-        const info = e.detail;
+    onARAddObject(info) {
         const cubeMesh = this.createCube(info.uuid);
         
         //~ const axisHelper = new THREE.AxisHelper(45);
@@ -371,12 +364,9 @@ class App {
     }
     
     onARDidMoveBackground() {
-        const onStopByMoving2Back = () => {
-            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT, onStopByMoving2Back);
+        this.ar.stop().then(() => {
             this.cleanScene();
-        };
-        this.ar.addEventListener(ARKitWrapper.STOP_EVENT, onStopByMoving2Back);
-        this.ar.stop();
+        });
     }
     
     onARWillEnterForeground() {
