@@ -105,7 +105,7 @@ var EventHandlerBase = function () {
 			if (Array.isArray(listeners) === false) {
 				return;
 			}
-			for (var i; i < listeners.length; i++) {
+			for (var i = 0; i < listeners.length; i++) {
 				if (listeners[i] === listener) {
 					listeners.splice(i, 1);
 					return;
@@ -1572,9 +1572,7 @@ ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the instance,
 			location: boolean,
 			camera: boolean,
 			objects: boolean,
-			debug: boolean,
-			h_plane: boolean,
-			hit_test_result: 'hit_test_plane'
+			light_intensity: boolean
 		})
 	}
 
@@ -1599,20 +1597,20 @@ var ARKitWrapper = function (_EventHandlerBase) {
 		_this._isInitialized = false;
 		_this._rawARData = null;
 
-		_this._globalCallbacksMap = {}; // Used to map a window.ARCallback method name to an ARKitWrapper.on* method name
-		// Set up the window.ARCallback methods that the ARKit bridge depends on
+		_this._globalCallbacksMap = {}; // Used to map a window.arkitCallback method name to an ARKitWrapper.on* method name
+		// Set up the window.arkitCallback methods that the ARKit bridge depends on
 		var callbackNames = ['onInit', 'onWatch', 'onStop', 'onHitTest', 'onAddAnchor'];
 		for (var i = 0; i < callbackNames.length; i++) {
 			_this._generateGlobalCallback(callbackNames[i], i);
 		}
 
 		// Set up some named global methods that the ARKit to JS bridge uses and send out custom events when they are called
-		var eventCallbacks = [['onStartRecording', ARKitWrapper.RECORD_START_EVENT], ['onStopRecording', ARKitWrapper.RECORD_STOP_EVENT], ['didMoveBackground', ARKitWrapper.DID_MOVE_BACKGROUND_EVENT], ['willEnterForeground', ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT], ['arkitInterrupted', ARKitWrapper.INTERRUPTED_EVENT], ['arkitInterruptionEnded', ARKitWrapper.INTERRUPTION_ENDED_EVENT], ['showDebug', ARKitWrapper.SHOW_DEBUG_EVENT]];
+		var eventCallbacks = [['arkitStartRecording', ARKitWrapper.RECORD_START_EVENT], ['arkitStopRecording', ARKitWrapper.RECORD_STOP_EVENT], ['arkitDidMoveBackground', ARKitWrapper.DID_MOVE_BACKGROUND_EVENT], ['arkitWillEnterForeground', ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT], ['arkitInterrupted', ARKitWrapper.INTERRUPTED_EVENT], ['arkitInterruptionEnded', ARKitWrapper.INTERRUPTION_ENDED_EVENT], ['arkitShowDebug', ARKitWrapper.SHOW_DEBUG_EVENT]];
 
 		var _loop = function _loop(_i) {
 			window[eventCallbacks[_i][0]] = function (detail) {
 				detail = detail || null;
-				_this.dispatchEvent(new CustomEvent(ARKitWrapper[eventCallbacks[_i][1]], {
+				_this.dispatchEvent(new CustomEvent(eventCallbacks[_i][1], {
 					source: _this,
 					detail: detail
 				}));
@@ -1775,8 +1773,7 @@ var ARKitWrapper = function (_EventHandlerBase) {
   		location: boolean,
   		camera: boolean,
   		objects: boolean,
-  		h_plane: boolean,
-  		hit_test_result: 'hit_test_plane'
+  		light_intensity: boolean
   	}
   */
 
@@ -1798,8 +1795,7 @@ var ARKitWrapper = function (_EventHandlerBase) {
 					location: true,
 					camera: true,
 					objects: true,
-					h_plane: true,
-					hit_test_result: 'hit_test_plane'
+					light_intensity: true
 				};
 			}
 
@@ -1812,31 +1808,20 @@ var ARKitWrapper = function (_EventHandlerBase) {
 		}
 
 		/*
-  Sends a showDebug message to ARKit to indicate whether the Metal layer should show debug info like detected planes
-  */
-
-	}, {
-		key: 'setDebugDisplay',
-		value: function setDebugDisplay(showDebug) {
-			window.webkit.messageHandlers.showDebug.postMessage({
-				debug: showDebug
-			});
-		}
-
-		/*
   Sends a setUIOptions message to ARKit to set ui options (show or hide ui elements)
   options: {
-  	browser: true,
-  	points: true,
-  	focus: true,
-  	rec: true,
-  	rec_time: true,
-  	mic: true,
-  	build: true,
-  	plane: true,
-  	warnings: true,
-  	anchors: true,
-  	debug: true
+  	browser: boolean,
+  	points: boolean,
+  	focus: boolean,
+  	rec: boolean,
+  	rec_time: boolean,
+  	mic: boolean,
+  	build: boolean,
+  	plane: boolean,
+  	warnings: boolean,
+  	anchors: boolean,
+  	debug: boolean,
+  	statistics: boolean
   }
   */
 
@@ -1851,17 +1836,18 @@ var ARKitWrapper = function (_EventHandlerBase) {
   Usually results in ARKit calling back to _onInit with a deviceId
   options: {
   	ui: {
-  		browser: true,
-  		points: true,
-  		focus: true,
-  		rec: true,
-  		rec_time: true,
-  		mic: true,
-  		build: true,
-  		plane: true,
-  		warnings: true,
-  		anchors: true,
-  		debug: true
+  		browser: boolean,
+  		points: boolean,
+  		focus: boolean,
+  		rec: boolean,
+  		rec_time: boolean,
+  		mic: boolean,
+  		build: boolean,
+  		plane: boolean,
+  		warnings: boolean,
+  		anchors: boolean,
+  		debug: boolean,
+  		statistics: boolean
   	}
   }
   */
@@ -1959,6 +1945,7 @@ var ARKitWrapper = function (_EventHandlerBase) {
   		type: hitTestType,
   		world_transform: matrix4x4 - specifies the position and orientation relative to WCS,
   		local_transform: matrix4x4 - the position and orientation of the hit test result relative to the nearest anchor or feature point,
+  		distance: distance to the detected plane,
   		anchor: {uuid, transform, ...} - the anchor representing the detected surface, if any
   	},
   	...
@@ -1977,18 +1964,18 @@ var ARKitWrapper = function (_EventHandlerBase) {
 
 		/*
   The ARKit iOS app depends on several callbacks on `window`. This method sets them up.
-  They end up as window.ARCallback? where ? is an integer.
-  You can map window.ARCallback? to ARKitWrapper instance methods using _globalCallbacksMap
+  They end up as window.arkitCallback? where ? is an integer.
+  You can map window.arkitCallback? to ARKitWrapper instance methods using _globalCallbacksMap
   */
 
 	}, {
 		key: '_generateGlobalCallback',
 		value: function _generateGlobalCallback(callbackName, num) {
-			var name = 'ARCallback' + num;
+			var name = 'arkitCallback' + num;
 			this._globalCallbacksMap[callbackName] = name;
 			var self = this;
-			window[name] = function () {
-				self['_' + callbackName].apply(self, arguments);
+			window[name] = function (deviceData) {
+				self['_' + callbackName](deviceData);
 			};
 		}
 	}, {
@@ -2021,21 +2008,12 @@ var ARKitWrapper = function (_EventHandlerBase) {
 
 			if (typeof ARKitWrapper.GLOBAL_INSTANCE === 'undefined') {
 				ARKitWrapper.GLOBAL_INSTANCE = new ARKitWrapper();
-				options = options && (typeof options === 'undefined' ? 'undefined' : _typeof(options)) == 'object' ? options : {
-					ui: {
-						browser: true,
-						points: true,
-						focus: false,
-						rec: true,
-						rec_time: true,
-						mic: false,
-						build: false,
-						plane: false,
-						warnings: true,
-						anchors: false,
-						debug: false
-					}
+				options = options && (typeof options === 'undefined' ? 'undefined' : _typeof(options)) == 'object' ? options : {};
+				var defaultUIOptions = {
+					browser: true
 				};
+				var uiOptions = _typeof(options.ui) == 'object' ? options.ui : {};
+				options.ui = Object.assign(defaultUIOptions, uiOptions);
 				ARKitWrapper.GLOBAL_INSTANCE._sendInit(options);
 			}
 			return ARKitWrapper.GLOBAL_INSTANCE;

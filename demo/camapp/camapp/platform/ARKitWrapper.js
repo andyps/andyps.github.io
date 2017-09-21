@@ -41,42 +41,29 @@ export default class ARKitWrapper extends EventHandlerBase {
 			this._generateGlobalCallback(callbackNames[i], i)
 		}
 
-		// these functions will be called by arkit
-		window.arkitStartRecording = () => {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.RECORD_START_EVENT, {
-				source: this
-			}))
-		}
-		window.arkitStopRecording = () => {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.RECORD_STOP_EVENT, {
-				source: this
-			}))
-		}
-		window.arkitDidMoveBackground = () => {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.DID_MOVE_BACKGROUND_EVENT, {
-				source: this
-			}))
-		}
-		window.arkitWillEnterForeground = () => {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT, {
-				source: this
-			}))
-		}
-		window.arkitInterrupted = () => {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.INTERRUPTED_EVENT, {
-				source: this
-			}))
-		}
-		window.arkitInterruptionEnded = () => {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.INTERRUPTION_ENDED_EVENT, {
-				source: this
-			}))
-		}
-		window.arkitShowDebug = (options) => {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.SHOW_DEBUG_EVENT, {
-				source: this,
-				detail: options
-			}))
+		// Set up some named global methods that the ARKit to JS bridge uses and send out custom events when they are called
+		let eventCallbacks = [
+			['arkitStartRecording', ARKitWrapper.RECORD_START_EVENT],
+			['arkitStopRecording', ARKitWrapper.RECORD_STOP_EVENT],
+			['arkitDidMoveBackground', ARKitWrapper.DID_MOVE_BACKGROUND_EVENT],
+			['arkitWillEnterForeground', ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT],
+			['arkitInterrupted', ARKitWrapper.INTERRUPTED_EVENT],
+			['arkitInterruptionEnded', ARKitWrapper.INTERRUPTION_ENDED_EVENT], 
+			['arkitShowDebug', ARKitWrapper.SHOW_DEBUG_EVENT]
+		]
+		for(let i=0; i < eventCallbacks.length; i++){
+			window[eventCallbacks[i][0]] = (detail) => {
+				detail = detail || null
+				this.dispatchEvent(
+					new CustomEvent(
+						eventCallbacks[i][1],
+						{
+							source: this,
+							detail: detail
+						}
+					)
+				)
+			}
 		}
 	}
 
