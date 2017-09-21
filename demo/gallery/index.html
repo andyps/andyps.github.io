@@ -1,70 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <title>gallery-native-demo</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width,height=device-height,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>gallery-native-demo</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="status-check"></div>
-  <div class="swiper-container">
+<div class="status-check"></div>
+<div class="swiper-container">
     <div class="swiper-wrapper">
-      <div class="swiper-slide"><img src="assets/thumbnail01.jpg" alt="Thumb"></div>
-      <div class="swiper-slide"><img src="assets/thumbnail02.jpg" alt="Thumb"></div>
-      <div class="swiper-slide"><img src="assets/thumbnail03.jpg" alt="Thumb"></div>
-      <div class="swiper-slide"><img src="assets/thumbnail04.jpg" alt="Thumb"></div>
-      <div class="swiper-slide"><img src="assets/thumbnail05.jpg" alt="Thumb"></div>
-      <div class="swiper-slide"><img src="assets/thumbnail06.jpg" alt="Thumb"></div>
-      <div class="swiper-slide"><img src="assets/thumbnail07.jpg" alt="Thumb"></div>
-      <div class="swiper-slide"><img src="assets/thumbnail08.jpg" alt="Thumb"></div>
-      <div class="swiper-slide"><img src="assets/thumbnail09.jpg" alt="Thumb"></div>
-      <div class="swiper-slide"><img src="assets/thumbnail010.jpg" alt="Thumb"></div>
+        <div class="swiper-slide"><img src="assets/thumbnail01.jpg" alt="Thumb"></div>
+        <div class="swiper-slide"><img src="assets/thumbnail02.jpg" alt="Thumb"></div>
+        <div class="swiper-slide"><img src="assets/thumbnail03.jpg" alt="Thumb"></div>
+        <div class="swiper-slide"><img src="assets/thumbnail04.jpg" alt="Thumb"></div>
+        <div class="swiper-slide"><img src="assets/thumbnail05.jpg" alt="Thumb"></div>
+        <div class="swiper-slide"><img src="assets/thumbnail06.jpg" alt="Thumb"></div>
+        <div class="swiper-slide"><img src="assets/thumbnail07.jpg" alt="Thumb"></div>
+        <div class="swiper-slide"><img src="assets/thumbnail08.jpg" alt="Thumb"></div>
+        <div class="swiper-slide"><img src="assets/thumbnail09.jpg" alt="Thumb"></div>
+        <div class="swiper-slide"><img src="assets/thumbnail010.jpg" alt="Thumb"></div>
     </div>
-  </div>
-  <script src="script.js"></script>
-  <script>
-    (function() {
-      var moving = false;
-      document.addEventListener('touchmove', function(e) {
-        e.preventDefault();
-      });
-      function statusCheck(msg) {
-        document.querySelector('.status-check').style.fontSize = '24px'
-        document.querySelector('.status-check').innerHTML = msg
-        var delay = setTimeout(function() {
-          document.querySelector('.status-check').innerHTML = ''
-        }, 2000)
-      }
-      var swiper = new Swiper('.swiper-container', {
-        slidesPerView: 6,
-        centeredSlides: false,
-        paginationClickable: false,
-        spaceBetween: 5,
-        /**
-        @todo: prevent double tap
-        */
-        onSliderMove: function(swiper, e) {
-          moving = true;
-        },
-        onTap: function(swiper, e) {
-            if (typeof(swiper.clickedIndex) == 'number') {
-              statusCheck('Model is added by tapping!' + swiper.clickedIndex)
-            }
-        },
-        onTouchEnd: function(swiper, e) {
-          if (!moving 
-            && swiper.touches.currentX != swiper.touches.startX 
-            && swiper.touches.currentY < (window.innerHeight - swiper.height - 20)
-          ) {
-            statusCheck('Model is added by dragging!')
-          }
-          moving = false;
+</div>
+<script src="script.js"></script>
+<script>
+  (function () {
+    var moving = false;
+    document.addEventListener('touchmove', function (e) {
+      e.preventDefault();
+    });
+    function statusCheck(msg) {
+      document.querySelector('.status-check').style.fontSize = '24px';
+      document.querySelector('.status-check').innerHTML = msg;
+      var delay = setTimeout(function () {
+        document.querySelector('.status-check').innerHTML = ''
+      }, 2000);
     }
-  })
+
+    var swiper = new Swiper('.swiper-container', {
+      slidesPerView: 6,
+      centeredSlides: false,
+      paginationClickable: false,
+      spaceBetween: 5,
+      /**
+       @todo: prevent double tap
+       */
+      onSliderMove: function (swiper, e) {
+        moving = true;
+      },
+      onTap: function (swiper, e) {
+        if (typeof(swiper.clickedIndex) == 'number') {
+          statusCheck('Model is added by tapping!' + swiper.clickedIndex);
+        }
+      },
+      onTouchStart: function (swiper, e) {
+console.log(e.target);
+        var swiperSlide = e.target.closest('div.swiper-slide');
+console.log(swiperSlide);
+        if (!swiperSlide) {
+          return;
+        }
+
+        var child = swiperSlide;
+        var i = 0;
+        while ((child = child.previousSibling) !== null) {
+          if (child.nodeType === 1) i++;
+        }
+
+        swiper.clickedIndex = i;
+      },
+      onTouchEnd: function (swiper, e) {
+        if (!moving
+          && swiper.touches.currentX != swiper.touches.startX
+          && swiper.touches.currentY < (window.innerHeight - swiper.height - 20)
+        ) {
+          statusCheck('Model is added by dragging!' + swiper.clickedIndex);
+        }
+        moving = false;
+      }
+    })
   }())
-;
-  </script>
+  ;
+</script>
 </body>
 </html>
