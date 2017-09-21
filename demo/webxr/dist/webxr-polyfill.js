@@ -1599,7 +1599,7 @@ var ARKitWrapper = function (_EventHandlerBase) {
 
 		_this._globalCallbacksMap = {}; // Used to map a window.arkitCallback method name to an ARKitWrapper.on* method name
 		// Set up the window.arkitCallback methods that the ARKit bridge depends on
-		var callbackNames = ['onInit', 'onWatch', 'onStop', 'onHitTest', 'onAddAnchor'];
+		var callbackNames = ['onInit', 'onWatch'];
 		for (var i = 0; i < callbackNames.length; i++) {
 			_this._generateGlobalCallback(callbackNames[i], i);
 		}
@@ -1721,16 +1721,21 @@ var ARKitWrapper = function (_EventHandlerBase) {
 	}, {
 		key: 'hitTest',
 		value: function hitTest(x, y) {
+			var _this3 = this;
+
 			var types = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ARKitWrapper.HIT_TEST_TYPE_ALL;
 
-			if (!this._isInitialized) {
-				return false;
-			}
-			window.webkit.messageHandlers.hitTest.postMessage({
-				x: x,
-				y: y,
-				type: types,
-				callback: this._globalCallbacksMap.onHitTest
+			return new Promise(function (resolve, reject) {
+				if (!_this3._isInitialized) {
+					reject(new Error('ARKit is not initialized'));
+					return;
+				}
+				window.webkit.messageHandlers.hitTest.postMessage({
+					x: x,
+					y: y,
+					type: types,
+					callback: _this3._createPromiseCallback('hitTest', resolve)
+				});
 			});
 		}
 
@@ -1741,13 +1746,18 @@ var ARKitWrapper = function (_EventHandlerBase) {
 	}, {
 		key: 'addAnchor',
 		value: function addAnchor(uuid, transform) {
-			if (!this._isInitialized) {
-				return false;
-			}
-			window.webkit.messageHandlers.addAnchor.postMessage({
-				uuid: uuid,
-				transform: transform,
-				callback: this._globalCallbacksMap.onAddAnchor
+			var _this4 = this;
+
+			return new Promise(function (resolve, reject) {
+				if (!_this4._isInitialized) {
+					reject(new Error('ARKit is not initialized'));
+					return;
+				}
+				window.webkit.messageHandlers.addAnchor.postMessage({
+					uuid: uuid,
+					transform: transform,
+					callback: _this4._createPromiseCallback('addAnchor', resolve)
+				});
 			});
 		}
 
@@ -1758,11 +1768,16 @@ var ARKitWrapper = function (_EventHandlerBase) {
 	}, {
 		key: 'stop',
 		value: function stop() {
-			if (!this._isWatching) {
-				return;
-			}
-			window.webkit.messageHandlers.stopAR.postMessage({
-				callback: this._globalCallbacksMap.onStop
+			var _this5 = this;
+
+			return new Promise(function (resolve, reject) {
+				if (!_this5._isWatching) {
+					resolve();
+					return;
+				}
+				window.webkit.messageHandlers.stopAR.postMessage({
+					callback: _this5._createPromiseCallback('stop', resolve)
+				});
 			});
 		}
 
@@ -1915,9 +1930,6 @@ var ARKitWrapper = function (_EventHandlerBase) {
 		key: '_onStop',
 		value: function _onStop() {
 			this._isWatching = false;
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.STOP_EVENT, {
-				source: this
-			}));
 		}
 
 		/*
@@ -1930,12 +1942,7 @@ var ARKitWrapper = function (_EventHandlerBase) {
 
 	}, {
 		key: '_onAddAnchor',
-		value: function _onAddAnchor(data) {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.ADD_ANCHOR_EVENT, {
-				source: this,
-				detail: data
-			}));
-		}
+		value: function _onAddAnchor(data) {}
 
 		/*
   Callback from ARKit for when it does the work initiated by sending the hitTest message from JS
@@ -1955,11 +1962,27 @@ var ARKitWrapper = function (_EventHandlerBase) {
 
 	}, {
 		key: '_onHitTest',
-		value: function _onHitTest(data) {
-			this.dispatchEvent(new CustomEvent(ARKitWrapper.HIT_TEST_EVENT, {
-				source: this,
-				detail: data
-			}));
+		value: function _onHitTest(data) {}
+	}, {
+		key: '_createPromiseCallback',
+		value: function _createPromiseCallback(action, resolve) {
+			var _this6 = this;
+
+			var callbackName = this._generateCallbackUID(action);
+			window[callbackName] = function (data) {
+				delete window[callbackName];
+				var wrapperCallbackName = '_on' + action[0].toUpperCase() + action.slice(1);
+				if (typeof _this6[wrapperCallbackName] == 'function') {
+					_this6[wrapperCallbackName](data);
+				}
+				resolve(data);
+			};
+			return callbackName;
+		}
+	}, {
+		key: '_generateCallbackUID',
+		value: function _generateCallbackUID(prefix) {
+			return 'arkitCallback_' + prefix + '_' + new Date().getTime() + '_' + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 		}
 
 		/*
@@ -2034,15 +2057,12 @@ var ARKitWrapper = function (_EventHandlerBase) {
 exports.default = ARKitWrapper;
 ARKitWrapper.INIT_EVENT = 'arkit-init';
 ARKitWrapper.WATCH_EVENT = 'arkit-watch';
-ARKitWrapper.STOP_EVENT = 'arkit-stop';
-ARKitWrapper.ADD_ANCHOR_EVENT = 'arkit-add-anchor';
 ARKitWrapper.RECORD_START_EVENT = 'arkit-record-start';
 ARKitWrapper.RECORD_STOP_EVENT = 'arkit-record-stop';
 ARKitWrapper.DID_MOVE_BACKGROUND_EVENT = 'arkit-did-move-background';
 ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT = 'arkit-will-enter-foreground';
 ARKitWrapper.INTERRUPTED_EVENT = 'arkit-interrupted';
 ARKitWrapper.INTERRUPTION_ENDED_EVENT = 'arkit-interruption-ended';
-ARKitWrapper.HIT_TEST_EVENT = 'arkit-hit-test';
 ARKitWrapper.SHOW_DEBUG_EVENT = 'arkit-show-debug';
 
 // hit test types
@@ -3834,9 +3854,7 @@ var FlatDisplay = function (_XRDisplay) {
 					location: true,
 					camera: true,
 					objects: true,
-					debug: false,
-					h_plane: false,
-					hit_test_result: 'hit_test_plane'
+					light_intensity: true
 				});
 			}, 1000);
 		}
@@ -4251,7 +4269,6 @@ var CameraReality = function (_Reality) {
 				if (this._initialized === false) {
 					this._initialized = true;
 					this._arKitWrapper = _ARKitWrapper2.default.GetOrCreate();
-					this._arKitWrapper.addEventListener(_ARKitWrapper2.default.ADD_ANCHOR_EVENT, this._handleARKitAddObject.bind(this));
 					this._arKitWrapper.addEventListener(_ARKitWrapper2.default.WATCH_EVENT, this._handleARKitWatch.bind(this));
 					this._arKitWrapper.waitForInit().then(function () {
 						_this2._arKitWrapper.watch();
@@ -4331,8 +4348,8 @@ var CameraReality = function (_Reality) {
 		}
 	}, {
 		key: '_handleARKitAddObject',
-		value: function _handleARKitAddObject(ev) {
-			this._updateAnchorFromARKitUpdate(ev.detail.uuid, ev.detail);
+		value: function _handleARKitAddObject(anchorInfo) {
+			this._updateAnchorFromARKitUpdate(anchorInfo.uuid, anchorInfo);
 		}
 	}, {
 		key: '_updateAnchorFromARKitUpdate',
@@ -4348,10 +4365,14 @@ var CameraReality = function (_Reality) {
 	}, {
 		key: '_addAnchor',
 		value: function _addAnchor(anchor, display) {
+			var _this3 = this;
+
 			// Convert coordinates to the stage coordinate system so that updating from ARKit transforms is simple
 			anchor.coordinates = anchor.coordinates.getTransformedCoordinates(display._stageCoordinateSystem);
 			if (this._arKitWrapper !== null) {
-				this._arKitWrapper.addAnchor(anchor.uid, anchor.coordinates.poseMatrix);
+				this._arKitWrapper.addAnchor(anchor.uid, anchor.coordinates.poseMatrix).then(function (detail) {
+					return _this3._handleARKitAddObject(detail);
+				});
 			}
 			// ARCore as implemented in the browser does not offer anchors except on a surface, so we just use untracked anchors
 			this._anchors.set(anchor.uid, anchor);
