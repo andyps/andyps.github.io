@@ -33,7 +33,12 @@ class App {
                 statistics: this.isDebug
             }
         });
-        this.ar.waitForInit().then(this.onARInit.bind(this));
+        try {
+            this.ar.waitForInit().then(this.onARInit.bind(this));
+        } catch(e) {
+            document.body.innerHTML = 'OSHIBKA';
+            return;
+        }
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
         
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
