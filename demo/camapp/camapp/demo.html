@@ -24,7 +24,7 @@
     
     <script>
         window.onerror = function(msg) {
-            if (document.body) document.body.innerHTML = msg;
+            if (document.body) document.body.innerHTML = 'err:' + msg;
         }
     </script>
     <script src="vendor/three.js"></script>
