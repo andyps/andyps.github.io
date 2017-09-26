@@ -68,7 +68,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	}
 
     static TestTest() {
-        
+        document.body.innerHTML = 'TestTest';
     }
 	static GetOrCreate(options = null){
         document.body.innerHTML = 'GetOrCreate';
