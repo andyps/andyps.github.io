@@ -18,6 +18,7 @@ class App {
         this.registerUIEvents();
     }
     initAR() {
+        document.body.innerHTML = 'GetOrCreate';
         try {
             this.ar = ARKitWrapper.GetOrCreate({
                 ui: {

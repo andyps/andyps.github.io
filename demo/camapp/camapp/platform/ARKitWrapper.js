@@ -68,8 +68,11 @@ export default class ARKitWrapper extends EventHandlerBase {
 	}
 
 	static GetOrCreate(options = null){
+        document.body.innerHTML = 'GetOrCreate';
 		if(typeof ARKitWrapper.GLOBAL_INSTANCE === 'undefined'){
+            document.body.innerHTML = 'create';
 			ARKitWrapper.GLOBAL_INSTANCE = new ARKitWrapper()
+            document.body.innerHTML = 'after instancing';
 			options = (options && typeof(options) == 'object') ? options : {}
 			let defaultUIOptions = {
 				browser: true,
