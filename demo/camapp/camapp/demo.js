@@ -12,7 +12,8 @@ class App {
         this.cubesNum = 0;
         this.cubesNames = 0;
 
-        this.initAR();
+        document.body.innerHTML = 'BEFORE INITAR';
+        //~ this.initAR();
 
         //~ this.raycaster = new THREE.Raycaster();
         //~ this.registerUIEvents();
