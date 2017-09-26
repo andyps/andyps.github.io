@@ -3,6 +3,8 @@ import ARKitWrapper from './platform/ARKitWrapper.js'
 const CUBE_SIZE = 0.1;
 class App {
     constructor(canvasId) {
+        document.body.innerHTML = 'constructor';
+        
         this.isDebug = true;
         this.deviceId = null;
         
