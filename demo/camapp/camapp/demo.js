@@ -13,7 +13,7 @@ class App {
         this.cubesNames = 0;
 
         this.initAR();
-        
+        return;
         this.raycaster = new THREE.Raycaster();
         this.registerUIEvents();
     }
