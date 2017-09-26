@@ -20,7 +20,7 @@ class App {
     initAR() {
         document.body.innerHTML = 'GetOrCreate';
         try {
-            ARKitWrapper.TestTest();
+            //~ ARKitWrapper.TestTest();
             //~ this.ar = ARKitWrapper.TestTest({
                 //~ ui: {
                     //~ points: true,
