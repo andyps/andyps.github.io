@@ -13,27 +13,27 @@ class App {
         this.cubesNames = 0;
 
         this.initAR();
-        return;
+
         this.raycaster = new THREE.Raycaster();
         this.registerUIEvents();
     }
     initAR() {
         try {
-            //~ this.ar = ARKitWrapper.GetOrCreate({
-                //~ ui: {
-                    //~ points: true,
-                    //~ focus: true,
-                    //~ rec: true,
-                    //~ rec_time: true,
-                    //~ mic: true,
-                    //~ build: true,
-                    //~ plane: true,
-                    //~ warnings: true,
-                    //~ anchors: false,
-                    //~ debug: true,
-                    //~ statistics: this.isDebug
-                //~ }
-            //~ });
+            this.ar = ARKitWrapper.GetOrCreate({
+                ui: {
+                    points: true,
+                    focus: true,
+                    rec: true,
+                    rec_time: true,
+                    mic: true,
+                    build: true,
+                    plane: true,
+                    warnings: true,
+                    anchors: false,
+                    debug: true,
+                    statistics: this.isDebug
+                }
+            });
         
             //this.ar.waitForInit().then(this.onARInit.bind(this));
         } catch(e) {
