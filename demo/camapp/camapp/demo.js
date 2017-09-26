@@ -18,23 +18,24 @@ class App {
         this.registerUIEvents();
     }
     initAR() {
-        this.ar = ARKitWrapper.GetOrCreate({
-            ui: {
-                points: true,
-                focus: true,
-                rec: true,
-                rec_time: true,
-                mic: true,
-                build: true,
-                plane: true,
-                warnings: true,
-                anchors: false,
-                debug: true,
-                statistics: this.isDebug
-            }
-        });
         try {
-            this.ar.waitForInit().then(this.onARInit.bind(this));
+            this.ar = ARKitWrapper.GetOrCreate({
+                ui: {
+                    points: true,
+                    focus: true,
+                    rec: true,
+                    rec_time: true,
+                    mic: true,
+                    build: true,
+                    plane: true,
+                    warnings: true,
+                    anchors: false,
+                    debug: true,
+                    statistics: this.isDebug
+                }
+            });
+        
+            //this.ar.waitForInit().then(this.onARInit.bind(this));
         } catch(e) {
             document.body.innerHTML = 'OSHIBKA';
             return;
