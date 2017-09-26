@@ -77,6 +77,8 @@ export default class ARKitWrapper extends EventHandlerBase {
 			};
 			let uiOptions = (typeof(options.ui) == 'object') ? options.ui : {}
 			options.ui = Object.assign(defaultUIOptions, uiOptions)
+            document.body.innerHTML = 'testingtesting';
+            return ARKitWrapper.GLOBAL_INSTANCE;
 			ARKitWrapper.GLOBAL_INSTANCE._sendInit(options)
 		} 
 		return ARKitWrapper.GLOBAL_INSTANCE
