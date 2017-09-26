@@ -20,21 +20,22 @@ class App {
     initAR() {
         document.body.innerHTML = 'GetOrCreate';
         try {
-            this.ar = ARKitWrapper.TestTest({
-                ui: {
-                    points: true,
-                    focus: true,
-                    rec: true,
-                    rec_time: true,
-                    mic: true,
-                    build: true,
-                    plane: true,
-                    warnings: true,
-                    anchors: false,
-                    debug: true,
-                    statistics: this.isDebug
-                }
-            });
+            ARKitWrapper.TestTest();
+            //~ this.ar = ARKitWrapper.TestTest({
+                //~ ui: {
+                    //~ points: true,
+                    //~ focus: true,
+                    //~ rec: true,
+                    //~ rec_time: true,
+                    //~ mic: true,
+                    //~ build: true,
+                    //~ plane: true,
+                    //~ warnings: true,
+                    //~ anchors: false,
+                    //~ debug: true,
+                    //~ statistics: this.isDebug
+                //~ }
+            //~ });
         
             //this.ar.waitForInit().then(this.onARInit.bind(this));
         } catch(e) {
