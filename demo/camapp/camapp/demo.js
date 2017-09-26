@@ -14,8 +14,8 @@ class App {
 
         this.initAR();
 
-        this.raycaster = new THREE.Raycaster();
-        this.registerUIEvents();
+        //~ this.raycaster = new THREE.Raycaster();
+        //~ this.registerUIEvents();
     }
     initAR() {
         document.body.innerHTML = 'GetOrCreate';
