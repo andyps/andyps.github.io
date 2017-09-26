@@ -4,7 +4,7 @@ const CUBE_SIZE = 0.1;
 class App {
     constructor(canvasId) {
         document.body.innerHTML = 'constructor';
-        
+        return;
         this.isDebug = true;
         this.deviceId = null;
         
