@@ -22,6 +22,11 @@
     }
     </style>
     
+    <script>
+        window.onerror = function(msg) {
+            if (document.body) document.body.innerHTML = msg;
+        }
+    </script>
     <script src="vendor/three.js"></script>
     <script src="vendor/stats.js"></script> 
     
