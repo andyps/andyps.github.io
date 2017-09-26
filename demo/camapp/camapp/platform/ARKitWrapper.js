@@ -67,6 +67,9 @@ export default class ARKitWrapper extends EventHandlerBase {
 		}
 	}
 
+    static TestTest() {
+        
+    }
 	static GetOrCreate(options = null){
         document.body.innerHTML = 'GetOrCreate';
 		//~ if(typeof ARKitWrapper.GLOBAL_INSTANCE === 'undefined'){
@@ -84,7 +87,7 @@ export default class ARKitWrapper extends EventHandlerBase {
             //~ return ARKitWrapper.GLOBAL_INSTANCE;
 			//~ ARKitWrapper.GLOBAL_INSTANCE._sendInit(options)
 		//~ } 
-		return ARKitWrapper.GLOBAL_INSTANCE
+		return ARKitWrapper.GLOBAL_INSTANCE;
 	}
 
 	static HasARKit(){
