@@ -3,8 +3,6 @@ import ARKitWrapper from './platform/ARKitWrapper.js'
 const CUBE_SIZE = 0.1;
 class App {
     constructor(canvasId) {
-        document.body.innerHTML = 'constructor';
-        return;
         this.isDebug = true;
         this.deviceId = null;
         
@@ -14,38 +12,28 @@ class App {
         this.cubesNum = 0;
         this.cubesNames = 0;
 
-        document.body.innerHTML = 'BEFORE INITAR';
-        //~ this.initAR();
-
-        //~ this.raycaster = new THREE.Raycaster();
-        //~ this.registerUIEvents();
+        this.initAR();
+        
+        this.raycaster = new THREE.Raycaster();
+        this.registerUIEvents();
     }
     initAR() {
-        document.body.innerHTML = 'GetOrCreate';
-        try {
-            //~ ARKitWrapper.TestTest();
-            //~ this.ar = ARKitWrapper.TestTest({
-                //~ ui: {
-                    //~ points: true,
-                    //~ focus: true,
-                    //~ rec: true,
-                    //~ rec_time: true,
-                    //~ mic: true,
-                    //~ build: true,
-                    //~ plane: true,
-                    //~ warnings: true,
-                    //~ anchors: false,
-                    //~ debug: true,
-                    //~ statistics: this.isDebug
-                //~ }
-            //~ });
-        
-            //this.ar.waitForInit().then(this.onARInit.bind(this));
-        } catch(e) {
-            document.body.innerHTML = 'OSHIBKA';
-        }
-        document.body.innerHTML = 'HELLO';
-        return;
+        this.ar = ARKitWrapper.GetOrCreate({
+            ui: {
+                points: true,
+                focus: true,
+                rec: true,
+                rec_time: true,
+                mic: true,
+                build: true,
+                plane: true,
+                warnings: true,
+                anchors: false,
+                debug: true,
+                statistics: this.isDebug
+            }
+        });
+        this.ar.waitForInit().then(this.onARInit.bind(this));
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
         
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
@@ -276,8 +264,8 @@ class App {
     }
     
     onARInit() {
-        //~ this.deviceId = this.ar.deviceId;
-        //~ this.watchAR();
+        this.deviceId = this.ar.deviceId;
+        this.watchAR();
     }
     
     onARWatch() {
@@ -294,6 +282,5 @@ class App {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    document.body.innerHTML = 'DOMContentLoaded';
     window.app = new App('app-canvas');
 });

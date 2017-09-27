@@ -67,27 +67,19 @@ export default class ARKitWrapper extends EventHandlerBase {
 		}
 	}
 
-    static TestTest() {
-        document.body.innerHTML = 'TestTest';
-    }
 	static GetOrCreate(options = null){
-        document.body.innerHTML = 'GetOrCreate';
-		//~ if(typeof ARKitWrapper.GLOBAL_INSTANCE === 'undefined'){
-            //~ document.body.innerHTML = 'create';
-			//~ ARKitWrapper.GLOBAL_INSTANCE = new ARKitWrapper()
-            //~ document.body.innerHTML = 'after instancing';
-			//~ options = (options && typeof(options) == 'object') ? options : {}
-			//~ let defaultUIOptions = {
-				//~ browser: true,
-				//~ rec: true
-			//~ };
-			//~ let uiOptions = (typeof(options.ui) == 'object') ? options.ui : {}
-			//~ options.ui = Object.assign(defaultUIOptions, uiOptions)
-            //~ document.body.innerHTML = 'testingtesting';
-            //~ return ARKitWrapper.GLOBAL_INSTANCE;
-			//~ ARKitWrapper.GLOBAL_INSTANCE._sendInit(options)
-		//~ } 
-		return ARKitWrapper.GLOBAL_INSTANCE;
+		if(typeof ARKitWrapper.GLOBAL_INSTANCE === 'undefined'){
+			ARKitWrapper.GLOBAL_INSTANCE = new ARKitWrapper()
+			options = (options && typeof(options) == 'object') ? options : {}
+			let defaultUIOptions = {
+				browser: true,
+				rec: true
+			};
+			let uiOptions = (typeof(options.ui) == 'object') ? options.ui : {}
+			options.ui = Object.assign(defaultUIOptions, uiOptions)
+			ARKitWrapper.GLOBAL_INSTANCE._sendInit(options)
+		} 
+		return ARKitWrapper.GLOBAL_INSTANCE
 	}
 
 	static HasARKit(){
