@@ -276,8 +276,6 @@ export default class ARKitWrapper extends EventHandlerBase {
 	*/
 	_sendInit(options){
 		// get device id
-document.body.innerHTML = 'bbb';
-return;
 		window.webkit.messageHandlers.initAR.postMessage({
 			options: options,
 			callback: this._globalCallbacksMap.onInit
@@ -289,6 +287,8 @@ return;
 	deviceId: DOMString with the AR device ID
 	*/
 	_onInit(deviceId) {
+document.body.innerHTML = 'callback';
+return;
 		this._deviceId = deviceId
 		this._isInitialized = true
 		this.dispatchEvent(new CustomEvent(ARKitWrapper.INIT_EVENT, {
