@@ -1,4 +1,5 @@
 AFRAME.registerComponent('picker', {
+    dependencies: ['raycaster'],
     init: function () {
         var self = this;
         var sel = null;
