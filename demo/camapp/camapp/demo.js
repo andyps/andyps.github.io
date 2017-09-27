@@ -294,5 +294,6 @@ class App {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+    document.body.innerHTML = 'DOMContentLoaded';
     window.app = new App('app-canvas');
 });
