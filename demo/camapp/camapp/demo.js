@@ -263,8 +263,9 @@ class App {
         this.watchAR();
     }
     
-    onARInit() {
+    onARInit(info) {
         this.deviceId = this.ar.deviceId;
+        console.log('device info', info);
         this.watchAR();
     }
     

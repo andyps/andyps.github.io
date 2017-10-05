@@ -310,13 +310,23 @@ export default class ARKitWrapper extends EventHandlerBase {
 
 	/*
 	Callback for when ARKit is initialized
-	deviceId: DOMString with the AR device ID
+	Callback returns device info: {
+        deviceUUID: DOMString - AR device ID,
+        screenScale: float,
+        systemVersion: DOMString,
+        isIpad: boolean,
+        screenSize: {
+            width: float,
+            height: float
+        }
+    }
 	*/
-	_onInit(deviceId){
-		this._deviceId = deviceId
+	_onInit(info){
+		this._deviceId = info.deviceUUID
 		this._isInitialized = true
 		this.dispatchEvent(new CustomEvent(ARKitWrapper.INIT_EVENT, {
-			source: this
+			source: this,
+			detail: info
 		}))
 	}
 
