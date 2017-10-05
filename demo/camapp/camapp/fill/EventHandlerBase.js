@@ -31,7 +31,6 @@ export default class EventHandlerBase {
 	dispatchEvent(event){
 		let listeners = this._listeners.get(event.type)
 		if(Array.isArray(listeners) === false) return
-		listeners = Array.from(listeners);
 		for(let listener of listeners){
 			listener(event)
 		}

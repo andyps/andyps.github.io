@@ -23,6 +23,10 @@
 </head>
 <body>
 <a-scene>
+    <a-assets>
+        <img id="uinormal" src="assets/ui-normal.png" crossorigin="anonymous">
+        <a-asset-item id="uiobj" src="assets/ui.obj"></a-asset-item>
+    </a-assets>
     <a-sky color="#ECECEC"></a-sky>
     
     <a-entity id="items" class="pickable">
@@ -32,6 +36,8 @@
         <a-entity id="line1" line="start: 0, 0, -1; end: 0 5 -1; color: red" ></a-entity>
     </a-entity>
 
+    <a-entity rotation="90 0 0" position="0 1.6 -0.25" obj-model="obj:#uiobj" material="shader: flat; color: white; src: #uinormal; transparent: true; flatShading: true" ></a-entity>
+    
     
     <a-entity id="ray" raycaster="objects: .pickable; showLine: true; recursive: true;" position="0 -1 0" rotation="0 0 0" direction="0 -1 0"></a-entity>
 </a-scene>
