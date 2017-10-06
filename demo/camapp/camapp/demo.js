@@ -1,5 +1,51 @@
 import ARKitWrapper from './platform/ARKitWrapper.js'
 
+/*
+window.def = {
+    x1: 1,
+    x2: 2,
+    x3: {
+        y1: 1,
+        y2: 2,
+        y3: {
+            z: 1,
+            z2: 333
+        }
+    },
+    z: {
+        zz: 1
+    }
+}
+window.opts = {
+    y1: 11,
+    x1: 10,
+    x3: {
+        y1: 20,
+        y3: {
+            a: 'bbb',
+            z: 111
+        }
+    },
+    z: 3
+}
+window.mergeOptions = function(def, opts) {
+    opts = (opts && typeof(opts) == 'object') ? opts : {}
+    opts = Object.assign({}, opts);
+    var result = {};
+    for (var key in def) {
+        if (typeof(opts[key]) == 'undefined') {
+            result[key] = def[key];
+        } else if (typeof(def[key]) != 'object') {
+            result[key] = opts[key];
+        } else {
+            result[key] = mergeOptions(def[key], opts[key]);
+        }
+        delete opts[key];
+    }
+    return Object.assign(result, opts);
+}
+*/
+
 const CUBE_SIZE = 0.1;
 class App {
     constructor(canvasId) {
@@ -13,27 +59,74 @@ class App {
         this.cubesNames = 0;
 
         this.initAR();
-        
+return;
         this.raycaster = new THREE.Raycaster();
         this.registerUIEvents();
     }
+    
+    /*
+UIOptions {
+   arkit: {
+   	statistics: Boolean?
+   	plane: Boolean?
+   	focus: Boolean?
+   	anchors: Boolean?
+   }
+   custom : {
+
+//        browser: Boolean?
+//        points: Boolean?
+//        rec: Boolean?
+//        rec_time: Boolean?
+//        mic: Boolean?
+//        build: Boolean?
+//        warnings: Boolean?  
+//        debug: Boolean?
+        _ : Boolean?
+   }
+}
+
+
+*/
+
     initAR() {
-        this.ar = ARKitWrapper.GetOrCreate({
+        this.ar = ARKitWrapper.GetOrCreate();
+        this.ar.init({
             ui: {
-                points: true,
-                focus: true,
-                rec: true,
-                rec_time: true,
-                mic: true,
-                build: true,
-                plane: true,
-                warnings: true,
-                anchors: false,
-                debug: true,
-                statistics: this.isDebug
+                arkit: {
+                    statistics: this.isDebug,
+                    plane: true,
+                    focus: true,
+                    anchors: false
+                },
+                custom: {
+                    points: true,
+                    rec: true,
+                    rec_time: true,
+                    mic: true,
+                    build: true,
+                    warnings: true,
+                    debug: true
+                }
             }
-        });
-        this.ar.waitForInit().then(this.onARInit.bind(this));
+        }).then(this.onARInit.bind(this));
+return;
+        //~ this.ar = ARKitWrapper.GetOrCreate({
+            //~ ui: {
+                //~ points: true,
+                //~ focus: true,
+                //~ rec: true,
+                //~ rec_time: true,
+                //~ mic: true,
+                //~ build: true,
+                //~ plane: true,
+                //~ warnings: true,
+                //~ anchors: false,
+                //~ debug: true,
+                //~ statistics: this.isDebug
+            //~ }
+        //~ });
+        //~ this.ar.waitForInit().then(this.onARInit.bind(this));
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
         
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
@@ -69,6 +162,27 @@ class App {
                 this.fpsStats.domElement.style.display = '';
             }
         });
+    }
+    testSetUIOptions() {
+        const options = {
+            ui: {
+                arkit: {
+                    statistics: this.isDebug,
+                    plane: true,
+                    focus: false,
+                    anchors: true
+                },
+                custom: {
+                    points: true,
+                    rec_time: true,
+                    mic: false,
+                    build: true,
+                    warnings: true,
+                    debug: true
+                }
+            }
+        }
+        this.ar.setUIOptions(options).then(() => {console.log('options are set')}).catch(err => console.log('options were not set ', err));
     }
     run() {
         let render = (time) => {
@@ -161,9 +275,16 @@ class App {
     
     watchAR() {
         this.ar.watch({
-            location: true,
+            location: {
+                accuracy: ARKitWrapper.LOCATION_ACCURACY_HUNDRED_METERS
+            },
             camera: true,
-            objects: true
+            anchors: true,
+            planes: true,
+            light_estimate: true,
+            heading: {
+                accuracy: 1
+            }
         });
     }
     
@@ -186,36 +307,38 @@ class App {
         let planeExistingUsingExtentResults = [];
         let planeExistingResults = [];
         
-        if (Array.isArray(data) && data.length) {
+        if (data.planes.length) {
             // search for planes
-            planeResults = data.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
+            //~ planeResults = data.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
+            
+            planeResults = data.planes;
             
             planeExistingUsingExtentResults = planeResults.filter(
-                hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT
+                hitTestResult => hitTestResult.point.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT
             );
             planeExistingResults = planeResults.filter(
-                hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE
+                hitTestResult => hitTestResult.point.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE
             );
             
             if (planeExistingUsingExtentResults.length) {
                 // existing planes using extent first
-                planeExistingUsingExtentResults = planeExistingUsingExtentResults.sort((a, b) => a.distance - b.distance);
-                info = planeExistingUsingExtentResults[0];
+                planeExistingUsingExtentResults = planeExistingUsingExtentResults.sort((a, b) => a.point.distance - b.point.distance);
+                info = planeExistingUsingExtentResults[0].point;
             } else if (planeExistingResults.length) {
                 // then other existing planes
-                planeExistingResults = planeExistingResults.sort((a, b) => a.distance - b.distance);
-                info = planeExistingResults[0];
-            } else if (planeResults.length) {
-                // other types except feature points
-                planeResults = planeResults.sort((a, b) => a.distance - b.distance);
-                info = planeResults[0];
+                planeExistingResults = planeExistingResults.sort((a, b) => a.point.distance - b.point.distance);
+                info = planeExistingResults[0].point;
             } else {
-                // feature points if any
-                info = data[0];
+                // other plane types
+                planeResults = planeResults.sort((a, b) => a.point.distance - b.point.distance);
+                info = planeResults[0].point;
             }
+        } else if (data.points.length) {
+            // feature points if any
+            info = data.points[0];
         }
 
-        let name = this.generateCubeName();
+        //~ let name = this.generateCubeName();
         let transform;
         if (info) {
             // if hit testing is positive
@@ -234,8 +357,11 @@ class App {
             transform = transform.toArray();
         }
         
+        //~ this.ar.addAnchor(
+            //~ name,
+            //~ transform
+        //~ ).then(info => this.onARAddObject(info));
         this.ar.addAnchor(
-            name,
             transform
         ).then(info => this.onARAddObject(info));
     }
@@ -244,8 +370,8 @@ class App {
         
         cubeMesh.matrixAutoUpdate = false;
 
-        info.transform[13] += CUBE_SIZE / 2;
-        cubeMesh.matrix.fromArray(info.transform);
+        info.world_transform[13] += CUBE_SIZE / 2;
+        cubeMesh.matrix.fromArray(info.world_transform);
         
         this.scene.add(cubeMesh);
         this.cubesNum++;
@@ -255,6 +381,7 @@ class App {
     
     onARDidMoveBackground() {
         this.ar.stop().then(() => {
+            console.log('stoped');
             this.cleanScene();
         });
     }
@@ -263,9 +390,13 @@ class App {
         this.watchAR();
     }
     
-    onARInit(info) {
-        this.deviceId = this.ar.deviceId;
-        console.log('device info', info);
+    onARInit(e) {
+        console.log('device info', e);
+        if (!e || !e.deviceUUID) {
+            return;
+        }
+        this.deviceId = this.ar.deviceInfo.deviceUUID;
+return;
         this.watchAR();
     }
     

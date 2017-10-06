@@ -17,13 +17,16 @@ class webkitSimulatorMessageHandler {
             location.href = data.url;
             return;
         }
-        
+        if (this.name == 'setUIOptions') {
+            window[data.callback]();
+            return;
+        }
         if (this.name === 'stopAR') {
             //~ clearInterval(this.simulator.watchARIntervalId);
             navigator.geolocation.clearWatch(this.simulator.watchARIntervalId);
             this.simulator.watchARIntervalId = null;
             
-            window[data.callback]('data callback simulator: ' + this.name);
+            window[data.callback]();
             return;
         }
 
@@ -94,6 +97,10 @@ class webkitSimulatorMessageHandler {
                         data.hitPosition = {x: -1, y: 1, z: -1};
                         window[data.callback](data);
                         return;
+                    } else if (this.name === 'initAR') {
+                        data.deviceUUID = 'deviceUUID';
+                        window[data.callback](data);
+                        return;
                     }
                     window[data.callback]('data callback simulator: ' + this.name);
                 }, 3000);
@@ -116,7 +123,8 @@ class webkitSimulator {
             showDebug: new webkitSimulatorMessageHandler(this, 'showDebug'),
             didMoveBackground: new webkitSimulatorMessageHandler(this, 'didMoveBackground'),
             willEnterForeground: new webkitSimulatorMessageHandler(this, 'willEnterForeground'),
-            loadUrl: new webkitSimulatorMessageHandler(this, 'loadUrl')
+            loadUrl: new webkitSimulatorMessageHandler(this, 'loadUrl'),
+            setUIOptions: new webkitSimulatorMessageHandler(this, 'setUIOptions')
         };
     }
 }
