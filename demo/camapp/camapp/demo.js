@@ -1,51 +1,5 @@
 import ARKitWrapper from './platform/ARKitWrapper.js'
 
-/*
-window.def = {
-    x1: 1,
-    x2: 2,
-    x3: {
-        y1: 1,
-        y2: 2,
-        y3: {
-            z: 1,
-            z2: 333
-        }
-    },
-    z: {
-        zz: 1
-    }
-}
-window.opts = {
-    y1: 11,
-    x1: 10,
-    x3: {
-        y1: 20,
-        y3: {
-            a: 'bbb',
-            z: 111
-        }
-    },
-    z: 3
-}
-window.mergeOptions = function(def, opts) {
-    opts = (opts && typeof(opts) == 'object') ? opts : {}
-    opts = Object.assign({}, opts);
-    var result = {};
-    for (var key in def) {
-        if (typeof(opts[key]) == 'undefined') {
-            result[key] = def[key];
-        } else if (typeof(def[key]) != 'object') {
-            result[key] = opts[key];
-        } else {
-            result[key] = mergeOptions(def[key], opts[key]);
-        }
-        delete opts[key];
-    }
-    return Object.assign(result, opts);
-}
-*/
-
 const CUBE_SIZE = 0.1;
 class App {
     constructor(canvasId) {
@@ -59,35 +13,10 @@ class App {
         this.cubesNames = 0;
 
         this.initAR();
-return;
+
         this.raycaster = new THREE.Raycaster();
         this.registerUIEvents();
     }
-    
-    /*
-UIOptions {
-   arkit: {
-   	statistics: Boolean?
-   	plane: Boolean?
-   	focus: Boolean?
-   	anchors: Boolean?
-   }
-   custom : {
-
-//        browser: Boolean?
-//        points: Boolean?
-//        rec: Boolean?
-//        rec_time: Boolean?
-//        mic: Boolean?
-//        build: Boolean?
-//        warnings: Boolean?  
-//        debug: Boolean?
-        _ : Boolean?
-   }
-}
-
-
-*/
 
     initAR() {
         this.ar = ARKitWrapper.GetOrCreate();
@@ -111,22 +40,6 @@ UIOptions {
             }
         }).then(this.onARInit.bind(this));
 
-        //~ this.ar = ARKitWrapper.GetOrCreate({
-            //~ ui: {
-                //~ points: true,
-                //~ focus: true,
-                //~ rec: true,
-                //~ rec_time: true,
-                //~ mic: true,
-                //~ build: true,
-                //~ plane: true,
-                //~ warnings: true,
-                //~ anchors: false,
-                //~ debug: true,
-                //~ statistics: this.isDebug
-            //~ }
-        //~ });
-        //~ this.ar.waitForInit().then(this.onARInit.bind(this));
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
         
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
@@ -162,27 +75,6 @@ UIOptions {
                 this.fpsStats.domElement.style.display = '';
             }
         });
-    }
-    testSetUIOptions() {
-        const options = {
-            ui: {
-                arkit: {
-                    statistics: this.isDebug,
-                    plane: true,
-                    focus: false,
-                    anchors: true
-                },
-                custom: {
-                    points: true,
-                    rec_time: true,
-                    mic: false,
-                    build: true,
-                    warnings: true,
-                    debug: true
-                }
-            }
-        }
-        this.ar.setUIOptions(options).then(() => {console.log('options are set')}).catch(err => console.log('options were not set ', err));
     }
     run() {
         let render = (time) => {
@@ -338,7 +230,6 @@ UIOptions {
             info = data.points[0];
         }
 
-        //~ let name = this.generateCubeName();
         let transform;
         if (info) {
             // if hit testing is positive
@@ -356,11 +247,7 @@ UIOptions {
             transform.makeTranslation(objPos.x, objPos.y, objPos.z);
             transform = transform.toArray();
         }
-        
-        //~ this.ar.addAnchor(
-            //~ name,
-            //~ transform
-        //~ ).then(info => this.onARAddObject(info));
+
         this.ar.addAnchor(
             transform
         ).then(info => this.onARAddObject(info));
@@ -381,7 +268,6 @@ UIOptions {
     
     onARDidMoveBackground() {
         this.ar.stop().then(() => {
-            console.log('stoped');
             this.cleanScene();
         });
     }
@@ -391,7 +277,6 @@ UIOptions {
     }
     
     onARInit(e) {
-        console.log('device info', e);
         if (!e || !e.deviceUUID) {
             return;
         }
