@@ -8,7 +8,7 @@ ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the instance,
 
 	if(ARKitWrapper.HasARKit()){
 		let arKitWrapper = ARKitWrapper.GetOrCreate()
-        arKitWrapper.init().then(ev => { console.log('ARKit initialized', ev) })
+		arKitWrapper.init().then(ev => { console.log('ARKit initialized', ev) })
 		arKitWrapper.addEventListener(ARKitWrapper.WATCH_EVENT, ev => { console.log('ARKit update', ev) })
 		arKitWrapper.watch({
 			location: boolean,
@@ -20,22 +20,26 @@ ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the instance,
 
 */
 const DEFAULT_OPTIONS = {
-    init: {
-        ui: {
-            arkit: {},
-            custom: {
-                browser: true,
-                rec: true,
-                warnings: true
-            }
-        }
-    },
-    setUIOptions: {
-        ui: {
-            arkit: {},
-            custom: {}
-        }
-    }
+	init: {
+		ui: {
+			arkit: {},
+			custom: {
+				browser: true,
+				rec: true,
+				warnings: true
+			}
+		}
+	},
+	setUIOptions: {
+		arkit: {},
+		custom: {}
+	},
+	watch: {
+		camera: true,
+		anchors: true,
+		planes: true,
+		light_estimate: true
+	}
 }
 
 export default class ARKitWrapper extends EventHandlerBase {
@@ -48,15 +52,13 @@ export default class ARKitWrapper extends EventHandlerBase {
 			throw 'ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the global instance.'
 		}
 
-		//~ this._deviceId = null
 		this._deviceInfo = null
 		this._isWatching = false
 		this._isInitialized = false
 		this._rawARData = null
 
-		this._globalCallbacksMap = {} // Used to map a window.arkitCallback method name to an ARKitWrapper.on* method name
-		// Set up the window.arkitCallback methods that the ARKit bridge depends on
-		//~ let callbackNames = ['onInit', 'onWatch']
+		this._globalCallbacksMap = {} // Used to map a window.arCallback method name to an ARKitWrapper.on* method name
+		// Set up the window.arCallback methods that the ARKit bridge depends on
 		let callbackNames = ['onWatch']
 		for(let i=0; i < callbackNames.length; i++){
 			this._generateGlobalCallback(callbackNames[i], i)
@@ -64,13 +66,23 @@ export default class ARKitWrapper extends EventHandlerBase {
 
 		// Set up some named global methods that the ARKit to JS bridge uses and send out custom events when they are called
 		let eventCallbacks = [
-			['arkitStartRecording', ARKitWrapper.RECORD_START_EVENT],
-			['arkitStopRecording', ARKitWrapper.RECORD_STOP_EVENT],
-			['arkitDidMoveBackground', ARKitWrapper.DID_MOVE_BACKGROUND_EVENT],
-			['arkitWillEnterForeground', ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT],
-			['arkitInterrupted', ARKitWrapper.INTERRUPTED_EVENT],
-			['arkitInterruptionEnded', ARKitWrapper.INTERRUPTION_ENDED_EVENT], 
-			['arkitShowDebug', ARKitWrapper.SHOW_DEBUG_EVENT]
+			['arStartRecording', ARKitWrapper.RECORD_START_EVENT],
+			['arStopRecording', ARKitWrapper.RECORD_STOP_EVENT],
+			['arDidMoveBackground', ARKitWrapper.DID_MOVE_BACKGROUND_EVENT],
+			['arWillEnterForeground', ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT],
+			['arInterruption', ARKitWrapper.INTERRUPTION_EVENT],
+			['arInterruptionEnded', ARKitWrapper.INTERRUPTION_ENDED_EVENT], 
+			['arShowDebug', ARKitWrapper.SHOW_DEBUG_EVENT],
+			['arReceiveMemoryWarning', ARKitWrapper.MEMORY_WARNING_EVENT],
+			['arEnterRegion', ARKitWrapper.ENTER_REGION_EVENT],
+			['arExitRegion', ARKitWrapper.EXIT_REGION_EVENT],
+			['arUpdateHeading', ARKitWrapper.HEADING_UPDATED_EVENT],
+			['arTrackingChanged', ARKitWrapper.TRACKING_CHANGED_EVENT],
+			['arSessionFails', ARKitWrapper.SESSION_FAILS_EVENT],
+			['arAddPlanes', ARKitWrapper.PLAINS_ADDED_EVENT],
+			['arRemovePlanes', ARKitWrapper.PLAINS_REMOVED_EVENT],
+			['arUpdatedAnchors', ARKitWrapper.ANCHORS_UPDATED_EVENT],
+			['arTransitionToSize', ARKitWrapper.SIZE_CHANGED_EVENT]
 		]
 		for(let i=0; i < eventCallbacks.length; i++){
 			window[eventCallbacks[i][0]] = (detail) => {
@@ -88,19 +100,9 @@ export default class ARKitWrapper extends EventHandlerBase {
 		}
 	}
 
-	//~ static GetOrCreate(options=null){
 	static GetOrCreate(){
 		if(typeof ARKitWrapper.GLOBAL_INSTANCE === 'undefined'){
 			ARKitWrapper.GLOBAL_INSTANCE = new ARKitWrapper()
-			//~ options = (options && typeof(options) == 'object') ? options : {}
-			//~ let defaultUIOptions = {
-				//~ browser: true,
-				//~ rec: true,
-				//~ warnings: true
-			//~ }
-			//~ let uiOptions = (typeof(options.ui) == 'object') ? options.ui : {}
-			//~ options.ui = Object.assign(defaultUIOptions, uiOptions)
-			//~ ARKitWrapper.GLOBAL_INSTANCE._sendInit(options)
 		}
 		return ARKitWrapper.GLOBAL_INSTANCE
 	}
@@ -110,21 +112,12 @@ export default class ARKitWrapper extends EventHandlerBase {
 	}
 
 	get deviceInfo(){ return this._deviceInfo } // The ARKit provided device information
-	//~ get deviceId(){ return this._deviceId } // The ARKit provided device ID
 	get isWatching(){ return this._isWatching } // True if ARKit is sending frame data
 	get isInitialized(){ return this._isInitialized } // True if this instance has received the onInit callback from ARKit
 	get hasData(){ return this._rawARData !== null } // True if this instance has received data via onWatch
 
-	//~ _sendInit(options){
-		//~ // get device id
-		//~ window.webkit.messageHandlers.initAR.postMessage({
-			//~ options: options,
-			//~ callback: this._globalCallbacksMap.onInit
-		//~ })
-	//~ }
-
 	init(options=null){
-        options = this._mergeOptions(DEFAULT_OPTIONS.init, options);
+		options = this._mergeOptions(DEFAULT_OPTIONS.init, options);
 		return new Promise((resolve, reject) => {
 			if (this._isInitialized){
 				resolve(this.deviceInfo);
@@ -132,44 +125,27 @@ export default class ARKitWrapper extends EventHandlerBase {
 			}
 			window.webkit.messageHandlers.initAR.postMessage({
 				callback: this._createPromiseCallback('init', resolve, reject),
-                options: options
+				options: options
 			})
 		})
 	}
 
-    _mergeOptions(defOptions, options){
-        options = (options && typeof(options) == 'object') ? options : {}
-        options = Object.assign({}, options)
-        let result = {}
-        for (let key in defOptions) {
-            if (typeof(options[key]) == 'undefined') {
-                result[key] = defOptions[key];
-            } else if (typeof(defOptions[key]) != 'object') {
-                result[key] = options[key];
-            } else {
-                result[key] = this._mergeOptions(defOptions[key], options[key]);
-            }
-            delete options[key];
-        }
-        return Object.assign(result, options);
-    }
-
-	/*
-	Useful for waiting for or immediately receiving notice of ARKit initialization
-	*/
-	//~ waitForInit(){
-		//~ return new Promise((resolve, reject) => {
-			//~ if(this._isInitialized){
-				//~ resolve()
-				//~ return
-			//~ }
-			//~ const callback = (evt) => {
-				//~ this.removeEventListener(ARKitWrapper.INIT_EVENT, callback, false)
-				//~ resolve(evt)
-			//~ }
-			//~ this.addEventListener(ARKitWrapper.INIT_EVENT, callback, false)
-		//~ })
-	//~ }
+	_mergeOptions(defOptions, options){
+		options = (options && typeof(options) == 'object') ? options : {}
+		options = Object.assign({}, options)
+		let result = {}
+		for (let key in defOptions) {
+			if (typeof(options[key]) == 'undefined') {
+				result[key] = defOptions[key];
+			} else if (typeof(defOptions[key]) != 'object') {
+				result[key] = options[key];
+			} else {
+				result[key] = this._mergeOptions(defOptions[key], options[key]);
+			}
+			delete options[key];
+		}
+		return Object.assign(result, options);
+	}
 
 	/*
 	getData looks into the most recent ARKit data (as received by onWatch) for a key
@@ -193,7 +169,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 		}
 
 	return null if object with `uuid` is not found
-	*/
+	*//*
 	getObject(uuid){
 		if (!this._isInitialized){
 			return null
@@ -207,7 +183,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 		}
 		return null
 	}
-
+*/
 	/*
 	Sends a hitTest message to ARKit to get hit testing results
 	x, y - screen coordinates normalized to 0..1 (0,0 is at top left and 1,1 is at bottom right)
@@ -240,10 +216,10 @@ export default class ARKitWrapper extends EventHandlerBase {
 				return;
 			}
 			window.webkit.messageHandlers.hitTest.postMessage({
-                options: {
-                    point: {x: x, y: y},
-                    type: types
-                },
+				options: {
+					point: {x: x, y: y},
+					type: types
+				},
 				callback: this._createPromiseCallback('hitTest', resolve, reject)
 			})
 		})
@@ -263,9 +239,9 @@ export default class ARKitWrapper extends EventHandlerBase {
 				return;
 			}
 			window.webkit.messageHandlers.addAnchor.postMessage({
-                options: {
-                    transform: transform
-                },
+				options: {
+					transform: transform
+				},
 				callback: this._createPromiseCallback('addAnchor', resolve, reject)
 			})
 		})
@@ -274,26 +250,74 @@ export default class ARKitWrapper extends EventHandlerBase {
 	removeAnchor(uid){
 		return new Promise((resolve, reject) => {
 			window.webkit.messageHandlers.removeAnchor.postMessage({
-                options: {
-                    uuid: uid
-                },
+				options: {
+					uuid: uid
+				},
 				callback: this._createPromiseCallback('removeAnchor', resolve, reject)
 			})
 		})
 	}
-    /*
-    anchor {
-      uuid: DOMString,
-      world_transform - anchor transformation matrix
-    }
-    */
+	/*
+	anchor {
+	  uuid: DOMString,
+	  world_transform - anchor transformation matrix
+	}
+	*/
 	updateAnchor(anchor){
 		return new Promise((resolve, reject) => {
 			window.webkit.messageHandlers.updateAnchor.postMessage({
-                options: {
-                    anchor: anchor
-                },
+				options: {
+					anchor: anchor
+				},
 				callback: this._createPromiseCallback('updateAnchor', resolve, reject)
+			})
+		})
+	}
+	
+	addRegion(id, center, radius){
+		return new Promise((resolve, reject) => {
+			if (!center || typeof(center.latitude) != 'number' || 
+				typeof(center.longitude) != 'number' || typeof(center.altitude) != 'number'
+			) {
+				reject(new Error('The center of the region must be specified with its latitude, longitude and altitude'));
+				return;
+			}
+			const region = {
+				id: id,
+				radius: radius,
+				center: {
+					latitude: center.latitude,
+					longitude: center.longitude,
+					altitude: center.altitude
+				}
+			};
+			window.webkit.messageHandlers.updateAnchor.postMessage({
+				options: {
+					region: region
+				},
+				callback: this._createPromiseCallback('addRegion', resolve, reject)
+			})
+		})
+	}
+	
+	removeRegion(id){
+		return new Promise((resolve, reject) => {
+			window.webkit.messageHandlers.updateAnchor.postMessage({
+				options: {
+					id: id
+				},
+				callback: this._createPromiseCallback('removeRegion', resolve, reject)
+			})
+		})
+	}
+	
+	inRegion(id){
+		return new Promise((resolve, reject) => {
+			window.webkit.messageHandlers.updateAnchor.postMessage({
+				options: {
+					id: id
+				},
+				callback: this._createPromiseCallback('inRegion', resolve, reject)
 			})
 		})
 	}
@@ -318,11 +342,11 @@ export default class ARKitWrapper extends EventHandlerBase {
 	options: the options map for ARKit
 		{
 			location: {
-                accuracy: DOMString
-            },
-            heading: {
-                accuracy: float
-            },
+				accuracy: DOMString
+			},
+			heading: {
+				accuracy: float
+			},
 			camera: boolean,
 			anchors: boolean,
 			planes: boolean,
@@ -338,15 +362,8 @@ export default class ARKitWrapper extends EventHandlerBase {
 		}
 		this._isWatching = true
 
-		if(options === null){
-			options = {
-				camera: true,
-				anchors: true,
-				planes: true,
-				light_estimate: true
-			}
-		}
-		
+        options = this._mergeOptions(DEFAULT_OPTIONS.watch, options);
+        
 		const data = {
 			options: options,
 			callback: this._globalCallbacksMap.onWatch
@@ -355,112 +372,25 @@ export default class ARKitWrapper extends EventHandlerBase {
 		return true
 	}
 
-
-/*
-UIOptions {
-   arkit: {
-   	statistics: Boolean?
-   	plane: Boolean?
-   	focus: Boolean?
-   	anchors: Boolean?
-   }
-   custom : {
-
-//        browser: Boolean?
-//        points: Boolean?
-//        rec: Boolean?
-//        rec_time: Boolean?
-//        mic: Boolean?
-//        build: Boolean?
-//        warnings: Boolean?  
-//        debug: Boolean?
-        _ : Boolean?
-   }
-}
-*/
-
-	/*
-	Sends a setUIOptions message to ARKit to set ui options (show or hide ui elements)
-	options: {
-		browser: boolean,
-		points: boolean,
-		focus: boolean,
-		rec: boolean,
-		rec_time: boolean,
-		mic: boolean,
-		build: boolean,
-		plane: boolean,
-		warnings: boolean,
-		anchors: boolean,
-		debug: boolean,
-		statistics: boolean
-	}
-	*/
 	setUIOptions(options){
-        options = this._mergeOptions(DEFAULT_OPTIONS.setUIOptions, options);
+		options = this._mergeOptions(DEFAULT_OPTIONS.setUIOptions, options);
 		return new Promise((resolve, reject) => {
 			window.webkit.messageHandlers.setUIOptions.postMessage({
 				callback: this._createPromiseCallback('setUIOptions', resolve, reject),
-                options: options
+				options: options
 			})
 		})
 	}
 
 	loadURL(url){
-        window.webkit.messageHandlers.loadURL.postMessage({
-            options: {url: url}
-        })
+		window.webkit.messageHandlers.loadURL.postMessage({
+			options: {url: url}
+		})
 	}
-    
-	/*
-	Called during instance creation to send a message to ARKit to initialize and create a device ID
-	Usually results in ARKit calling back to _onInit with a deviceId
-	options: {
-		ui: {
-			browser: boolean,
-			points: boolean,
-			focus: boolean,
-			rec: boolean,
-			rec_time: boolean,
-			mic: boolean,
-			build: boolean,
-			plane: boolean,
-			warnings: boolean,
-			anchors: boolean,
-			debug: boolean,
-			statistics: boolean
-		}
-	}
-	*/
-	//~ _sendInit(options){
-		//~ // get device id
-		//~ window.webkit.messageHandlers.initAR.postMessage({
-			//~ options: options,
-			//~ callback: this._globalCallbacksMap.onInit
-		//~ })
-	//~ }
 
-	/*
-	Callback for when ARKit is initialized
-	Callback returns device info: {
-		deviceUUID: DOMString - AR device ID,
-		screenScale: float,
-		systemVersion: DOMString,
-		isIpad: boolean,
-		screenSize: {
-			width: float,
-			height: float
-		}
-	}
-	*/
 	_onInit(info){
-        this._deviceInfo = info
-        //~ this._deviceId = info.deviceUUID
+		this._deviceInfo = info
 		this._isInitialized = true
-		//~ this.dispatchEvent(new CustomEvent(ARKitWrapper.INIT_EVENT, {
-			//~ source: this,
-			//~ detail: info
-		//~ }))
 	}
 
 	/*
@@ -496,10 +426,10 @@ UIOptions {
 		const callbackName = this._generateCallbackUID(action);
 		window[callbackName] = (data) => {
 			delete window[callbackName]
-            if (this._isError(data)){
-                reject(new Error('ARKit responded with an error code ' + data));
-                return;
-            }
+			if (this._isError(data)){
+				reject(new Error('ARKit responded with an error code ' + data));
+				return;
+			}
 			const wrapperCallbackName = '_on' + action[0].toUpperCase() +
 				action.slice(1);
 			if (typeof(this[wrapperCallbackName]) == 'function'){
@@ -511,17 +441,17 @@ UIOptions {
 	}
 
 	_generateCallbackUID(prefix){
-		return 'arkitCallback_' + prefix + '_' + new Date().getTime() + 
+		return 'arCallback_' + prefix + '_' + new Date().getTime() + 
 			'_' + Math.floor((Math.random() * Number.MAX_SAFE_INTEGER))
 	}
 
 	/*
 	The ARKit iOS app depends on several callbacks on `window`. This method sets them up.
-	They end up as window.arkitCallback? where ? is an integer.
-	You can map window.arkitCallback? to ARKitWrapper instance methods using _globalCallbacksMap
+	They end up as window.arCallback? where ? is an integer.
+	You can map window.arCallback? to ARKitWrapper instance methods using _globalCallbacksMap
 	*/
 	_generateGlobalCallback(callbackName, num){
-		const name = 'arkitCallback' + num
+		const name = 'arCallback' + num
 		this._globalCallbacksMap[callbackName] = name
 		const self = this
 		window[name] = function(deviceData){
@@ -538,15 +468,24 @@ UIOptions {
 }
 
 // ARKitWrapper event names:
-//~ ARKitWrapper.INIT_EVENT = 'arkit-init'
-ARKitWrapper.WATCH_EVENT = 'arkit-watch'
-ARKitWrapper.RECORD_START_EVENT = 'arkit-record-start'
-ARKitWrapper.RECORD_STOP_EVENT = 'arkit-record-stop'
-ARKitWrapper.DID_MOVE_BACKGROUND_EVENT = 'arkit-did-move-background'
-ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT = 'arkit-will-enter-foreground'
-ARKitWrapper.INTERRUPTED_EVENT = 'arkit-interrupted'
-ARKitWrapper.INTERRUPTION_ENDED_EVENT = 'arkit-interruption-ended'
-ARKitWrapper.SHOW_DEBUG_EVENT = 'arkit-show-debug'
+ARKitWrapper.WATCH_EVENT = 'ar-watch'
+ARKitWrapper.RECORD_START_EVENT = 'ar-record-start'
+ARKitWrapper.RECORD_STOP_EVENT = 'ar-record-stop'
+ARKitWrapper.DID_MOVE_BACKGROUND_EVENT = 'ar-did-move-background'
+ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT = 'ar-will-enter-foreground'
+ARKitWrapper.INTERRUPTION_EVENT = 'ar-interruption'
+ARKitWrapper.INTERRUPTION_ENDED_EVENT = 'ar-interruption-ended'
+ARKitWrapper.SHOW_DEBUG_EVENT = 'ar-show-debug'
+ARKitWrapper.MEMORY_WARNING_EVENT = 'ar-receive-memory-warning'
+ARKitWrapper.ENTER_REGION_EVENT = 'ar-enter-region'
+ARKitWrapper.EXIT_REGION_EVENT = 'ar-exit-region'
+ARKitWrapper.HEADING_UPDATED_EVENT = 'ar-heading-updated'
+ARKitWrapper.TRACKING_CHANGED_EVENT = 'ar-tracking-changed'
+ARKitWrapper.SESSION_FAILS_EVENT = 'ar-session-fails'
+ARKitWrapper.PLAINS_ADDED_EVENT = 'ar-plains-added'
+ARKitWrapper.PLAINS_REMOVED_EVENT = 'ar-plains-removed'
+ARKitWrapper.ANCHORS_UPDATED_EVENT = 'ar-anchors-updated'
+ARKitWrapper.SIZE_CHANGED_EVENT = 'ar-size-changed'
 
 // hit test types
 ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT = 1

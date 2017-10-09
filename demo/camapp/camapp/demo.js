@@ -110,7 +110,7 @@ UIOptions {
                 }
             }
         }).then(this.onARInit.bind(this));
-return;
+
         //~ this.ar = ARKitWrapper.GetOrCreate({
             //~ ui: {
                 //~ points: true,
@@ -145,7 +145,7 @@ return;
             this.onARWillEnterForeground();
         });
         
-        this.ar.addEventListener(ARKitWrapper.INTERRUPTED_EVENT, () => {
+        this.ar.addEventListener(ARKitWrapper.INTERRUPTION_EVENT, () => {
             // do something on interruption event
         });
         
@@ -155,7 +155,7 @@ return;
         
         this.ar.addEventListener(ARKitWrapper.SHOW_DEBUG_EVENT, e => {
             const options = e.detail;
-            this.isDebug = options.debug == 1;
+            this.isDebug = Boolean(options.debug);
             if (!this.isDebug) {
                 this.fpsStats.domElement.style.display = 'none';
             } else {
@@ -396,17 +396,15 @@ return;
             return;
         }
         this.deviceId = this.ar.deviceInfo.deviceUUID;
-return;
+
         this.watchAR();
     }
     
     onARWatch() {
-        const cameraProjectionMatrix = this.ar.getData('projection_camera');
-        const cameraTransformMatrix = this.ar.getData('camera_transform');
-        if (cameraProjectionMatrix && cameraTransformMatrix) {
-            this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
-
-            this.camera.matrix.fromArray(cameraTransformMatrix);
+        const camera = this.ar.getData('camera');
+        if (camera) {
+            this.camera.projectionMatrix.fromArray(camera.projection_camera);
+            this.camera.matrix.fromArray(camera.camera_transform);
         }
         
         this.requestAnimationFrame();
