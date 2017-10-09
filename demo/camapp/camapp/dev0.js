@@ -1,4 +1,4 @@
-import ARKitWrapper from './platform/ARKitWrapper.js'
+import ARKitWrapper from './platform/ARKitWrapperOld.js'
 
 const CUBE_SIZE = 0.1;
 class App {
@@ -35,6 +35,9 @@ class App {
         });
         this.ar.waitForInit().then(this.onARInit.bind(this));
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
+        
+        this.ar.addEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, this.onARAddObject.bind(this));
+        this.ar.addEventListener(ARKitWrapper.HIT_TEST_EVENT, this.onARHitTest.bind(this));
         
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
             // do something when recording is started
@@ -151,7 +154,7 @@ class App {
             
             this.tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
             
-            this.ar.hitTest(normX, normY).then(data => this.onARHitTest(data));
+            this.ar.hitTest(normX, normY);
         });
     }
 
@@ -180,15 +183,15 @@ class App {
             this.fpsStats.end();
         }
     }
-    onARHitTest(data) {
+    onARHitTest(e) {
         let info;
         let planeResults = [];
         let planeExistingUsingExtentResults = [];
         let planeExistingResults = [];
         
-        if (Array.isArray(data) && data.length) {
+        if (typeof(e) == 'object' && Array.isArray(e.detail) && e.detail.length) {
             // search for planes
-            planeResults = data.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
+            planeResults = e.detail.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
             
             planeExistingUsingExtentResults = planeResults.filter(
                 hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT
@@ -211,7 +214,7 @@ class App {
                 info = planeResults[0];
             } else {
                 // feature points if any
-                info = data[0];
+                info = e.detail[0];
             }
         }
 
@@ -237,9 +240,10 @@ class App {
         this.ar.addAnchor(
             name,
             transform
-        ).then(info => this.onARAddObject(info));
+        );
     }
-    onARAddObject(info) {
+    onARAddObject(e) {
+        const info = e.detail;
         const cubeMesh = this.createCube(info.uuid);
         
         cubeMesh.matrixAutoUpdate = false;
@@ -254,9 +258,12 @@ class App {
     }
     
     onARDidMoveBackground() {
-        this.ar.stop().then(() => {
+        const onStopByMoving2Back = () => {
+            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT, onStopByMoving2Back);
             this.cleanScene();
-        });
+        };
+        this.ar.addEventListener(ARKitWrapper.STOP_EVENT, onStopByMoving2Back);
+        this.ar.stop();
     }
     
     onARWillEnterForeground() {

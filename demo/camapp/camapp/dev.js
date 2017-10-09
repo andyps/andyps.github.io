@@ -1,4 +1,4 @@
-import ARKitWrapper from './platform/ARKitWrapperOld.js'
+import ARKitWrapper from './platform/ARKitWrapper.js'
 
 const CUBE_SIZE = 0.1;
 class App {
@@ -13,31 +13,34 @@ class App {
         this.cubesNames = 0;
 
         this.initAR();
-        
+
         this.raycaster = new THREE.Raycaster();
         this.registerUIEvents();
     }
+
     initAR() {
-        this.ar = ARKitWrapper.GetOrCreate({
+        this.ar = ARKitWrapper.GetOrCreate();
+        this.ar.init({
             ui: {
-                points: true,
-                focus: true,
-                rec: true,
-                rec_time: true,
-                mic: true,
-                build: true,
-                plane: true,
-                warnings: true,
-                anchors: false,
-                debug: true,
-                statistics: this.isDebug
+                arkit: {
+                    statistics: this.isDebug,
+                    plane: true,
+                    focus: true,
+                    anchors: false
+                },
+                custom: {
+                    points: true,
+                    rec: true,
+                    rec_time: true,
+                    mic: true,
+                    build: true,
+                    warnings: true,
+                    debug: true
+                }
             }
-        });
-        this.ar.waitForInit().then(this.onARInit.bind(this));
+        }).then(this.onARInit.bind(this));
+
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
-        
-        this.ar.addEventListener(ARKitWrapper.ADD_ANCHOR_EVENT, this.onARAddObject.bind(this));
-        this.ar.addEventListener(ARKitWrapper.HIT_TEST_EVENT, this.onARHitTest.bind(this));
         
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
             // do something when recording is started
@@ -55,7 +58,7 @@ class App {
             this.onARWillEnterForeground();
         });
         
-        this.ar.addEventListener(ARKitWrapper.INTERRUPTED_EVENT, () => {
+        this.ar.addEventListener(ARKitWrapper.INTERRUPTION_EVENT, () => {
             // do something on interruption event
         });
         
@@ -65,7 +68,7 @@ class App {
         
         this.ar.addEventListener(ARKitWrapper.SHOW_DEBUG_EVENT, e => {
             const options = e.detail;
-            this.isDebug = options.debug == 1;
+            this.isDebug = Boolean(options.debug);
             if (!this.isDebug) {
                 this.fpsStats.domElement.style.display = 'none';
             } else {
@@ -154,7 +157,7 @@ class App {
             
             this.tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
             
-            this.ar.hitTest(normX, normY);
+            this.ar.hitTest(normX, normY).then(data => this.onARHitTest(data));
         });
     }
 
@@ -164,9 +167,16 @@ class App {
     
     watchAR() {
         this.ar.watch({
-            location: true,
+            location: {
+                accuracy: ARKitWrapper.LOCATION_ACCURACY_HUNDRED_METERS
+            },
             camera: true,
-            objects: true
+            anchors: true,
+            planes: true,
+            light_estimate: true,
+            heading: {
+                accuracy: 1
+            }
         });
     }
     
@@ -183,42 +193,43 @@ class App {
             this.fpsStats.end();
         }
     }
-    onARHitTest(e) {
+    onARHitTest(data) {
         let info;
         let planeResults = [];
         let planeExistingUsingExtentResults = [];
         let planeExistingResults = [];
         
-        if (typeof(e) == 'object' && Array.isArray(e.detail) && e.detail.length) {
+        if (data.planes.length) {
             // search for planes
-            planeResults = e.detail.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
+            //~ planeResults = data.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
+            
+            planeResults = data.planes;
             
             planeExistingUsingExtentResults = planeResults.filter(
-                hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT
+                hitTestResult => hitTestResult.point.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT
             );
             planeExistingResults = planeResults.filter(
-                hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE
+                hitTestResult => hitTestResult.point.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE
             );
             
             if (planeExistingUsingExtentResults.length) {
                 // existing planes using extent first
-                planeExistingUsingExtentResults = planeExistingUsingExtentResults.sort((a, b) => a.distance - b.distance);
-                info = planeExistingUsingExtentResults[0];
+                planeExistingUsingExtentResults = planeExistingUsingExtentResults.sort((a, b) => a.point.distance - b.point.distance);
+                info = planeExistingUsingExtentResults[0].point;
             } else if (planeExistingResults.length) {
                 // then other existing planes
-                planeExistingResults = planeExistingResults.sort((a, b) => a.distance - b.distance);
-                info = planeExistingResults[0];
-            } else if (planeResults.length) {
-                // other types except feature points
-                planeResults = planeResults.sort((a, b) => a.distance - b.distance);
-                info = planeResults[0];
+                planeExistingResults = planeExistingResults.sort((a, b) => a.point.distance - b.point.distance);
+                info = planeExistingResults[0].point;
             } else {
-                // feature points if any
-                info = e.detail[0];
+                // other plane types
+                planeResults = planeResults.sort((a, b) => a.point.distance - b.point.distance);
+                info = planeResults[0].point;
             }
+        } else if (data.points.length) {
+            // feature points if any
+            info = data.points[0];
         }
 
-        let name = this.generateCubeName();
         let transform;
         if (info) {
             // if hit testing is positive
@@ -236,20 +247,18 @@ class App {
             transform.makeTranslation(objPos.x, objPos.y, objPos.z);
             transform = transform.toArray();
         }
-        
+
         this.ar.addAnchor(
-            name,
             transform
-        );
+        ).then(info => this.onARAddObject(info));
     }
-    onARAddObject(e) {
-        const info = e.detail;
+    onARAddObject(info) {
         const cubeMesh = this.createCube(info.uuid);
         
         cubeMesh.matrixAutoUpdate = false;
 
-        info.transform[13] += CUBE_SIZE / 2;
-        cubeMesh.matrix.fromArray(info.transform);
+        info.world_transform[13] += CUBE_SIZE / 2;
+        cubeMesh.matrix.fromArray(info.world_transform);
         
         this.scene.add(cubeMesh);
         this.cubesNum++;
@@ -258,30 +267,29 @@ class App {
     }
     
     onARDidMoveBackground() {
-        const onStopByMoving2Back = () => {
-            this.ar.removeEventListener(ARKitWrapper.STOP_EVENT, onStopByMoving2Back);
+        this.ar.stop().then(() => {
             this.cleanScene();
-        };
-        this.ar.addEventListener(ARKitWrapper.STOP_EVENT, onStopByMoving2Back);
-        this.ar.stop();
+        });
     }
     
     onARWillEnterForeground() {
         this.watchAR();
     }
     
-    onARInit() {
-        this.deviceId = this.ar.deviceId;
+    onARInit(e) {
+        if (!e || !e.deviceUUID) {
+            return;
+        }
+        this.deviceId = this.ar.deviceInfo.deviceUUID;
+
         this.watchAR();
     }
     
     onARWatch() {
-        const cameraProjectionMatrix = this.ar.getData('projection_camera');
-        const cameraTransformMatrix = this.ar.getData('camera_transform');
-        if (cameraProjectionMatrix && cameraTransformMatrix) {
-            this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
-
-            this.camera.matrix.fromArray(cameraTransformMatrix);
+        const camera = this.ar.getData('camera');
+        if (camera) {
+            this.camera.projectionMatrix.fromArray(camera.projection_camera);
+            this.camera.matrix.fromArray(camera.camera_transform);
         }
         
         this.requestAnimationFrame();
