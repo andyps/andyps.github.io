@@ -321,9 +321,12 @@ class App {
         
         this.showMessage('initinfo:' + JSON.stringify(e.screenSize));
         
+        document.querySelector('#info-debug').value = JSON.stringify(this.ar.deviceInfo);
+        
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.deviceUUID) {
             return;
         }
+        return;
         this.deviceId = this.ar.deviceInfo.deviceUUID;
 
         this.watchAR();
