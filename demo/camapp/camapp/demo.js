@@ -319,7 +319,7 @@ class App {
     
     onARInit(e) {
         
-        this.showMessage(JSON.stringify(e));
+        this.showMessage('initinfo:' + JSON.stringify(e.screenSize));
         
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.deviceUUID) {
             return;
