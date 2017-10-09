@@ -194,6 +194,14 @@ class App {
             
             this.ar.hitTest(normX, normY).then(data => this.onARHitTest(data));
         });
+        
+        document.querySelector('#message').onclick = function() {
+            this.style.display = 'none';
+        }
+        document.querySelector('#btn-snapdebug').addEventListener('click', () => {
+            document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
+        });
+
     }
 
     requestAnimationFrame() {
@@ -325,7 +333,23 @@ class App {
             this.camera.matrix.fromArray(camera.camera_transform);
         }
         
+        if (this.isDebug) {
+            this.logDebugData();
+        }
+        
         this.requestAnimationFrame();
+    }
+    
+    showMessage(txt) {
+        document.querySelector('#message').textContent = txt;
+        document.querySelector('#message').style.display = 'block';
+    }
+    
+    logDebugData() {
+        let data = this.ar.getData();
+        const date = (new Date()).toTimeString();
+        
+        document.querySelector('#info-debug').value = JSON.stringify(data) + ':' + date;
     }
 }
 
