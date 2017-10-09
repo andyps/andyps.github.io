@@ -318,7 +318,10 @@ class App {
     }
     
     onARInit(e) {
-        if (!e || !e.deviceUUID) {
+        
+        this.showMessage(JSON.stringify(e));
+        
+        if (!this.ar.deviceInfo || !this.ar.deviceInfo.deviceUUID) {
             return;
         }
         this.deviceId = this.ar.deviceInfo.deviceUUID;
