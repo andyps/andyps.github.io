@@ -123,7 +123,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 				resolve(this.deviceInfo);
 				return;
 			}
-			window.webkit.messageHandlers.initAR.postMessage({
+			window.webkit.messageHandlers.arInitAR.postMessage({
 				callback: this._createPromiseCallback('init', resolve, reject),
 				options: options
 			})
@@ -215,7 +215,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 				reject(new Error('ARKit is not initialized'));
 				return;
 			}
-			window.webkit.messageHandlers.hitTest.postMessage({
+			window.webkit.messageHandlers.arHitTest.postMessage({
 				options: {
 					point: {x: x, y: y},
 					type: types
@@ -238,7 +238,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 				reject(new Error('ARKit is not initialized'));
 				return;
 			}
-			window.webkit.messageHandlers.addAnchor.postMessage({
+			window.webkit.messageHandlers.arAddAnchor.postMessage({
 				options: {
 					transform: transform
 				},
@@ -249,7 +249,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 
 	removeAnchor(uid){
 		return new Promise((resolve, reject) => {
-			window.webkit.messageHandlers.removeAnchor.postMessage({
+			window.webkit.messageHandlers.arRemoveAnchor.postMessage({
 				options: {
 					uuid: uid
 				},
@@ -265,7 +265,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	*/
 	updateAnchor(anchor){
 		return new Promise((resolve, reject) => {
-			window.webkit.messageHandlers.updateAnchor.postMessage({
+			window.webkit.messageHandlers.arUpdateAnchor.postMessage({
 				options: {
 					anchor: anchor
 				},
@@ -291,7 +291,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 					altitude: center.altitude
 				}
 			};
-			window.webkit.messageHandlers.updateAnchor.postMessage({
+			window.webkit.messageHandlers.arAddRegion.postMessage({
 				options: {
 					region: region
 				},
@@ -302,7 +302,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	
 	removeRegion(id){
 		return new Promise((resolve, reject) => {
-			window.webkit.messageHandlers.updateAnchor.postMessage({
+			window.webkit.messageHandlers.arRemoveRegion.postMessage({
 				options: {
 					id: id
 				},
@@ -313,7 +313,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	
 	inRegion(id){
 		return new Promise((resolve, reject) => {
-			window.webkit.messageHandlers.updateAnchor.postMessage({
+			window.webkit.messageHandlers.arInRegion.postMessage({
 				options: {
 					id: id
 				},
@@ -331,7 +331,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 				resolve();
 				return;
 			}
-			window.webkit.messageHandlers.stopAR.postMessage({
+			window.webkit.messageHandlers.arStopAR.postMessage({
 				callback: this._createPromiseCallback('stop', resolve, reject)
 			})
 		})
@@ -368,14 +368,14 @@ export default class ARKitWrapper extends EventHandlerBase {
 			options: options,
 			callback: this._globalCallbacksMap.onWatch
 		}
-		window.webkit.messageHandlers.watchAR.postMessage(data)
+		window.webkit.messageHandlers.arWatchAR.postMessage(data)
 		return true
 	}
 
 	setUIOptions(options){
 		options = this._mergeOptions(DEFAULT_OPTIONS.setUIOptions, options);
 		return new Promise((resolve, reject) => {
-			window.webkit.messageHandlers.setUIOptions.postMessage({
+			window.webkit.messageHandlers.arSetUIOptions.postMessage({
 				callback: this._createPromiseCallback('setUIOptions', resolve, reject),
 				options: options
 			})
@@ -383,7 +383,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	}
 
 	loadURL(url){
-		window.webkit.messageHandlers.loadURL.postMessage({
+		window.webkit.messageHandlers.arLoadURL.postMessage({
 			options: {url: url}
 		})
 	}
