@@ -4,20 +4,24 @@ import EventHandlerBase from '../fill/EventHandlerBase.js'
 ARKitWrapper talks to Apple ARKit, as exposed by Mozilla's test ARDemo app.
 It won't function inside a browser like Firefox.
 
-ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the instance, then add event listeners like so:
+ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the instance, then add watch event listener like so:
 
 	if(ARKitWrapper.HasARKit()){
 		let arKitWrapper = ARKitWrapper.GetOrCreate()
 		arKitWrapper.init().then(ev => { console.log('ARKit initialized', ev) })
 		arKitWrapper.addEventListener(ARKitWrapper.WATCH_EVENT, ev => { console.log('ARKit update', ev) })
 		arKitWrapper.watch({
-			location: boolean,
 			camera: boolean,
 			anchors: boolean,
+			planes: boolean,
 			light_estimate: boolean
 		})
 	}
 
+*/
+
+/*
+Default options for some methods
 */
 const DEFAULT_OPTIONS = {
 	init: {
@@ -116,6 +120,30 @@ export default class ARKitWrapper extends EventHandlerBase {
 	get isInitialized(){ return this._isInitialized } // True if this instance has received the onInit callback from ARKit
 	get hasData(){ return this._rawARData !== null } // True if this instance has received data via onWatch
 
+	/*
+	Call this to send a message to ARKit to initialize and get device information
+	Results in ARKit calling back to _onInit with device information
+	options: {
+		ui: {
+			arkit: {
+				statistics: boolean,
+				plane: boolean,
+				focus: boolean,
+				anchors: boolean
+			},
+			custom: {
+				browser: boolean,
+				points: boolean,
+				rec: boolean,
+				rec_time: boolean,
+				mic: boolean,
+				build: boolean,
+				warnings: boolean,
+				debug: boolean
+			}
+		}
+	}
+	*/
 	init(options=null){
 		options = this._mergeOptions(DEFAULT_OPTIONS.init, options);
 		return new Promise((resolve, reject) => {
@@ -128,23 +156,6 @@ export default class ARKitWrapper extends EventHandlerBase {
 				options: options
 			})
 		})
-	}
-
-	_mergeOptions(defOptions, options){
-		options = (options && typeof(options) == 'object') ? options : {}
-		options = Object.assign({}, options)
-		let result = {}
-		for (let key in defOptions) {
-			if (typeof(options[key]) == 'undefined') {
-				result[key] = defOptions[key];
-			} else if (typeof(defOptions[key]) != 'object') {
-				result[key] = options[key];
-			} else {
-				result[key] = this._mergeOptions(defOptions[key], options[key]);
-			}
-			delete options[key];
-		}
-		return Object.assign(result, options);
 	}
 
 	/*
@@ -162,50 +173,39 @@ export default class ARKitWrapper extends EventHandlerBase {
 	}	
 
 	/*
-	returns
-		{
-			uuid: DOMString,
-			transform: [4x4 column major affine transform]
-		}
-
-	return null if object with `uuid` is not found
-	*//*
-	getObject(uuid){
-		if (!this._isInitialized){
-			return null
-		}
-		const objects = this.getKey('objects')
-		if(objects === null) return null
-		for(const object of objects){
-			if(object.uuid === uuid){
-				return object
-			}
-		}
-		return null
-	}
-*/
-	/*
 	Sends a hitTest message to ARKit to get hit testing results
 	x, y - screen coordinates normalized to 0..1 (0,0 is at top left and 1,1 is at bottom right)
 	types - bit mask of hit testing types
 	
-	Returns a Promise that resolves to a (possibly empty) array of hit test data:
+	Returns a Promise that resolves to a an object with planes and points (possibly empty) arrays of hit test data:
+	{
+	points:
+		[
+			{
+				type: 1,							// A packed mask of types ARKitWrapper.HIT_TEST_TYPE_*
+				distance: 1.0216870307922363,		// The distance in meters from the camera to the detected anchor or feature point.
+				world_transform:  [float x 16],		// The pose of the hit test result relative to the world coordinate system. 
+				local_transform:  [float x 16],		// The pose of the hit test result relative to the nearest anchor or feature point
+
+				// If the `type` is `HIT_TEST_TYPE_ESTIMATED_HORIZONTAL_PLANE`, `HIT_TEST_TYPE_EXISTING_PLANE`, or `HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT` (2, 8, or 16) it will also have anchor data:
+				anchor_center: { x:float, y:float, z:float },
+				anchor_extent: { x:float, y:float },
+				uuid: string,
+
+				// If the `type` is `HIT_TEST_TYPE_EXISTING_PLANE` or `HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT` (8 or 16) it will also have an anchor transform:
+				anchor_transform: [float x 16]
+			},
+			...
+		]
+	plains:
 	[
-		{
-			type: 1,							// A packed mask of types ARKitWrapper.HIT_TEST_TYPE_*
-			distance: 1.0216870307922363,		// The distance in meters from the camera to the detected anchor or feature point.
-			world_transform:  [float x 16],		// The pose of the hit test result relative to the world coordinate system. 
-			local_transform:  [float x 16],		// The pose of the hit test result relative to the nearest anchor or feature point
-
-			// If the `type` is `HIT_TEST_TYPE_ESTIMATED_HORIZONTAL_PLANE`, `HIT_TEST_TYPE_EXISTING_PLANE`, or `HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT` (2, 8, or 16) it will also have anchor data:
-			anchor_center: { x:float, y:float, z:float },
-			anchor_extent: { x:float, y:float },
-			uuid: string,
-
-			// If the `type` is `HIT_TEST_TYPE_EXISTING_PLANE` or `HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT` (8 or 16) it will also have an anchor transform:
-			anchor_transform: [float x 16]
-		},
-		...
+		point: PointData,
+		plane: {
+			center: Vector3,
+			extent: Vector3,
+			transform: Matrix4,
+			uuid: DOMString
+		}
 	]
 	@see https://developer.apple.com/documentation/arkit/arframe/2875718-hittest
 	*/
@@ -229,6 +229,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	Sends an addAnchor message to ARKit
 	Returns a promise that returns:
 	{
+		uuid: DOMString,
 		world_transform - anchor transformation matrix
 	}
 	*/
@@ -257,6 +258,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 			})
 		})
 	}
+	
 	/*
 	anchor {
 	  uuid: DOMString,
@@ -362,8 +364,8 @@ export default class ARKitWrapper extends EventHandlerBase {
 		}
 		this._isWatching = true
 
-        options = this._mergeOptions(DEFAULT_OPTIONS.watch, options);
-        
+		options = this._mergeOptions(DEFAULT_OPTIONS.watch, options);
+		
 		const data = {
 			options: options,
 			callback: this._globalCallbacksMap.onWatch
@@ -397,15 +399,20 @@ export default class ARKitWrapper extends EventHandlerBase {
 	_onWatch is called from native ARKit on each frame:
 		data:
 		{
-			"camera_transform":[4x4 column major affine transform matrix],
-			"projection_camera":[4x4 projection matrix],
-			"location":{
+			camera: {
+				"camera_transform":[4x4 column major affine transform matrix],
+				"projection_camera":[4x4 projection matrix],
+			},
+			location: {
 				"altitude": 176.08457946777344,
 				"longitude": -79.222516606740456,
 				"latitude": 35.789005972772181
+			},
+			light: {
+				ambientIntensity: number,
+				ambientColorTemperature: number
 			}
 		}
-
 	*/
 	_onWatch(data){
 		this._rawARData = data
@@ -422,6 +429,10 @@ export default class ARKitWrapper extends EventHandlerBase {
 		this._isWatching = false
 	}
 
+	/*
+	The ARKit iOS app depends on several temporal callbacks on `window`. This method sets them up.
+	These callbacks are used in promises and are removed after using.
+	*/
 	_createPromiseCallback(action, resolve, reject){
 		const callbackName = this._generateCallbackUID(action);
 		window[callbackName] = (data) => {
@@ -440,13 +451,24 @@ export default class ARKitWrapper extends EventHandlerBase {
 		return callbackName;
 	}
 
+	/*
+	Generate unique callback name
+	*/
 	_generateCallbackUID(prefix){
 		return 'arCallback_' + prefix + '_' + new Date().getTime() + 
 			'_' + Math.floor((Math.random() * Number.MAX_SAFE_INTEGER))
 	}
 
+	_isError(info){
+		if (typeof(info) == 'object' || typeof(info) == 'undefined') {
+			return false;
+		}
+		return true;
+	}
+
 	/*
 	The ARKit iOS app depends on several callbacks on `window`. This method sets them up.
+	These callbacks are not removed after using.
 	They end up as window.arCallback? where ? is an integer.
 	You can map window.arCallback? to ARKitWrapper instance methods using _globalCallbacksMap
 	*/
@@ -458,12 +480,25 @@ export default class ARKitWrapper extends EventHandlerBase {
 			self['_' + callbackName](deviceData)
 		}
 	}
-	
-	_isError(info){
-		if (typeof(info) == 'object' || typeof(info) == 'undefined') {
-			return false;
+
+	/*
+	Merge options passed to some methods with default ones defined by DEFAULT_OPTIONS constant
+	*/
+	_mergeOptions(defOptions, options){
+		options = (options && typeof(options) == 'object') ? options : {}
+		options = Object.assign({}, options)
+		let result = {}
+		for (let key in defOptions) {
+			if (typeof(options[key]) == 'undefined') {
+				result[key] = defOptions[key];
+			} else if (typeof(defOptions[key]) != 'object') {
+				result[key] = options[key];
+			} else {
+				result[key] = this._mergeOptions(defOptions[key], options[key]);
+			}
+			delete options[key];
 		}
-		return true;
+		return Object.assign(result, options);
 	}
 }
 

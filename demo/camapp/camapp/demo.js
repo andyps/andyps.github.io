@@ -1,6 +1,8 @@
 import ARKitWrapper from './platform/ARKitWrapper.js'
 
+
 const CUBE_SIZE = 0.1;
+
 class App {
     constructor(canvasId) {
         this.isDebug = true;
@@ -10,7 +12,6 @@ class App {
         this.initScene(canvasId);
         
         this.cubesNum = 0;
-        this.cubesNames = 0;
 
         this.initAR();
 
@@ -26,7 +27,7 @@ class App {
                     statistics: this.isDebug,
                     plane: true,
                     focus: true,
-                    anchors: false
+                    anchors: true
                 },
                 custom: {
                     points: true,
@@ -41,48 +42,88 @@ class App {
         }).then(this.onARInit.bind(this));
 
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
-        
+
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
             // do something when recording is started
         });
-        
+
         this.ar.addEventListener(ARKitWrapper.RECORD_STOP_EVENT, () => {
             // do something when recording is stopped
         });
-        
+
         this.ar.addEventListener(ARKitWrapper.DID_MOVE_BACKGROUND_EVENT, () => {
             this.onARDidMoveBackground();
         });
-        
+
         this.ar.addEventListener(ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT, () => {
             this.onARWillEnterForeground();
         });
-        
+
         this.ar.addEventListener(ARKitWrapper.INTERRUPTION_EVENT, () => {
             // do something on interruption event
         });
-        
+
         this.ar.addEventListener(ARKitWrapper.INTERRUPTION_ENDED_EVENT, () => {
             // do something on interruption event ended
+        });
+
+        this.ar.addEventListener(ARKitWrapper.MEMORY_WARNING_EVENT, () => {
+            // do something on memory warning
+        });
+
+        this.ar.addEventListener(ARKitWrapper.ENTER_REGION_EVENT, (e) => {
+            // do something when enter a region
+            console.log('ENTER_REGION_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.EXIT_REGION_EVENT, (e) => {
+            // do something when leave a region
+            console.log('EXIT_REGION_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.SESSION_FAILS_EVENT, () => {
+            // do something when the session fails
+            console.log('SESSION_FAILS_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.TRACKING_CHANGED_EVENT, () => {
+            // do something when tracking status is changed
+            console.log('TRACKING_CHANGED_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.HEADING_UPDATED_EVENT, () => {
+            // do something when heading is updated
+            console.log('HEADING_UPDATED_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, () => {
+            // do something on viewport 'size changed' event
+            console.log('SIZE_CHANGED_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.PLAINS_ADDED_EVENT, () => {
+            // do something when new plains appear
+            console.log('PLAINS_ADDED_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.PLAINS_REMOVED_EVENT, () => {
+            // do something when plains are removed
+            console.log('PLAINS_REMOVED_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.ANCHORS_UPDATED_EVENT, () => {
+            // do something when anchors are updated
+            console.log('ANCHORS_UPDATED_EVENT', e.detail);
         });
         
         this.ar.addEventListener(ARKitWrapper.SHOW_DEBUG_EVENT, e => {
             const options = e.detail;
             this.isDebug = Boolean(options.debug);
-            if (!this.isDebug) {
-                this.fpsStats.domElement.style.display = 'none';
-            } else {
-                this.fpsStats.domElement.style.display = '';
-            }
+            
+            this.fpsStats.domElement.style.display = this.isDebug ? '' : 'none';
         });
     }
-    run() {
-        let render = (time) => {
-            this.render(time);
-            window.requestAnimationFrame(render);
-        };
-        render();
-    }
+
     createCube(name) {
         let geometry = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
         let material = new THREE.MeshLambertMaterial({color: 0x7d4db2, reflectivity: 0, wireframe: false, opacity: 0.8});
@@ -90,11 +131,6 @@ class App {
         cubeMesh.name = name;
         
         return cubeMesh;
-    }
-    generateCubeName() {
-        const name = 'obj-' + this.cubesNames;
-        this.cubesNames++;
-        return name;
     }
     initScene(canvasId) {
         this.canvas = document.getElementById(canvasId);
@@ -146,7 +182,6 @@ class App {
         });
         
         this.cubesNum = 0;
-        this.cubesNames = 0;
     }
 
     registerUIEvents() {
@@ -201,8 +236,6 @@ class App {
         
         if (data.planes.length) {
             // search for planes
-            //~ planeResults = data.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
-            
             planeResults = data.planes;
             
             planeExistingUsingExtentResults = planeResults.filter(

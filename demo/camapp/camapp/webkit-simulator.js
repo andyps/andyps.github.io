@@ -114,17 +114,17 @@ class webkitSimulator {
         this.watchARIntervalId = null;
         
         this.messageHandlers = {
-            initAR: new webkitSimulatorMessageHandler(this, 'initAR'),
-            watchAR: new webkitSimulatorMessageHandler(this, 'watchAR'),
-            stopAR: new webkitSimulatorMessageHandler(this, 'stopAR'),
-            addObject: new webkitSimulatorMessageHandler(this, 'addObject'),
-            addAnchor: new webkitSimulatorMessageHandler(this, 'addAnchor'),
-            hitTest: new webkitSimulatorMessageHandler(this, 'hitTest'),
-            showDebug: new webkitSimulatorMessageHandler(this, 'showDebug'),
-            didMoveBackground: new webkitSimulatorMessageHandler(this, 'didMoveBackground'),
-            willEnterForeground: new webkitSimulatorMessageHandler(this, 'willEnterForeground'),
-            loadUrl: new webkitSimulatorMessageHandler(this, 'loadUrl'),
-            setUIOptions: new webkitSimulatorMessageHandler(this, 'setUIOptions')
+            arInitAR: new webkitSimulatorMessageHandler(this, 'initAR'),
+            arWatchAR: new webkitSimulatorMessageHandler(this, 'watchAR'),
+            arStopAR: new webkitSimulatorMessageHandler(this, 'stopAR'),
+            arAddObject: new webkitSimulatorMessageHandler(this, 'addObject'),
+            arAddAnchor: new webkitSimulatorMessageHandler(this, 'addAnchor'),
+            arHitTest: new webkitSimulatorMessageHandler(this, 'hitTest'),
+            arShowDebug: new webkitSimulatorMessageHandler(this, 'showDebug'),
+            arDidMoveBackground: new webkitSimulatorMessageHandler(this, 'didMoveBackground'),
+            arWillEnterForeground: new webkitSimulatorMessageHandler(this, 'willEnterForeground'),
+            arLoadUrl: new webkitSimulatorMessageHandler(this, 'loadUrl'),
+            arSetUIOptions: new webkitSimulatorMessageHandler(this, 'setUIOptions')
         };
     }
 }
