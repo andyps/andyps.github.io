@@ -193,7 +193,7 @@ class App {
             
             this.tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
             
-            this.ar.hitTest(normX, normY).then(data => this.onARHitTest(data));
+            this.ar.hitTest(normX, normY).then(data => this.onARHitTest(data)).catch(e => e);
         });
         
         document.querySelector('#message').onclick = function() {
