@@ -80,33 +80,30 @@ class webkitSimulatorMessageHandler {
             } else {
                 setTimeout(() => {
                     if (this.name === 'addObject' || this.name === 'addAnchor') {
-                        data.transform = [
-                            0.9914429783821106,
-                            -0.10326667129993439,
-                            0.079854816198349,
-                            0,
-
-                            0.12760323286056519,
-                            0.8956893682479858,
-                            -0.4259788990020752,
-                            0,
-
-                            -0.0275356974452734,
-                            0.4325235188007355,
-                            0.9012021422386169,
-                            0,
-                             
-                            0.07370418310165405,
-                            -0.8629032373428345,
-                            -1.7984013557434082,
-                            1
-                        ];
+                        data.world_transform = {
+                            v0: {x: 0.9914429783821106, y: -0.10326667129993439, z: 0.079854816198349, w: 0},
+                            v1: {x: 0.12760323286056519, y: 0.8956893682479858, z: -0.4259788990020752, w: 0},
+                            v2: {x: -0.0275356974452734, y: 0.4325235188007355, z: 0.9012021422386169, w: 0},
+                            v3: {x: 0.07370418310165405, y: -0.8629032373428345, z: -1.7984013557434082, w: 1}
+                        }
                         window[data.callback](data);
                         return;
                     } else if (this.name === 'hitTest') {
-                        data.status = 'plain'; // plain | point | null
-                        data.position = {x: 0, y: 1, z: -1};
-                        data.hitPosition = {x: -1, y: 1, z: -1};
+                        data.planes = [
+                            {
+                                point: {
+                                    distance: 1,
+                                    type: 8,
+                                    world_transform: {
+                                        v0: {x: 1, y: 1, z: -1, w: 0},
+                                        v1: {x: 0, y: 1, z: 1, w: 0},
+                                        v2: {x: 0, y: 0, z: -1, w: 0},
+                                        v3: {x: 0, y: 0, z: 0, w: 1}
+                                    }
+                                }
+                            }
+                        ];
+                        
                         window[data.callback](data);
                         return;
                     } else if (this.name === 'initAR') {

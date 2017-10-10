@@ -404,6 +404,19 @@ export default class ARKitWrapper extends EventHandlerBase {
 		);
 	}
 
+	createARMatrix(matrixArray) {
+		const v0 = matrixArray.slice(0, 4);
+		const v1 = matrixArray.slice(4, 8);
+		const v2 = matrixArray.slice(8, 12);
+		const v3 = matrixArray.slice(12, 16);
+		return {
+			v0: {x: v0[0], y: v0[1], z: v0[2], w: v0[3]},
+			v1: {x: v1[0], y: v1[1], z: v1[2], w: v1[3]},
+			v2: {x: v2[0], y: v2[1], z: v2[2], w: v2[3]},
+			v3: {x: v3[0], y: v3[1], z: v3[2], w: v3[3]}
+		}
+	}
+
 	/*
 	_onWatch is called from native ARKit on each frame:
 		data:

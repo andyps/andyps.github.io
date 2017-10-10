@@ -242,7 +242,7 @@ class App {
         let planeResults = [];
         let planeExistingUsingExtentResults = [];
         let planeExistingResults = [];
-document.querySelector('#info-snapdebug').value = JSON.stringify(data);
+document.querySelector('#info-snapdebug').value = 'onARHitTest\n' + JSON.stringify(data);
         if (data.planes.length) {
             // search for planes
             planeResults = data.planes;
@@ -288,6 +288,7 @@ document.querySelector('#info-snapdebug').value = JSON.stringify(data);
             transform = new THREE.Matrix4();
             transform.makeTranslation(objPos.x, objPos.y, objPos.z);
             transform = transform.toArray();
+            transform = this.ar.createARMatrix(transform);
         }
 
         this.ar.addAnchor(
@@ -296,11 +297,11 @@ document.querySelector('#info-snapdebug').value = JSON.stringify(data);
     }
     onARAddObject(info) {
         const cubeMesh = this.createCube(info.uuid);
-        
         cubeMesh.matrixAutoUpdate = false;
 
-        info.world_transform[13] += CUBE_SIZE / 2;
-        cubeMesh.matrix.fromArray(info.world_transform);
+        //~ info.world_transform[13] += CUBE_SIZE / 2;
+        info.world_transform.v3.y += CUBE_SIZE / 2;
+        cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.world_transform));
         
         this.scene.add(cubeMesh);
         this.cubesNum++;
