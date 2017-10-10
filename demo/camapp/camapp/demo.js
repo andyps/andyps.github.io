@@ -328,15 +328,9 @@ class App {
         this.watchAR();
     }
     
-    onARWatch(e) {
-        var test = {};
-this.showMessage('???' + JSON.stringify(e.detail.camera));
+    onARWatch() {
         const camera = this.ar.getData('camera');
         if (camera) {
-            
-            test.projectionCamera = this.ar.flattenARMatrix(camera.projectionCamera);
-            test.cameraTransform = this.ar.flattenARMatrix(camera.cameraTransform);
-this.showMessage('onARWatch' + JSON.stringify(test));
             this.camera.projectionMatrix.fromArray(
                 this.ar.flattenARMatrix(camera.projectionCamera)
             );
@@ -346,7 +340,7 @@ this.showMessage('onARWatch' + JSON.stringify(test));
         }
 
         if (this.isDebug) {
-            this.logDebugData(test);
+            this.logDebugData();
         }
 
         this.requestAnimationFrame();

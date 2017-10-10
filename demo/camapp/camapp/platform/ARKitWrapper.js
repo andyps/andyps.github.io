@@ -409,8 +409,18 @@ export default class ARKitWrapper extends EventHandlerBase {
 		data:
 		{
 			camera: {
-				"cameraTransform":[4x4 column major affine transform matrix],
-				"projectionCamera":[4x4 projection matrix],
+				"cameraTransform": {
+					v0: {x: number, y: number, z: number, w: number}, - column 0
+					v1: {x: number, y: number, z: number, w: number}, - column 1
+					v2: {x: number, y: number, z: number, w: number}, - column 2
+					v3: {x: number, y: number, z: number, w: number} - column 3
+				},
+				"projectionCamera": {
+					v0: {x: number, y: number, z: number, w: number}, - column 0
+					v1: {x: number, y: number, z: number, w: number}, - column 1
+					v2: {x: number, y: number, z: number, w: number}, - column 2
+					v3: {x: number, y: number, z: number, w: number} - column 3
+				}
 			},
 			location: {
 				"altitude": 176.08457946777344,
