@@ -273,7 +273,7 @@ document.querySelector('#info-snapdebug').value = 'RHitTest\n' + JSON.stringify(
             // feature points if any
             info = data.points[0];
         }
-this.showMessage('hittest:' + info.type + 'd:' + info.distance + 't:' + JSON.stringify(info.worldTransform));
+this.showMessage('hittest!:' + info.type + 'd:' + info.distance + 't:' + JSON.stringify(info.worldTransform));
 
         let transform;
         if (info) {
