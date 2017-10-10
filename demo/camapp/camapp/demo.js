@@ -334,14 +334,14 @@ this.showMessage('???' + JSON.stringify(e.detail.camera));
         const camera = this.ar.getData('camera');
         if (camera) {
             
-            test.projection_camera = this.ar.flattenARMatrix(camera.projectionCamera);
-            test.camera_transform = this.ar.flattenARMatrix(camera.cameraTransform);
+            test.projectionCamera = this.ar.flattenARMatrix(camera.projectionCamera);
+            test.cameraTransform = this.ar.flattenARMatrix(camera.cameraTransform);
 this.showMessage('onARWatch' + JSON.stringify(test));
             this.camera.projectionMatrix.fromArray(
-                this.ar.flattenARMatrix(camera.projection_camera)
+                this.ar.flattenARMatrix(camera.projectionCamera)
             );
             this.camera.matrix.fromArray(
-                this.ar.flattenARMatrix(camera.camera_transform)
+                this.ar.flattenARMatrix(camera.cameraTransform)
             );
         }
 
