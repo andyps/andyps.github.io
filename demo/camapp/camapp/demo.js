@@ -243,7 +243,7 @@ class App {
         let planeResults = [];
         let planeExistingUsingExtentResults = [];
         let planeExistingResults = [];
-this.showMessage('hittest');
+this.showMessage('brb');
 document.querySelector('#info-snapdebug').value = 'RHitTest\n' + JSON.stringify(data);
         if (data.planes.length) {
             // search for planes
@@ -273,7 +273,7 @@ document.querySelector('#info-snapdebug').value = 'RHitTest\n' + JSON.stringify(
             // feature points if any
             info = data.points[0];
         }
-
+this.showMessage('hittest:' + info.type + 'd:' + info.distance + 't:' + info.worldTransform);
         let transform;
         if (info) {
             // if hit testing is positive
