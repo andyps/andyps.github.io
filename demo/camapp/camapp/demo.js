@@ -353,8 +353,7 @@ class App {
         if (this.isDebug) {
             this.logDebugData(test);
         }
-        
-        return;
+
         this.requestAnimationFrame();
     }
     
