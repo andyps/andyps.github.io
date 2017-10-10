@@ -299,6 +299,7 @@ this.showMessage('hittest!:' + info.type + 'd:' + info.distance + 't:' + JSON.st
         ).then(info => this.onARAddObject(info));
     }
     onARAddObject(info) {
+this.showMessage('onARAddObject:' + JSON.stringify(info));
         const cubeMesh = this.createCube(info.uuid);
         cubeMesh.matrixAutoUpdate = false;
 
