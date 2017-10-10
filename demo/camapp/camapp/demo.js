@@ -117,6 +117,7 @@ class App {
         });
         
         this.ar.addEventListener(ARKitWrapper.SHOW_DEBUG_EVENT, e => {
+            return;
             const options = e.detail;
             this.isDebug = Boolean(options.debug);
             
@@ -332,7 +333,7 @@ class App {
         this.watchAR();
     }
     
-    onARWatch() {
+    onARWatch(e) {
         const camera = this.ar.getData('camera');
         if (camera) {
             this.camera.projectionMatrix.fromArray(camera.projection_camera);
@@ -340,7 +341,7 @@ class App {
         }
         
         if (this.isDebug) {
-            this.logDebugData();
+            this.logDebugData(e);
         }
         
         this.requestAnimationFrame();
@@ -351,8 +352,8 @@ class App {
         document.querySelector('#message').style.display = 'block';
     }
     
-    logDebugData() {
-        let data = this.ar.getData();
+    logDebugData(data) {
+        data = data ? data : this.ar.getData();
         const date = (new Date()).toTimeString();
         
         document.querySelector('#info-debug').value = JSON.stringify(data) + ':' + date;
