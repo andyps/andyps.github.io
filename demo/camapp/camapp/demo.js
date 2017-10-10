@@ -330,7 +330,7 @@ class App {
     
     onARWatch(e) {
         var test = {};
-this.showMessage('ARWatch' + JSON.stringify(e.detail.camera.projection_camera.v0));
+this.showMessage('!!!' + JSON.stringify(e.detail.camera));
         const camera = this.ar.getData('camera');
         if (camera) {
             
