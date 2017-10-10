@@ -319,8 +319,6 @@ class App {
     }
     
     onARInit(e) {
-        document.querySelector('#info-debug').value = JSON.stringify(this.ar.deviceInfo);
-        
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
