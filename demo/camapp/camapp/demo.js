@@ -325,9 +325,6 @@ class App {
             return;
         }
 
-
-        this.showMessage('initarinfo:' + JSON.stringify(e));
-        
         this.deviceId = this.ar.deviceInfo.uuid;
 
         this.watchAR();
