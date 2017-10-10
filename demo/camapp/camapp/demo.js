@@ -99,6 +99,7 @@ class App {
         this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, () => {
             // do something on viewport 'size changed' event
             console.log('SIZE_CHANGED_EVENT', e.detail);
+            this.showMessage('size updated' + JSON.stringify(e.detail));
         });
 
         this.ar.addEventListener(ARKitWrapper.PLAINS_ADDED_EVENT, () => {
@@ -242,6 +243,7 @@ class App {
         let planeResults = [];
         let planeExistingUsingExtentResults = [];
         let planeExistingResults = [];
+this.showMessage('hittest');
 document.querySelector('#info-snapdebug').value = 'RHitTest\n' + JSON.stringify(data);
         if (data.planes.length) {
             // search for planes
