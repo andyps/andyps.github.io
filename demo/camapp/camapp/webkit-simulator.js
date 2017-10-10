@@ -50,8 +50,20 @@ class webkitSimulatorMessageHandler {
                         this.data.location.longitude = pos.coords.longitude;
                         
                         this.data.camera = {};
-                        this.data.camera.projection_camera = [1.636377, 0, 0, 0, 0, 2.909114, 0, 0,  0.004712701, 0.02586138, -1.000002, -1,  0, 0, -0.002000002, 0];
-                        this.data.camera.camera_transform = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, 0, 1];
+                        //~ this.data.camera.projection_camera = [1.636377, 0, 0, 0,  0, 2.909114, 0, 0,  0.004712701, 0.02586138, -1.000002, -1,  0, 0, -0.002000002, 0];
+
+                        this.data.camera.projection_camera = {
+                            v0: {x: 1.636377, y: 0, z: 0, w: 0},
+                            v1: {x: 0, y: 2.909114, z: 0, w: 0},
+                            v2: {x: 0.004712701, y: 0.02586138, z: -1.000002, w: -1},
+                            v3: {x: 0, y: 2, z: -0.002000002, w: 1}
+                        };
+                        this.data.camera.camera_transform = {
+                            v0: {x: 1, y: 0, z: 0, w: 0},
+                            v1: {x: 0, y: 1, z: 0, w: 0},
+                            v2: {x: 0, y: 0, z: 1, w: 0},
+                            v3: {x: 0, y: 2, z: 0, w: 1}
+                        };
                         
                         console.log('this.data', this.data);
                         window[data.callback](this.data);

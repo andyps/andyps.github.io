@@ -334,14 +334,24 @@ class App {
     }
     
     onARWatch(e) {
+        var test = {};
+        
         const camera = this.ar.getData('camera');
-        //~ if (camera) {
-            //~ this.camera.projectionMatrix.fromArray(camera.projection_camera);
-            //~ this.camera.matrix.fromArray(camera.camera_transform);
-        //~ }
+        if (camera) {
+            
+            test.projection_camera = this.ar.flattenARMatrix(camera.projection_camera);
+            test.camera_transform = this.ar.flattenARMatrix(camera.camera_transform);
+            
+            this.camera.projectionMatrix.fromArray(
+                this.ar.flattenARMatrix(camera.projection_camera)
+            );
+            this.camera.matrix.fromArray(
+                this.ar.flattenARMatrix(camera.camera_transform)
+            );
+        }
 
         if (this.isDebug) {
-            this.logDebugData(e.detail);
+            this.logDebugData(test);
         }
         
         return;

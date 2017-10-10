@@ -395,6 +395,15 @@ export default class ARKitWrapper extends EventHandlerBase {
 		this._isInitialized = true
 	}
 
+	flattenARMatrix(matrix) {
+		return [].concat(
+			[matrix.v0.x, matrix.v0.y, matrix.v0.z, matrix.v0.w],
+			[matrix.v1.x, matrix.v1.y, matrix.v1.z, matrix.v1.w],
+			[matrix.v2.x, matrix.v2.y, matrix.v2.z, matrix.v2.w],
+			[matrix.v3.x, matrix.v3.y, matrix.v3.z, matrix.v3.w]
+		);
+	}
+
 	/*
 	_onWatch is called from native ARKit on each frame:
 		data:
