@@ -218,7 +218,7 @@ class App {
             planes: true,
             light_estimate: true,
             heading: {
-                accuracy: 1
+                accuracy: 360
             }
         });
     }
@@ -323,11 +323,11 @@ class App {
         
         document.querySelector('#info-debug').value = JSON.stringify(this.ar.deviceInfo);
         
-        if (!this.ar.deviceInfo || !this.ar.deviceInfo.deviceUUID) {
+        if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
-        return;
-        this.deviceId = this.ar.deviceInfo.deviceUUID;
+
+        this.deviceId = this.ar.deviceInfo.uuid;
 
         this.watchAR();
     }
