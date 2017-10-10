@@ -334,7 +334,9 @@ class App {
     }
     
     onARWatch(e) {
-        this.showMessage('onARWatch');
+        this.showMessage('ARWatch' + JSON.stringify(e));
+        
+        return;
         const camera = this.ar.getData('camera');
         //~ if (camera) {
             //~ this.camera.projectionMatrix.fromArray(camera.projection_camera);
