@@ -331,7 +331,7 @@ class App {
     onARWatch() {
         const camera = this.ar.getData('camera');
 try {
-this.showMessage('w:' + window.innerWidth + ';vw' : this.ar.deviceInfo.viewportSize.width);
+this.showMessage('w:' + window.innerWidth + ';vw:' + this.ar.deviceInfo.viewportSize.width);
 } catch(e) {}
         if (camera) {
             this.camera.projectionMatrix.fromArray(
