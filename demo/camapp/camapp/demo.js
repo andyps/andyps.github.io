@@ -334,7 +334,7 @@ class App {
     }
     
     onARWatch(e) {
-        this.showMessage('ARWatch' + JSON.stringify(e.detail));
+        this.showMessage('onRRWatch' + JSON.stringify(e.detail));
         
         return;
         const camera = this.ar.getData('camera');
