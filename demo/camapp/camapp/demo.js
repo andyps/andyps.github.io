@@ -334,15 +334,12 @@ class App {
     }
     
     onARWatch(e) {
-        this.showMessage('onRRWatch' + JSON.stringify(e.detail));
-        
-        return;
         const camera = this.ar.getData('camera');
         //~ if (camera) {
             //~ this.camera.projectionMatrix.fromArray(camera.projection_camera);
             //~ this.camera.matrix.fromArray(camera.camera_transform);
         //~ }
-        
+        document.querySelector('#message').textContent = JSON.stringify(camera);
         if (this.isDebug) {
             this.logDebugData(e.detail);
         }
