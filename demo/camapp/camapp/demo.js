@@ -339,9 +339,9 @@ class App {
             this.camera.projectionMatrix.fromArray(camera.projection_camera);
             this.camera.matrix.fromArray(camera.camera_transform);
         }
-        
+        console.log('watch', e.detail);
         if (this.isDebug) {
-            this.logDebugData(e);
+            this.logDebugData(e.detail);
         }
         
         this.requestAnimationFrame();
