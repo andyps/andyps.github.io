@@ -319,7 +319,7 @@ class App {
     
     onARInit(e) {
         
-        this.showMessage('initinfo:' + JSON.stringify(e.screenSize));
+        this.showMessage('initinfo:' + JSON.stringify(e));
         
         document.querySelector('#info-debug').value = JSON.stringify(this.ar.deviceInfo);
         

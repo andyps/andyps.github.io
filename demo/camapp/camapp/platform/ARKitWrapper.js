@@ -391,7 +391,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	}
 
 	_onInit(info){
-		this._deviceInfo = info
+		this._deviceInfo = info.device
 		this._isInitialized = true
 	}
 
