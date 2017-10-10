@@ -217,7 +217,7 @@ class App {
             camera: true,
             anchors: true,
             planes: true,
-            light_estimate: true,
+            lightEstimate: true,
             heading: {
                 accuracy: 360
             }
@@ -242,7 +242,7 @@ class App {
         let planeResults = [];
         let planeExistingUsingExtentResults = [];
         let planeExistingResults = [];
-document.querySelector('#info-snapdebug').value = 'onARHitTest\n' + JSON.stringify(data);
+document.querySelector('#info-snapdebug').value = 'RHitTest\n' + JSON.stringify(data);
         if (data.planes.length) {
             // search for planes
             planeResults = data.planes;
@@ -275,7 +275,7 @@ document.querySelector('#info-snapdebug').value = 'onARHitTest\n' + JSON.stringi
         let transform;
         if (info) {
             // if hit testing is positive
-            transform = info.world_transform;
+            transform = info.worldTransform;
         } else {
             // if hit testing is negative put object at distance 1m from camera
             this.raycaster.setFromCamera(
@@ -300,8 +300,8 @@ document.querySelector('#info-snapdebug').value = 'onARHitTest\n' + JSON.stringi
         cubeMesh.matrixAutoUpdate = false;
 
         //~ info.world_transform[13] += CUBE_SIZE / 2;
-        info.world_transform.v3.y += CUBE_SIZE / 2;
-        cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.world_transform));
+        info.worldTransform.v3.y += CUBE_SIZE / 2;
+        cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.worldTransform));
         
         this.scene.add(cubeMesh);
         this.cubesNum++;

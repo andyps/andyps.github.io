@@ -14,7 +14,7 @@ ARKitWrapper is a singleton. Use ARKitWrapper.GetOrCreate() to get the instance,
 			camera: boolean,
 			anchors: boolean,
 			planes: boolean,
-			light_estimate: boolean
+			lightEstimate: boolean
 		})
 	}
 
@@ -42,7 +42,7 @@ const DEFAULT_OPTIONS = {
 		camera: true,
 		anchors: true,
 		planes: true,
-		light_estimate: true
+		lightEstimate: true
 	}
 }
 
@@ -184,16 +184,8 @@ export default class ARKitWrapper extends EventHandlerBase {
 			{
 				type: 1,							// A packed mask of types ARKitWrapper.HIT_TEST_TYPE_*
 				distance: 1.0216870307922363,		// The distance in meters from the camera to the detected anchor or feature point.
-				world_transform:  [float x 16],		// The pose of the hit test result relative to the world coordinate system. 
-				local_transform:  [float x 16],		// The pose of the hit test result relative to the nearest anchor or feature point
-
-				// If the `type` is `HIT_TEST_TYPE_ESTIMATED_HORIZONTAL_PLANE`, `HIT_TEST_TYPE_EXISTING_PLANE`, or `HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT` (2, 8, or 16) it will also have anchor data:
-				anchor_center: { x:float, y:float, z:float },
-				anchor_extent: { x:float, y:float },
-				uuid: string,
-
-				// If the `type` is `HIT_TEST_TYPE_EXISTING_PLANE` or `HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT` (8 or 16) it will also have an anchor transform:
-				anchor_transform: [float x 16]
+				worldTransform:  Matrix4,		// The pose of the hit test result relative to the world coordinate system. 
+				localTransform:  Matrix4,		// The pose of the hit test result relative to the nearest anchor or feature point
 			},
 			...
 		]
@@ -230,7 +222,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	Returns a promise that returns:
 	{
 		uuid: DOMString,
-		world_transform - anchor transformation matrix
+		worldTransform - anchor transformation matrix
 	}
 	*/
 	addAnchor(transform){
@@ -262,7 +254,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	/*
 	anchor {
 	  uuid: DOMString,
-	  world_transform - anchor transformation matrix
+	  worldTransform - anchor transformation matrix
 	}
 	*/
 	updateAnchor(anchor){
@@ -352,7 +344,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 			camera: boolean,
 			anchors: boolean,
 			planes: boolean,
-			light_estimate: boolean
+			lightEstimate: boolean
 		}
 	*/
 	watch(options=null){
