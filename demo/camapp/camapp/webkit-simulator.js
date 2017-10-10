@@ -80,7 +80,7 @@ class webkitSimulatorMessageHandler {
             } else {
                 setTimeout(() => {
                     if (this.name === 'addObject' || this.name === 'addAnchor') {
-                        data.world_transform = {
+                        data.worldTransform = {
                             v0: {x: 0.9914429783821106, y: -0.10326667129993439, z: 0.079854816198349, w: 0},
                             v1: {x: 0.12760323286056519, y: 0.8956893682479858, z: -0.4259788990020752, w: 0},
                             v2: {x: -0.0275356974452734, y: 0.4325235188007355, z: 0.9012021422386169, w: 0},
@@ -94,7 +94,7 @@ class webkitSimulatorMessageHandler {
                                 point: {
                                     distance: 1,
                                     type: 8,
-                                    world_transform: {
+                                    worldTransform: {
                                         v0: {x: 1, y: 1, z: -1, w: 0},
                                         v1: {x: 0, y: 1, z: 1, w: 0},
                                         v2: {x: 0, y: 0, z: -1, w: 0},
