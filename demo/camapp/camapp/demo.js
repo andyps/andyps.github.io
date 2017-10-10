@@ -335,13 +335,12 @@ class App {
     
     onARWatch(e) {
         var test = {};
-        
         const camera = this.ar.getData('camera');
         if (camera) {
             
             test.projection_camera = this.ar.flattenARMatrix(camera.projection_camera);
             test.camera_transform = this.ar.flattenARMatrix(camera.camera_transform);
-            
+this.showMessage('onARWatch' + JSON.stringify(test));
             this.camera.projectionMatrix.fromArray(
                 this.ar.flattenARMatrix(camera.projection_camera)
             );
