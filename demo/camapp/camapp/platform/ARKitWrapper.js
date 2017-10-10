@@ -409,8 +409,8 @@ export default class ARKitWrapper extends EventHandlerBase {
 		data:
 		{
 			camera: {
-				"camera_transform":[4x4 column major affine transform matrix],
-				"projection_camera":[4x4 projection matrix],
+				"cameraTransform":[4x4 column major affine transform matrix],
+				"projectionCamera":[4x4 projection matrix],
 			},
 			location: {
 				"altitude": 176.08457946777344,
