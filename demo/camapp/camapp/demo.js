@@ -319,15 +319,15 @@ class App {
     }
     
     onARInit(e) {
-        
-        this.showMessage('initinfo:' + JSON.stringify(e));
-        
         document.querySelector('#info-debug').value = JSON.stringify(this.ar.deviceInfo);
         
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
 
+
+        this.showMessage('initarinfo:' + JSON.stringify(e));
+        
         this.deviceId = this.ar.deviceInfo.uuid;
 
         this.watchAR();
