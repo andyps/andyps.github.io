@@ -339,7 +339,7 @@ class App {
             //~ this.camera.projectionMatrix.fromArray(camera.projection_camera);
             //~ this.camera.matrix.fromArray(camera.camera_transform);
         //~ }
-        document.querySelector('#message').textContent = JSON.stringify(camera);
+
         if (this.isDebug) {
             this.logDebugData(e.detail);
         }
