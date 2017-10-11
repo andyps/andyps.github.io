@@ -98,7 +98,7 @@ class App {
 
         this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, (e) => {
             // do something on viewport 'size changed' event
-            this.showMessage('size updated' + JSON.stringify(e.detail));
+            this.showMessage('SZE updated' + JSON.stringify(e.detail));
             this.resize(e.detail.width, e.detail.height);
         });
 
@@ -348,7 +348,7 @@ document.querySelector('#info-snapdebug').value = 'ADDobj\n\n' + JSON.stringify(
 
         this.deviceId = this.ar.deviceInfo.uuid;
 
-        this.showMessage('init' + JSON.stringify({
+        this.showMessage('INIT' + JSON.stringify({
             'device': this.ar.deviceInfo,
             'window': {w: window.innerWidth, h: window.innerHeight}
         }));
