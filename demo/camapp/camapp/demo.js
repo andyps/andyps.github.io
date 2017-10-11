@@ -118,7 +118,6 @@ class App {
         });
         
         this.ar.addEventListener(ARKitWrapper.SHOW_DEBUG_EVENT, e => {
-            return;
             const options = e.detail;
             this.isDebug = Boolean(options.debug);
             
@@ -196,6 +195,15 @@ class App {
             
             this.tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
             
+this.showMessage('tap:' + JSON.stringify({
+    tapPos: this.tapPos,
+    clientX: e.clientX,
+    clientY: e.clientY,
+    width: this.width,
+    height: this.height,
+    normX: normX,
+    normY: normY
+}));
             this.ar.hitTest(normX, normY).then(data => this.onARHitTest(data)).catch(e => e);
         });
         
