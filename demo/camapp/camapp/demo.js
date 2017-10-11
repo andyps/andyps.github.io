@@ -297,10 +297,11 @@ this.showMessage('hittest!:' + info.type + 'd:' + info.distance + 't:' + JSON.st
             transform = this.ar.createARMatrix(transform);
         }
         
-        transform = new THREE.Matrix4();
-        transform.makeTranslation(0, 1, 0);
-        transform = transform.toArray();
-        transform = this.ar.createARMatrix(transform);
+        //~ transform = new THREE.Matrix4();
+        //~ transform.makeTranslation(0, 1, 0);
+        //~ transform = transform.toArray();
+        //~ transform = this.ar.createARMatrix(transform);
+        
         //~ transform = {
             //~ v0: {x: v0[0], y: v0[1], z: v0[2], w: v0[3]},
             //~ v1: {x: v1[0], y: v1[1], z: v1[2], w: v1[3]},
