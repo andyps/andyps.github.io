@@ -375,7 +375,9 @@ document.querySelector('#info-snapdebug').value = 'addobj\n\n' + JSON.stringify(
         data = data ? data : this.ar.getData();
         const date = (new Date()).toTimeString();
         
-        document.querySelector('#info-debug').value = JSON.stringify(data) + ':' + date;
+        document.querySelector('#info-debug').value = JSON.stringify(data) + ':\n\n camerapos: \n'
+            + JSON.stringify(this.camera.matrix.getPosition())
+            + date;
     }
 }
 
