@@ -203,7 +203,11 @@ class App {
         document.querySelector('#btn-snapdebug').addEventListener('click', () => {
             document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
         });
-
+        document.querySelector('#btn-stop').addEventListener('click', () => {
+            this.ar.stop().then(() => {
+                this.showMessage('Stopped!');
+            });
+        });
     }
 
     requestAnimationFrame() {
@@ -243,7 +247,6 @@ class App {
         let planeResults = [];
         let planeExistingUsingExtentResults = [];
         let planeExistingResults = [];
-this.showMessage('brb');
 document.querySelector('#info-snapdebug').value = 'RHitTest\n' + JSON.stringify(data);
         if (data.planes.length) {
             // search for planes
@@ -314,12 +317,14 @@ this.showMessage('onARAddObject:' + JSON.stringify(info));
     }
     
     onARDidMoveBackground() {
+        this.showMessage('onARDidMoveBackground!' + this.deviceId);
         this.ar.stop().then(() => {
             this.cleanScene();
         });
     }
     
     onARWillEnterForeground() {
+        this.showMessage('onARWillEnterForeground!');
         this.watchAR();
     }
     
