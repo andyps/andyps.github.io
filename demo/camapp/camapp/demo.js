@@ -99,6 +99,7 @@ class App {
         this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, (e) => {
             // do something on viewport 'size changed' event
             this.showMessage('size updated' + JSON.stringify(e.detail));
+            this.resize(e.detail.width, e.detail.height);
         });
 
         this.ar.addEventListener(ARKitWrapper.PLAINS_ADDED_EVENT, (e) => {
@@ -133,6 +134,11 @@ class App {
         
         return cubeMesh;
     }
+    resize(width, height) {
+        this.width = width;
+        this.height = height;
+        this.engine.setSize(width, height, false);
+    }
     initScene(canvasId) {
         this.canvas = document.getElementById(canvasId);
         
@@ -142,10 +148,7 @@ class App {
             canvas: this.canvas,
             alpha: true
         });
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
-        
-        this.engine.setSize(this.width, this.height, false);
+        this.resize(window.innerWidth, window.innerHeight);
         
         this.engine.setClearColor('#000', 0);
 
@@ -188,8 +191,8 @@ class App {
     registerUIEvents() {
         this.tapPos = {x: 0, y: 0};
         this.canvas.addEventListener('click', e => {
-            let normX = e.clientX / window.innerWidth;
-            let normY = e.clientY / window.innerHeight;
+            let normX = e.clientX / this.width;
+            let normY = e.clientY / this.height;
             
             this.tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
             
@@ -349,6 +352,11 @@ document.querySelector('#info-snapdebug').value = 'ADDobj\n\n' + JSON.stringify(
             'device': this.ar.deviceInfo,
             'window': {w: window.innerWidth, h: window.innerHeight}
         }));
+        
+        this.resize(
+            this.ar.deviceInfo.viewportSize.width,
+            this.ar.deviceInfo.viewportSize.height
+        );
         
         this.watchAR();
     }

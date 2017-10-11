@@ -114,6 +114,7 @@ class webkitSimulatorMessageHandler {
                         return;
                     } else if (this.name === 'initAR') {
                         data.uuid = 'uuid';
+                        data.viewportSize = {width: window.innerWidth, height: window.innerHeight};
                         window[data.callback](data);
                         return;
                     }
