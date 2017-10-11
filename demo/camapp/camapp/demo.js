@@ -296,7 +296,17 @@ this.showMessage('hittest!:' + info.type + 'd:' + info.distance + 't:' + JSON.st
             transform = transform.toArray();
             transform = this.ar.createARMatrix(transform);
         }
-
+        
+        transform = new THREE.Matrix4();
+        transform.makeTranslation(0, 1, 0);
+        transform = transform.toArray();
+        transform = this.ar.createARMatrix(transform);
+        //~ transform = {
+            //~ v0: {x: v0[0], y: v0[1], z: v0[2], w: v0[3]},
+            //~ v1: {x: v1[0], y: v1[1], z: v1[2], w: v1[3]},
+            //~ v2: {x: v2[0], y: v2[1], z: v2[2], w: v2[3]},
+            //~ v3: {x: v3[0], y: v3[1], z: v3[2], w: v3[3]}
+        //~ }
         this.ar.addAnchor(
             transform
         ).then(info => this.onARAddObject(info));
@@ -307,9 +317,9 @@ this.showMessage('onARAddObject:' + JSON.stringify(info));
         cubeMesh.matrixAutoUpdate = false;
 
         //~ info.world_transform[13] += CUBE_SIZE / 2;
-        info.worldTransform.v3.y += CUBE_SIZE / 2;
+        //~ info.worldTransform.v3.y += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.worldTransform));
-        
+document.querySelector('#info-snapdebug').value = 'addobj\n\n' + JSON.stringify(info.worldTransform) + '\n\n' + JSON.stringify(this.ar.flattenARMatrix(info.worldTransform));
         this.scene.add(cubeMesh);
         this.cubesNum++;
 
