@@ -81,37 +81,37 @@ class App {
             console.log('EXIT_REGION_EVENT', e.detail);
         });
 
-        this.ar.addEventListener(ARKitWrapper.SESSION_FAILS_EVENT, () => {
+        this.ar.addEventListener(ARKitWrapper.SESSION_FAILS_EVENT, (e) => {
             // do something when the session fails
             console.log('SESSION_FAILS_EVENT', e.detail);
         });
 
-        this.ar.addEventListener(ARKitWrapper.TRACKING_CHANGED_EVENT, () => {
+        this.ar.addEventListener(ARKitWrapper.TRACKING_CHANGED_EVENT, (e) => {
             // do something when tracking status is changed
             console.log('TRACKING_CHANGED_EVENT', e.detail);
         });
 
-        this.ar.addEventListener(ARKitWrapper.HEADING_UPDATED_EVENT, () => {
+        this.ar.addEventListener(ARKitWrapper.HEADING_UPDATED_EVENT, (e) => {
             // do something when heading is updated
             console.log('HEADING_UPDATED_EVENT', e.detail);
         });
 
-        this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, () => {
+        this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, (e) => {
             // do something on viewport 'size changed' event
             this.showMessage('size updated' + JSON.stringify(e.detail));
         });
 
-        this.ar.addEventListener(ARKitWrapper.PLAINS_ADDED_EVENT, () => {
+        this.ar.addEventListener(ARKitWrapper.PLAINS_ADDED_EVENT, (e) => {
             // do something when new plains appear
             console.log('PLAINS_ADDED_EVENT', e.detail);
         });
 
-        this.ar.addEventListener(ARKitWrapper.PLAINS_REMOVED_EVENT, () => {
+        this.ar.addEventListener(ARKitWrapper.PLAINS_REMOVED_EVENT, (e) => {
             // do something when plains are removed
             console.log('PLAINS_REMOVED_EVENT', e.detail);
         });
 
-        this.ar.addEventListener(ARKitWrapper.ANCHORS_UPDATED_EVENT, () => {
+        this.ar.addEventListener(ARKitWrapper.ANCHORS_UPDATED_EVENT, (e) => {
             // do something when anchors are updated
             console.log('ANCHORS_UPDATED_EVENT', e.detail);
         });
@@ -319,7 +319,7 @@ document.querySelector('#info-snapdebug').value = 'RHitTest\n' + JSON.stringify(
         //~ info.world_transform[13] += CUBE_SIZE / 2;
         //~ info.worldTransform.v3.y += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.worldTransform));
-document.querySelector('#info-snapdebug').value = 'addobj\n\n' + JSON.stringify(info.worldTransform) + '\n\n' + JSON.stringify(this.ar.flattenARMatrix(info.worldTransform));
+document.querySelector('#info-snapdebug').value = 'ADDobj\n\n' + JSON.stringify(info.worldTransform) + '\n\n' + JSON.stringify(this.ar.flattenARMatrix(info.worldTransform));
         this.scene.add(cubeMesh);
         this.cubesNum++;
 
