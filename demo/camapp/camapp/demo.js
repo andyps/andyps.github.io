@@ -386,7 +386,7 @@ document.querySelector('#info-snapdebug').value = 'addobj\n\n' + JSON.stringify(
         document.querySelector('#info-debug').value = JSON.stringify(data) + ':\n\n camerapos: \n'
             + JSON.stringify(this.camera.matrix.getPosition()) + '\n\nscale:\n'
             + JSON.stringify(scale) + '\n\n quaternion:\n'
-            + JSON.stringify(rotq) + '\n\n rotation:\n'
+            + JSON.stringify(rotq) + '\n\n RATation:\n'
             + JSON.stringify({x: rot.x * 180 / Math.PI, y: rot.y * 180 / Math.PI, z: rot.z * 180 / Math.PI}) + '\n\npos:\n'
             + JSON.stringify(pos) + '\n'
             + date;
