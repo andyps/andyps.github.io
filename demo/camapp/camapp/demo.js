@@ -377,12 +377,15 @@ document.querySelector('#info-snapdebug').value = 'addobj\n\n' + JSON.stringify(
         
         let scale = new THREE.Vector3();
         let pos = new THREE.Vector3();
-        let rot = new THREE.Quaternion();
+        let rotq = new THREE.Quaternion();
         this.camera.matrix.decompose(pos, rot, scale);
+        
+        rot = new THREE.Euler().setFromQuaternion(rotq);
         
         document.querySelector('#info-debug').value = JSON.stringify(data) + ':\n\n camerapos: \n'
             + JSON.stringify(this.camera.matrix.getPosition()) + '\n\nscale:\n'
-            + JSON.stringify(scale) + '\n\n rotation:\n'
+            + JSON.stringify(scale) + '\n\n quaternion:\n'
+            + JSON.stringify(rotq) + '\n\n rotation:\n'
             + JSON.stringify(rot) + '\n\npos:\n'
             + JSON.stringify(pos) + '\n'
             + date;
