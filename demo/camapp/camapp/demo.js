@@ -375,8 +375,16 @@ document.querySelector('#info-snapdebug').value = 'addobj\n\n' + JSON.stringify(
         data = data ? data : this.ar.getData();
         const date = (new Date()).toTimeString();
         
+        let scale = new THREE.Vector3();
+        let pos = new THREE.Vector3();
+        let rot = new THREE.Quaternion();
+        this.camera.matrix.decompose(pos, rot, scale);
+        
         document.querySelector('#info-debug').value = JSON.stringify(data) + ':\n\n camerapos: \n'
-            + JSON.stringify(this.camera.matrix.getPosition())
+            + JSON.stringify(this.camera.matrix.getPosition()) + '\n\nscale:\n'
+            + JSON.stringify(scale) + '\n\n rotation:\n'
+            + JSON.stringify(rot) + '\n\npos:\n'
+            + JSON.stringify(pos) + '\n'
             + date;
     }
 }
