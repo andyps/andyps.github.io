@@ -98,7 +98,6 @@ class App {
 
         this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, () => {
             // do something on viewport 'size changed' event
-            console.log('SIZE_CHANGED_EVENT', e.detail);
             this.showMessage('size updated' + JSON.stringify(e.detail));
         });
 
@@ -205,7 +204,7 @@ class App {
         });
         document.querySelector('#btn-stop').addEventListener('click', () => {
             this.ar.stop().then(() => {
-                this.showMessage('Stopped!');
+                //~ this.showMessage('Stopped!');
             });
         });
     }
@@ -276,7 +275,7 @@ document.querySelector('#info-snapdebug').value = 'RHitTest\n' + JSON.stringify(
             // feature points if any
             info = data.points[0];
         }
-this.showMessage('hittest!:' + info.type + 'd:' + info.distance + 't:' + JSON.stringify(info.worldTransform));
+//~ this.showMessage('hittest!:' + info.type + 'd:' + info.distance + 't:' + JSON.stringify(info.worldTransform));
 
         let transform;
         if (info) {
@@ -313,7 +312,7 @@ this.showMessage('hittest!:' + info.type + 'd:' + info.distance + 't:' + JSON.st
         ).then(info => this.onARAddObject(info));
     }
     onARAddObject(info) {
-this.showMessage('onARAddObject:' + JSON.stringify(info));
+//~ this.showMessage('onARAddObject:' + JSON.stringify(info));
         const cubeMesh = this.createCube(info.uuid);
         cubeMesh.matrixAutoUpdate = false;
 
@@ -328,14 +327,14 @@ document.querySelector('#info-snapdebug').value = 'addobj\n\n' + JSON.stringify(
     }
     
     onARDidMoveBackground() {
-        this.showMessage('onARDidMoveBackground!' + this.deviceId);
+        //~ this.showMessage('onARDidMoveBackground!' + this.deviceId);
         this.ar.stop().then(() => {
             this.cleanScene();
         });
     }
     
     onARWillEnterForeground() {
-        this.showMessage('onARWillEnterForeground!');
+        //~ this.showMessage('onARWillEnterForeground!');
         this.watchAR();
     }
     
@@ -346,6 +345,11 @@ document.querySelector('#info-snapdebug').value = 'addobj\n\n' + JSON.stringify(
 
         this.deviceId = this.ar.deviceInfo.uuid;
 
+        this.showMessage('init' + JSON.stringify({
+            'device': this.ar.deviceInfo,
+            'window': {w: window.innerWidth, h: window.innerHeight}
+        }));
+        
         this.watchAR();
     }
     
@@ -388,7 +392,8 @@ document.querySelector('#info-snapdebug').value = 'addobj\n\n' + JSON.stringify(
             + JSON.stringify(scale) + '\n\n quaternion:\n'
             + JSON.stringify(rotq) + '\n\n RATation:\n'
             + JSON.stringify({x: rot.x * 180 / Math.PI, y: rot.y * 180 / Math.PI, z: rot.z * 180 / Math.PI}) + '\n\npos:\n'
-            + JSON.stringify(pos) + '\n'
+            + JSON.stringify(pos) + '\n\n'
+            + JSON.stringify({window: {w: window.innerWidth, h: window.innerHeight}}) + '\n'
             + date;
     }
 }
