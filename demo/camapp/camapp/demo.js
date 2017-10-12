@@ -97,8 +97,6 @@ class App {
         });
 
         this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, (e) => {
-            // do something on viewport 'size changed' event
-            this.showMessage('SZE updated' + JSON.stringify(e.detail));
             this.resize(e.detail.width, e.detail.height);
         });
 
@@ -195,29 +193,12 @@ class App {
             
             this.tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
             
-this.showMessage('tap:' + JSON.stringify({
-    tapPos: this.tapPos,
-    clientX: e.clientX,
-    clientY: e.clientY,
-    width: this.width,
-    height: this.height,
-    normX: normX,
-    normY: normY
-}));
             this.ar.hitTest(normX, normY).then(data => this.onARHitTest(data)).catch(e => e);
         });
         
         document.querySelector('#message').onclick = function() {
             this.style.display = 'none';
         }
-        document.querySelector('#btn-snapdebug').addEventListener('click', () => {
-            document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
-        });
-        document.querySelector('#btn-stop').addEventListener('click', () => {
-            this.ar.stop().then(() => {
-                //~ this.showMessage('Stopped!');
-            });
-        });
     }
 
     requestAnimationFrame() {
@@ -257,7 +238,7 @@ this.showMessage('tap:' + JSON.stringify({
         let planeResults = [];
         let planeExistingUsingExtentResults = [];
         let planeExistingResults = [];
-document.querySelector('#info-snapdebug').value = 'RHitTest\n' + JSON.stringify(data);
+
         if (data.planes.length) {
             // search for planes
             planeResults = data.planes;
@@ -286,7 +267,6 @@ document.querySelector('#info-snapdebug').value = 'RHitTest\n' + JSON.stringify(
             // feature points if any
             info = data.points[0];
         }
-//~ this.showMessage('hittest!:' + info.type + 'd:' + info.distance + 't:' + JSON.stringify(info.worldTransform));
 
         let transform;
         if (info) {
@@ -306,31 +286,16 @@ document.querySelector('#info-snapdebug').value = 'RHitTest\n' + JSON.stringify(
             transform = transform.toArray();
             transform = this.ar.createARMatrix(transform);
         }
-        
-        //~ transform = new THREE.Matrix4();
-        //~ transform.makeTranslation(0, 1, 0);
-        //~ transform = transform.toArray();
-        //~ transform = this.ar.createARMatrix(transform);
-        
-        //~ transform = {
-            //~ v0: {x: v0[0], y: v0[1], z: v0[2], w: v0[3]},
-            //~ v1: {x: v1[0], y: v1[1], z: v1[2], w: v1[3]},
-            //~ v2: {x: v2[0], y: v2[1], z: v2[2], w: v2[3]},
-            //~ v3: {x: v3[0], y: v3[1], z: v3[2], w: v3[3]}
-        //~ }
         this.ar.addAnchor(
             transform
         ).then(info => this.onARAddObject(info));
     }
     onARAddObject(info) {
-//~ this.showMessage('onARAddObject:' + JSON.stringify(info));
         const cubeMesh = this.createCube(info.uuid);
         cubeMesh.matrixAutoUpdate = false;
 
-        //~ info.world_transform[13] += CUBE_SIZE / 2;
         //~ info.worldTransform.v3.y += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.worldTransform));
-document.querySelector('#info-snapdebug').value = 'ADDobj\n\n' + JSON.stringify(info.worldTransform) + '\n\n' + JSON.stringify(this.ar.flattenARMatrix(info.worldTransform));
         this.scene.add(cubeMesh);
         this.cubesNum++;
 
@@ -338,14 +303,12 @@ document.querySelector('#info-snapdebug').value = 'ADDobj\n\n' + JSON.stringify(
     }
     
     onARDidMoveBackground() {
-        //~ this.showMessage('onARDidMoveBackground!' + this.deviceId);
         this.ar.stop().then(() => {
             this.cleanScene();
         });
     }
     
     onARWillEnterForeground() {
-        //~ this.showMessage('onARWillEnterForeground!');
         this.watchAR();
     }
     
@@ -356,11 +319,6 @@ document.querySelector('#info-snapdebug').value = 'ADDobj\n\n' + JSON.stringify(
 
         this.deviceId = this.ar.deviceInfo.uuid;
 
-        this.showMessage('INIT' + JSON.stringify({
-            'device': this.ar.deviceInfo,
-            'window': {w: window.innerWidth, h: window.innerHeight}
-        }));
-        
         this.resize(
             this.ar.deviceInfo.viewportSize.width,
             this.ar.deviceInfo.viewportSize.height
@@ -380,37 +338,12 @@ document.querySelector('#info-snapdebug').value = 'ADDobj\n\n' + JSON.stringify(
             );
         }
 
-        if (this.isDebug) {
-            this.logDebugData();
-        }
-
         this.requestAnimationFrame();
     }
     
     showMessage(txt) {
         document.querySelector('#message').textContent = txt;
         document.querySelector('#message').style.display = 'block';
-    }
-    
-    logDebugData(data) {
-        data = data ? data : this.ar.getData();
-        const date = (new Date()).toTimeString();
-        
-        let scale = new THREE.Vector3();
-        let pos = new THREE.Vector3();
-        let rotq = new THREE.Quaternion();
-        this.camera.matrix.decompose(pos, rotq, scale);
-        
-        let rot = new THREE.Euler().setFromQuaternion(rotq);
-        
-        document.querySelector('#info-debug').value = JSON.stringify(data) + ':\n\n camerapos: \n'
-            + JSON.stringify(this.camera.matrix.getPosition()) + '\n\nscale:\n'
-            + JSON.stringify(scale) + '\n\n quaternion:\n'
-            + JSON.stringify(rotq) + '\n\n RATation:\n'
-            + JSON.stringify({x: rot.x * 180 / Math.PI, y: rot.y * 180 / Math.PI, z: rot.z * 180 / Math.PI}) + '\n\npos:\n'
-            + JSON.stringify(pos) + '\n\n'
-            + JSON.stringify({window: {w: window.innerWidth, h: window.innerHeight}}) + '\n'
-            + date;
     }
 }
 

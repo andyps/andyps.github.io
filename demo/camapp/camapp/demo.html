@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
     <title>ARKit JS App Demo</title>
     
-    <link href="app.css" rel="stylesheet" type="text/css" charset="utf-8" >
     <style>
     html, body {
         width: 100%;
@@ -21,6 +20,17 @@
     * {
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     }
+    #message {
+        display: none;
+        border: 1px solid red;
+        position: absolute;
+        top: 0px;
+        left: 10px;
+        right: 10px;
+        text-align: center;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.9);
+    }
     </style>
     
     <script src="vendor/three.js"></script>
@@ -29,23 +39,10 @@
     <script src="fill/EventHandlerBase.js" type="module"></script>
     <script src="platform/ARKitWrapper.js" type="module"></script>
     
-    <script src="demo.js?t=taptaptap" type="module"></script>
-    
-    <script src="webkit-simulator.js"></script>
+    <script src="demo.js" type="module"></script>
 </head>
 <body>
 <canvas id="app-canvas" oncontextmenu="return false;">Browser not supported</canvas>
-
 <div id="message" style="display: none;">Any message</div>
-<div id="info-container">
-    <div>
-        <button id="btn-snapdebug">Snap</button>
-        <button id="btn-stop">Stop</button>
-        <br>
-        <textarea tabindex="-1" readonly id="info-debug" rows="10" cols="40"></textarea>
-        <br>
-        <textarea tabindex="-1" readonly id="info-snapdebug" rows="10" cols="40"></textarea>
-    </div>
-</div>
 </body>
 </html>
