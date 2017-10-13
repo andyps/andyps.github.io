@@ -323,8 +323,6 @@ class App {
             return;
         }
         
-        this.showMessage('init');
-        
         this.deviceId = this.ar.deviceInfo.uuid;
 
         this.resize(
