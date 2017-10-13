@@ -81,6 +81,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 			['arEnterRegion', ARKitWrapper.ENTER_REGION_EVENT],
 			['arExitRegion', ARKitWrapper.EXIT_REGION_EVENT],
 			['arUpdateHeading', ARKitWrapper.HEADING_UPDATED_EVENT],
+			['arUpdateLocation', ARKitWrapper.LOCATION_UPDATED_EVENT],
 			['arTrackingChanged', ARKitWrapper.TRACKING_CHANGED_EVENT],
 			['arSessionFails', ARKitWrapper.SESSION_FAILS_EVENT],
 			['arAddPlanes', ARKitWrapper.PLAINS_ADDED_EVENT],
@@ -225,16 +226,20 @@ export default class ARKitWrapper extends EventHandlerBase {
 		worldTransform - anchor transformation matrix
 	}
 	*/
-	addAnchor(transform){
+	addAnchor(name, transform){
 		return new Promise((resolve, reject) => {
 			if (!this._isInitialized){
 				reject(new Error('ARKit is not initialized'));
 				return;
 			}
+			const options = {
+				transform: transform
+			}
+			if (name !== null) {
+				options.name = name
+			}
 			window.webkit.messageHandlers.arAddAnchor.postMessage({
-				options: {
-					transform: transform
-				},
+				options: options,
 				callback: this._createPromiseCallback('addAnchor', resolve, reject)
 			})
 		})
@@ -539,6 +544,7 @@ ARKitWrapper.MEMORY_WARNING_EVENT = 'ar-receive-memory-warning'
 ARKitWrapper.ENTER_REGION_EVENT = 'ar-enter-region'
 ARKitWrapper.EXIT_REGION_EVENT = 'ar-exit-region'
 ARKitWrapper.HEADING_UPDATED_EVENT = 'ar-heading-updated'
+ARKitWrapper.LOCATION_UPDATED_EVENT = 'ar-location-updated'
 ARKitWrapper.TRACKING_CHANGED_EVENT = 'ar-tracking-changed'
 ARKitWrapper.SESSION_FAILS_EVENT = 'ar-session-fails'
 ARKitWrapper.PLAINS_ADDED_EVENT = 'ar-plains-added'

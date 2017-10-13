@@ -27,10 +27,10 @@ class App {
                     statistics: this.isDebug,
                     plane: true,
                     focus: true,
-                    anchors: true
+                    anchors: true,
+                    points: false
                 },
                 custom: {
-                    points: true,
                     rec: true,
                     rec_time: true,
                     mic: true,
@@ -113,6 +113,11 @@ class App {
         this.ar.addEventListener(ARKitWrapper.ANCHORS_UPDATED_EVENT, (e) => {
             // do something when anchors are updated
             console.log('ANCHORS_UPDATED_EVENT', e.detail);
+        });
+        
+        this.ar.addEventListener(ARKitWrapper.LOCATION_UPDATED_EVENT, (e) => {
+            // do something when location is updated
+            console.log('LOCATION_UPDATED_EVENT', e.detail);
         });
         
         this.ar.addEventListener(ARKitWrapper.SHOW_DEBUG_EVENT, e => {
@@ -287,6 +292,7 @@ class App {
             transform = this.ar.createARMatrix(transform);
         }
         this.ar.addAnchor(
+            null,
             transform
         ).then(info => this.onARAddObject(info));
     }
@@ -294,7 +300,7 @@ class App {
         const cubeMesh = this.createCube(info.uuid);
         cubeMesh.matrixAutoUpdate = false;
 
-        //~ info.worldTransform.v3.y += CUBE_SIZE / 2;
+        info.worldTransform.v3.y += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.worldTransform));
         this.scene.add(cubeMesh);
         this.cubesNum++;
@@ -316,7 +322,9 @@ class App {
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
-
+        
+        this.showMessage('init');
+        
         this.deviceId = this.ar.deviceInfo.uuid;
 
         this.resize(
