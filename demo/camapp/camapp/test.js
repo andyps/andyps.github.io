@@ -239,7 +239,10 @@ class App {
             
             this.showMessage(JSON.stringify(options));
             
-            this.ar.setUIOptions(options);
+            this.ar.setUIOptions(options).then(() => { console.log('options are set'); }).catch(e => { 
+                console.log('cannot set options');
+                this.showMessage('cannot set options: ' + JSON.stringify(e))
+            });
         });
     }
 
