@@ -237,7 +237,7 @@ class App {
             };
             this.isDebug = options.debug;
             
-            this.showMessage(JSON.stringify(options));
+            this.showMessage('options:' + JSON.stringify(options));
             
             this.ar.setUIOptions(options).then(() => { console.log('options are set'); }).catch(e => { 
                 console.log('cannot set options');
