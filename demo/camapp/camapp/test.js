@@ -1,6 +1,8 @@
 import ARKitWrapper from './platform/ARKitWrapper.js'
 
+
 const CUBE_SIZE = 0.1;
+
 class App {
     constructor(canvasId) {
         this.isDebug = true;
@@ -10,79 +12,122 @@ class App {
         this.initScene(canvasId);
         
         this.cubesNum = 0;
-        this.cubesNames = 0;
 
         this.initAR();
-        
+
         this.raycaster = new THREE.Raycaster();
         this.registerUIEvents();
     }
+
     initAR() {
-        this.ar = ARKitWrapper.GetOrCreate({
+        this.ar = ARKitWrapper.GetOrCreate();
+        this.ar.init({
             ui: {
-                points: true,
-                focus: true,
-                rec: true,
-                rec_time: true,
-                mic: true,
-                build: true,
-                plane: true,
-                warnings: true,
-                anchors: false,
-                debug: true,
-                statistics: this.isDebug
+                arkit: {
+                    statistics: this.isDebug,
+                    plane: true,
+                    focus: true,
+                    anchors: true,
+                    points: false
+                },
+                custom: {
+                    rec: true,
+                    rec_time: true,
+                    mic: true,
+                    build: true,
+                    warnings: true,
+                    debug: true
+                }
             }
-        });
-        this.ar.waitForInit().then(this.onARInit.bind(this));
+        }).then(this.onARInit.bind(this));
+
         this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
-        
+
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
-            document.querySelector('#btn-reset').style.display = 'none';
-            document.querySelector('#btn-debug').style.display = 'none';
+            // do something when recording is started
         });
-        
+
         this.ar.addEventListener(ARKitWrapper.RECORD_STOP_EVENT, () => {
-            // document.querySelector('#btn-reset').style.display = '';
-            // document.querySelector('#btn-debug').style.display = '';
+            // do something when recording is stopped
         });
-        
+
         this.ar.addEventListener(ARKitWrapper.DID_MOVE_BACKGROUND_EVENT, () => {
             this.onARDidMoveBackground();
         });
-        
+
         this.ar.addEventListener(ARKitWrapper.WILL_ENTER_FOREGROUND_EVENT, () => {
             this.onARWillEnterForeground();
         });
-        
-        this.ar.addEventListener(ARKitWrapper.INTERRUPTED_EVENT, () => {
-            // this.showMessage('arkitInterrupted');
+
+        this.ar.addEventListener(ARKitWrapper.INTERRUPTION_EVENT, () => {
+            // do something on interruption event
+        });
+
+        this.ar.addEventListener(ARKitWrapper.INTERRUPTION_ENDED_EVENT, () => {
+            // do something on interruption event ended
+        });
+
+        this.ar.addEventListener(ARKitWrapper.MEMORY_WARNING_EVENT, () => {
+            // do something on memory warning
+        });
+
+        this.ar.addEventListener(ARKitWrapper.ENTER_REGION_EVENT, (e) => {
+            // do something when enter a region
+            console.log('ENTER_REGION_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.EXIT_REGION_EVENT, (e) => {
+            // do something when leave a region
+            console.log('EXIT_REGION_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.SESSION_FAILS_EVENT, (e) => {
+            // do something when the session fails
+            console.log('SESSION_FAILS_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.TRACKING_CHANGED_EVENT, (e) => {
+            // do something when tracking status is changed
+            console.log('TRACKING_CHANGED_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.HEADING_UPDATED_EVENT, (e) => {
+            // do something when heading is updated
+            console.log('HEADING_UPDATED_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, (e) => {
+            this.resize(e.detail.width, e.detail.height);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.PLAINS_ADDED_EVENT, (e) => {
+            // do something when new plains appear
+            console.log('PLAINS_ADDED_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.PLAINS_REMOVED_EVENT, (e) => {
+            // do something when plains are removed
+            console.log('PLAINS_REMOVED_EVENT', e.detail);
+        });
+
+        this.ar.addEventListener(ARKitWrapper.ANCHORS_UPDATED_EVENT, (e) => {
+            // do something when anchors are updated
+            console.log('ANCHORS_UPDATED_EVENT', e.detail);
         });
         
-        this.ar.addEventListener(ARKitWrapper.INTERRUPTION_ENDED_EVENT, () => {
-            // this.showMessage('arkitInterruptionEnded');
+        this.ar.addEventListener(ARKitWrapper.LOCATION_UPDATED_EVENT, (e) => {
+            // do something when location is updated
+            console.log('LOCATION_UPDATED_EVENT', e.detail);
         });
         
         this.ar.addEventListener(ARKitWrapper.SHOW_DEBUG_EVENT, e => {
             const options = e.detail;
-            this.isDebug = options.debug == 1;
+            this.isDebug = Boolean(options.debug);
             
-            this.showMessage(JSON.stringify({opts: options, isDebugNew: this.isDebug}));
-            
-            if (!this.isDebug) {
-                this.fpsStats.domElement.style.display = 'none';
-            } else {
-                this.fpsStats.domElement.style.display = '';
-            }
+            this.fpsStats.domElement.style.display = this.isDebug ? '' : 'none';
         });
+    }
 
-    }
-    run() {
-        let render = (time) => {
-            this.render(time);
-            window.requestAnimationFrame(render);
-        };
-        render();
-    }
     createCube(name) {
         let geometry = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
         let material = new THREE.MeshLambertMaterial({color: 0x7d4db2, reflectivity: 0, wireframe: false, opacity: 0.8});
@@ -91,13 +136,10 @@ class App {
         
         return cubeMesh;
     }
-    addObject() {
-
-    }
-    generateCubeName() {
-        const name = 'obj-' + this.cubesNames;
-        this.cubesNames++;
-        return name;
+    resize(width, height) {
+        this.width = width;
+        this.height = height;
+        this.engine.setSize(width, height, false);
     }
     initScene(canvasId) {
         this.canvas = document.getElementById(canvasId);
@@ -108,10 +150,7 @@ class App {
             canvas: this.canvas,
             alpha: true
         });
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
-        
-        this.engine.setSize(this.width, this.height, false);
+        this.resize(window.innerWidth, window.innerHeight);
         
         this.engine.setClearColor('#000', 0);
 
@@ -135,20 +174,6 @@ class App {
         document.body.appendChild(this.fpsStats.domElement);
     }
     
-    toggleDebug() {
-        this.isDebug = !this.isDebug;
-        
-        if (!this.isDebug) {
-            this.fpsStats.domElement.style.display = 'none';
-            document.querySelector('#info-container').style.display = 'none';
-        } else {
-            this.fpsStats.domElement.style.display = '';
-            document.querySelector('#info-container').style.display = '';
-        }
-        
-        //~ this.ar.setDebugDisplay(this.isDebug);
-    }
-    
     cleanScene() {
         let children2Remove = [];
 
@@ -163,96 +188,59 @@ class App {
         });
         
         this.cubesNum = 0;
-        this.cubesNames = 0;
-        document.querySelector('#info-objectsCnt').textContent = 0;
     }
 
-    reset() {
-        this.ar.stop().then(() => {
-            this.cleanScene();
-            this.watchAR();
-        });
-    }
-    
     registerUIEvents() {
-        document.querySelector('#btn-add').addEventListener('click', () => {
-            this.addObject();
-        });          
+        this.tapPos = {x: 0, y: 0};
+        this.canvas.addEventListener('click', e => {
+            let normX = e.clientX / this.width;
+            let normY = e.clientY / this.height;
+            
+            this.tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
+            
+            this.ar.hitTest(normX, normY).then(data => this.onARHitTest(data)).catch(e => e);
+        });
+        
+        document.querySelector('#message').onclick = function() {
+            this.style.display = 'none';
+        }
+        
+        document.querySelector('#btn-snapdebug').addEventListener('click', () => {
+            document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
+        });
+        
+        document.querySelector('#btn-options').addEventListener('click', () => {
+            document.querySelector('#area-options').style.display = '';
+            document.querySelector('#info-debug').style.display = 'none';
+            document.querySelector('#info-snapdebug').style.display = 'none';
+        });
         
         document.querySelector('#btn-set-options').addEventListener('click', () => {
             const frm = document.querySelector('#form-options');
             let options = {
-                browser: frm.elements['opt-browser'].checked,
-                points: frm.elements['opt-points'].checked,
-                focus: frm.elements['opt-focus'].checked,
-                rec: frm.elements['opt-rec'].checked,
-                rec_time: frm.elements['opt-rec_time'].checked,
-                mic: frm.elements['opt-mic'].checked,
-                build: frm.elements['opt-build'].checked,
-                plane: frm.elements['opt-plane'].checked,
-                warnings: frm.elements['opt-warnings'].checked,
-                anchors: frm.elements['opt-anchors'].checked,
-                debug: frm.elements['opt-debug'].checked,
-                statistics: frm.elements['opt-statistics'].checked
+                arkit: {
+                    statistics: frm.elements['opt-statistics'].checked,
+                    plane: frm.elements['opt-plane'].checked,
+                    focus: frm.elements['opt-focus'].checked,
+                    anchors: frm.elements['opt-anchors'].checked,
+                    points: frm.elements['opt-points'].checked
+                },
+                custom: {
+                    browser: frm.elements['opt-browser'].checked,
+                    rec: frm.elements['opt-rec'].checked,
+                    rec_time: frm.elements['opt-rec_time'].checked,
+                    mic: frm.elements['opt-mic'].checked,
+                    build: frm.elements['opt-build'].checked,
+                    warnings: frm.elements['opt-warnings'].checked,
+                    debug: frm.elements['opt-debug'].checked
+                }
             };
             this.isDebug = options.debug;
             
             this.showMessage(JSON.stringify(options));
             
             this.ar.setUIOptions(options);
-        });          
-        
-        document.querySelector('#btn-options').addEventListener('click', () => {
-            document.querySelector('#area-options').style.display = '';
-            document.querySelector('#info-debug').style.display = 'none';
-            document.querySelector('#info-snapdebug').style.display = 'none';
-        });        
-        
-        document.querySelector('#btn-stop').addEventListener('click', () => {
-            this.ar.stop();
-        });        
-        
-        document.querySelector('#btn-testMemoryWarningOnShot').addEventListener('click', () => {
-            window.webkit.messageHandlers.testMemoryWarningOnShot.postMessage({
-                test: true
-            });
         });
-        
-        document.querySelector('#btn-debug').addEventListener('click', () => {
-            this.toggleDebug();
-        });
-        
-        document.querySelector('#btn-reset').addEventListener('click', () => {
-            this.reset();
-        });
-
-        document.querySelector('#message').onclick = function() {
-            this.style.display = 'none';
-        }
-        document.querySelector('#btn-snapdebug').addEventListener('click', () => {
-            document.querySelector('#info-snapdebug').value = document.querySelector('#info-debug').value;
-        });
-        
-        this.tapPos = {x: 0, y: 0};
-        this.canvas.addEventListener('click', e => {
-            let normX = e.clientX / window.innerWidth;
-            let normY = e.clientY / window.innerHeight;
-            
-            this.tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
-            
-            this.showMessage('hitTest ' + JSON.stringify({
-                x: normX,
-                y: normY,
-                tap: this.tapPos
-            }));
-           
-            this.ar.hitTest(normX, normY).then(data => this.onARHitTest(data)); 
-        });
-    }
-    
-    showMessage(txt) {
-        document.querySelector('#message').textContent = txt;
-        document.querySelector('#message').style.display = 'block';
     }
 
     requestAnimationFrame() {
@@ -261,9 +249,16 @@ class App {
     
     watchAR() {
         this.ar.watch({
-            location: true,
+            location: {
+                accuracy: ARKitWrapper.LOCATION_ACCURACY_HUNDRED_METERS
+            },
             camera: true,
-            objects: true
+            anchors: true,
+            planes: true,
+            lightEstimate: true,
+            heading: {
+                accuracy: 360
+            }
         });
     }
     
@@ -286,42 +281,39 @@ class App {
         let planeExistingUsingExtentResults = [];
         let planeExistingResults = [];
 
-        document.querySelector('#info-snapdebug').value = 'onhittest:' + JSON.stringify(data);
-
-        if (Array.isArray(data) && data.length) {
+        if (data.planes.length) {
             // search for planes
-            planeResults = data.filter(hitTestResult => hitTestResult.type != ARKitWrapper.HIT_TEST_TYPE_FEATURE_POINT);
+            planeResults = data.planes;
             
             planeExistingUsingExtentResults = planeResults.filter(
-                hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT
+                hitTestResult => hitTestResult.point.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE_USING_EXTENT
             );
             planeExistingResults = planeResults.filter(
-                hitTestResult => hitTestResult.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE
+                hitTestResult => hitTestResult.point.type == ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANE
             );
             
             if (planeExistingUsingExtentResults.length) {
                 // existing planes using extent first
-                planeExistingUsingExtentResults = planeExistingUsingExtentResults.sort((a, b) => a.distance - b.distance);
-                info = planeExistingUsingExtentResults[0];
+                planeExistingUsingExtentResults = planeExistingUsingExtentResults.sort((a, b) => a.point.distance - b.point.distance);
+                info = planeExistingUsingExtentResults[0].point;
             } else if (planeExistingResults.length) {
                 // then other existing planes
-                planeExistingResults = planeExistingResults.sort((a, b) => a.distance - b.distance);
-                info = planeExistingResults[0];
-            } else if (planeResults.length) {
-                // other types except feature points
-                planeResults = planeResults.sort((a, b) => a.distance - b.distance);
-                info = planeResults[0];
+                planeExistingResults = planeExistingResults.sort((a, b) => a.point.distance - b.point.distance);
+                info = planeExistingResults[0].point;
             } else {
-                // feature points if any
-                info = data[0];
+                // other plane types
+                planeResults = planeResults.sort((a, b) => a.point.distance - b.point.distance);
+                info = planeResults[0].point;
             }
+        } else if (data.points.length) {
+            // feature points if any
+            info = data.points[0];
         }
-        
-        let name = this.generateCubeName();
+
         let transform;
         if (info) {
             // if hit testing is positive
-            transform = info.world_transform;
+            transform = info.worldTransform;
         } else {
             // if hit testing is negative put object at distance 1m from camera
             this.raycaster.setFromCamera(
@@ -334,35 +326,23 @@ class App {
             transform = new THREE.Matrix4();
             transform.makeTranslation(objPos.x, objPos.y, objPos.z);
             transform = transform.toArray();
+            transform = this.ar.createARMatrix(transform);
         }
-        
-        document.querySelector('#info-snapdebug').value = 'all:\n' + JSON.stringify(info ? data : null) + '\n\n'
-            + 'selected:\n' + (info ? JSON.stringify(info) : 'empty');
-        
-        document.querySelector('#info-snapdebug').value += '\n\n---\n\n' + JSON.stringify(transform)
-        
         this.ar.addAnchor(
-            name,
+            null,
             transform
         ).then(info => this.onARAddObject(info));
     }
     onARAddObject(info) {
         const cubeMesh = this.createCube(info.uuid);
-        
-        //~ const axisHelper = new THREE.AxisHelper(45);
-        //~ cubeMesh.add(axisHelper);
-
         cubeMesh.matrixAutoUpdate = false;
 
-        info.transform[13] += CUBE_SIZE / 2;
-        cubeMesh.matrix.fromArray(info.transform);
-        
+        info.worldTransform.v3.y += CUBE_SIZE / 2;
+        cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.worldTransform));
         this.scene.add(cubeMesh);
         this.cubesNum++;
 
         this.requestAnimationFrame();
-        
-        document.querySelector('#info-objectsCnt').textContent = this.cubesNum;
     }
     
     onARDidMoveBackground() {
@@ -375,29 +355,32 @@ class App {
         this.watchAR();
     }
     
-    onARInit() {
-        this.deviceId = this.ar.deviceId;
+    onARInit(e) {
+        if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
+            return;
+        }
+        
+        this.deviceId = this.ar.deviceInfo.uuid;
+
+        this.resize(
+            this.ar.deviceInfo.viewportSize.width,
+            this.ar.deviceInfo.viewportSize.height
+        );
+        
         this.watchAR();
     }
     
     onARWatch() {
-        const cameraProjectionMatrix = this.ar.getData('projection_camera');
-        const cameraTransformMatrix = this.ar.getData('camera_transform');
-        if (cameraProjectionMatrix && cameraTransformMatrix) {
-            this.camera.projectionMatrix.fromArray(cameraProjectionMatrix);
+        const camera = this.ar.getData('camera');
+        if (camera) {
+            this.camera.projectionMatrix.fromArray(
+                this.ar.flattenARMatrix(camera.projectionCamera)
+            );
+            this.camera.matrix.fromArray(
+                this.ar.flattenARMatrix(camera.cameraTransform)
+            );
+        }
 
-            this.camera.matrix.fromArray(cameraTransformMatrix);
-        }
-        /*
-        const arObjects = this.ar.getData('objects');
-        if (arObjects && arObjects.forEach) {
-            arObjects.forEach(info => {
-                // is it needed?
-                const mesh = this.scene.getObjectByName(info.uuid);
-                // mesh.matrix.fromArray(info.transform);
-            });
-        }
-        */
         if (this.isDebug) {
             this.logDebugData();
         }
@@ -409,18 +392,12 @@ class App {
         let data = this.ar.getData();
         const date = (new Date()).toTimeString();
         
-        // show data in debug layer
-        const objPositions = [];
-        this.scene.children.forEach(child => {
-            if (child.name.substr(0, 3) !== 'obj') {
-                return;
-            }
-            objPositions.push(child.getWorldPosition());
-        });
-        
         document.querySelector('#info-debug').value = JSON.stringify(data) + ':' + date;
     }
-    
+    showMessage(txt) {
+        document.querySelector('#message').textContent = txt;
+        document.querySelector('#message').style.display = 'block';
+    }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
