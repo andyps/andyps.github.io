@@ -359,6 +359,8 @@ class App {
     }
     
     onARInit(e) {
+        this.showMessage('Init success: ' + JSON.stringify(e));
+        
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
