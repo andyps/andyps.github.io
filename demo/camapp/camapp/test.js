@@ -340,6 +340,8 @@ class App {
         const cubeMesh = this.createCube(info.uuid);
         cubeMesh.matrixAutoUpdate = false;
 
+        this.showMessage('onARAddObject ' + JSON.stringify(info));
+                
         info.worldTransform.v3.y += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.worldTransform));
         this.scene.add(cubeMesh);
