@@ -80,6 +80,7 @@ Plane {
 
 UserAnchor {
   uuid: String!
+  name: String?
   transform: Matrix4!
 }
 
@@ -240,6 +241,7 @@ arAddAnchor (
         error: ErrorCodes?
     )
     options: {
+        name: String?
         transform: Matrix4!
     }
 )
@@ -351,6 +353,10 @@ arExitRegion (
 
 arUpdateHeading (
     heading: Heading!
+)
+
+arUpdateLocation (
+    location: Location!
 )
 
 // AR
