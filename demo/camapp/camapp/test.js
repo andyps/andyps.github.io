@@ -342,8 +342,8 @@ class App {
 
         this.showMessage('onARAddObject ' + JSON.stringify(info));
                 
-        info.worldTransform.v3.y += CUBE_SIZE / 2;
-        cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.worldTransform));
+        info.transform.v3.y += CUBE_SIZE / 2;
+        cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.transform));
         this.scene.add(cubeMesh);
         this.cubesNum++;
 
