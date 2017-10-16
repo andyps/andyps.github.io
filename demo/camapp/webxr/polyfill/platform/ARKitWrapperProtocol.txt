@@ -80,7 +80,7 @@ Plane {
 
 UserAnchor {
   uuid: String!
-  worldTransform: Matrix4!
+  transform: Matrix4!
 }
 
 Camera {

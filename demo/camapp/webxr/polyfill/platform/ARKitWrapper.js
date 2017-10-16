@@ -223,7 +223,7 @@ export default class ARKitWrapper extends EventHandlerBase {
 	Returns a promise that returns:
 	{
 		uuid: DOMString,
-		worldTransform - anchor transformation matrix
+		transform - anchor transformation matrix
 	}
 	*/
 	addAnchor(name, transform){
@@ -258,8 +258,8 @@ export default class ARKitWrapper extends EventHandlerBase {
 	
 	/*
 	anchor {
-	  uuid: DOMString,
-	  worldTransform - anchor transformation matrix
+		uuid: DOMString,
+		transform - anchor transformation matrix
 	}
 	*/
 	updateAnchor(anchor){
