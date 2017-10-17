@@ -90,7 +90,7 @@ export default class CameraReality extends Reality {
 				this._arKitWrapper = ARKitWrapper.GetOrCreate()
 				this._arKitWrapper.addEventListener(ARKitWrapper.ANCHORS_UPDATED_EVENT, this._handleARKitAnchorsUpdate.bind(this))
 				addMessage('before init camerareality');
-				this._arKitWrapper.init({ui: {arkit: {plane: true, focus: true}}}).then(() => {
+				this._arKitWrapper.init({ui: {arkit: {plane: true, focus: true}, custom: {debug: true}}}).then(() => {
 					addMessage('camera init');
 					this._arKitWrapper.watch({planes: true})
 				})
