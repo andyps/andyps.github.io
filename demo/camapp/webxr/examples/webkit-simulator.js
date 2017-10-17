@@ -100,7 +100,7 @@ class webkitSimulatorMessageHandler {
                                 point: {
                                     distance: 1,
                                     type: 8,
-                                    worldTransform: {
+                                    transform: {
                                         v0: {x: 1, y: 1, z: -1, w: 0},
                                         v1: {x: 0, y: 1, z: 1, w: 0},
                                         v2: {x: 0, y: 0, z: -1, w: 0},
