@@ -50,6 +50,10 @@
             background: rgba(255, 255, 255, 0.9);
         }
         </style>
+
+	</head>
+	<body>
+        <div id="message" style="display: none;">Any message</div>
         <script>
         function showMessage(txt) {
             document.querySelector('#message').textContent = txt;
@@ -60,10 +64,11 @@
             document.querySelector('#message').innerHTML += txt;
             document.querySelector('#message').style.display = 'block';
         }
+        document.querySelector('#message').onclick = function() {
+            this.style.display = 'none';
+        }
         </script>
-	</head>
-	<body>
-        <div id="message" style="display: none;">Any message</div>
+
 		<div id="target" />
         
 		<script>
@@ -89,6 +94,10 @@
 					this._messageEl.style['font-size'] = '16px'
 
 					this.el.addEventListener('touchstart', this._onTouchStart.bind(this), false)
+                    
+                    if (typeof(webkitSimulator) != 'undefined') {
+                        this.el.addEventListener('click', this._onClick.bind(this), false)
+                    }
 				}
 
 				// Called during construction to allow the app to populate this.scene
@@ -129,12 +138,27 @@
 					}
 				}
 
+                _onClick(e){
+                    let normX = e.clientX / window.innerWidth;
+                    let normY = e.clientY / window.innerHeight;
+					this._tapEventData = [
+						normX,
+						normY
+					]
+                    
+                    showMessage('tap ' + normX + ':' + normY);
+                }
+                
 				// Save screen taps as normalized coordinates for use in this.updateScene
 				_onTouchStart(ev){
 					if (!ev.touches || ev.touches.length === 0) {
 						console.error('No touches on touch event', ev)
+						addMessage('No touches on touch event')
 						return
 					}
+                    
+                    showMessage('tap ' + ev.touches[0].clientX / window.innerWidth + ':' + ev.touches[0].clientY / window.innerHeight);
+                    
 					//save screen coordinates normalized to -1..1 (0,0 is at center and 1,1 is at top right)
 					this._tapEventData = [
 						ev.touches[0].clientX / window.innerWidth,
