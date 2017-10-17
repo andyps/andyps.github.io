@@ -52,11 +52,17 @@
             document.querySelector('#message').textContent = txt;
             document.querySelector('#message').style.display = 'block';
         }
+        function addMessage(txt) {
+            document.querySelector('#message').innerHTML += '<br>';
+            document.querySelector('#message').innerHTML += txt;
+            document.querySelector('#message').style.display = 'block';
+        }
         </script>
 	</head>
 	<body>
-		<div id="target" />
         <div id="message" style="display: none;">Any message</div>
+		<div id="target" />
+        
 		<script>
 			/*
 			HitTestExample shows how to find surfaces or other features and place content relative to them.
