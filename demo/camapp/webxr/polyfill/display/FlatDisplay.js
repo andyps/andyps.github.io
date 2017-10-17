@@ -58,7 +58,7 @@ export default class FlatDisplay extends XRDisplay {
 				this._arKitWrapper.addEventListener(ARKitWrapper.WATCH_EVENT, this._handleARKitUpdate.bind(this))
 				addMessage('before init flatdisplay');
 				this._arKitWrapper.init({ui: {arkit: {plane: true, focus: true}, custom: {debug: true}}}).then(() => {
-					addMessage('flatdisplay inited');
+					addMessage('flatdisplay inited!');
 					this._handleARKitInit();
 				})
 			} else {
