@@ -89,9 +89,9 @@ export default class CameraReality extends Reality {
 				this._initialized = true
 				this._arKitWrapper = ARKitWrapper.GetOrCreate()
 				this._arKitWrapper.addEventListener(ARKitWrapper.ANCHORS_UPDATED_EVENT, this._handleARKitAnchorsUpdate.bind(this))
-				addMessage('before init camerareality');
+				// addMessage('before init camerareality');
 				this._arKitWrapper.init({ui: {arkit: {plane: true, focus: true}, custom: {debug: true}}}).then(() => {
-					addMessage('camera inited');
+					// addMessage('camera inited');
 					this._arKitWrapper.watch({planes: true})
 				})
 			} else {
@@ -179,7 +179,7 @@ export default class CameraReality extends Reality {
 			if(this._arKitWrapper !== null){
 				// Perform a hit test using the ARKit integration
 				this._arKitWrapper.hitTest(normalizedScreenX, normalizedScreenY, ARKitWrapper.HIT_TEST_TYPE_EXISTING_PLANES).then(hits => {
-					showMessage('hit planes length:' + hits.planes.length);
+					// showMessage('hit planes length:' + hits.planes.length);
 					if(hits.planes.length === 0){
 						resolve(null)
 						console.log('miss plane hits')
@@ -187,7 +187,7 @@ export default class CameraReality extends Reality {
 					}
 					const arHit = this._pickARKitHit(hits)
 					
-					showMessage('hit' + JSON.stringify(arHit));
+					// showMessage('hit' + JSON.stringify(arHit));
 					
 					// Only plane hits have uuid!
 					const hit = {
