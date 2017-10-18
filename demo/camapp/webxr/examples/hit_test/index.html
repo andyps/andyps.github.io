@@ -96,7 +96,7 @@
 					this.el.addEventListener('touchstart', this._onTouchStart.bind(this), false)
                     
                     if (typeof(webkitSimulator) != 'undefined') {
-                        this.el.addEventListener('click', this._onClick.bind(this), false)
+                        //this.el.addEventListener('click', this._onClick.bind(this), false)
                     }
 				}
 
@@ -139,6 +139,7 @@
 				}
 
                 _onClick(e){
+                    return;
                     let normX = e.clientX / window.innerWidth;
                     let normY = e.clientY / window.innerHeight;
 					this._tapEventData = [
@@ -157,7 +158,7 @@
 						return
 					}
                     
-                    showMessage('tap ' + ev.touches[0].clientX / window.innerWidth + ':' + ev.touches[0].clientY / window.innerHeight);
+                    addMessage('tap! ' + ev.touches[0].clientX / window.innerWidth + ':' + ev.touches[0].clientY / window.innerHeight);
                     
 					//save screen coordinates normalized to -1..1 (0,0 is at center and 1,1 is at top right)
 					this._tapEventData = [

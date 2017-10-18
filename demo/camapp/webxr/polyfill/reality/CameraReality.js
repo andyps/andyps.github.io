@@ -187,7 +187,7 @@ export default class CameraReality extends Reality {
 					}
 					const arHit = this._pickARKitHit(hits)
 					
-					// showMessage('hit' + JSON.stringify(arHit));
+					if (typeof(showMessage) != 'undefined') showMessage('hit' + JSON.stringify(arHit));
 					
 					// Only plane hits have uuid!
 					const hit = {
