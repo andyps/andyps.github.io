@@ -171,6 +171,9 @@ class App {
 
         this.scene.add(this.camera);
         
+        this.root = new THREE.Object3D();
+        this.scene.add(this.root);
+        
         let light = new THREE.PointLight(0xffffff, 2, 0);
         this.camera.add(light);
         
@@ -255,6 +258,20 @@ class App {
                 this.showMessage('cannot set options: ' + JSON.stringify(e))
             });
         });
+        
+        document.querySelector('#btn-rotate').addEventListener('click', () => {
+            let rotZ = this.root.rotation.z * 180 / Math.PI + 90;
+            if (rotZ >= 360) {
+                rotZ = 0;
+            } else {
+                rotZ = this.root.rotation.z + Math.PI / 2;
+            }
+            
+            this.root.rotation.z = rotZ;
+            
+            document.querySelector('#btn-rotate').innerHTML = 'Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
+        });
+
     }
 
     requestAnimationFrame() {
@@ -355,7 +372,7 @@ class App {
         
         info.transform.v3.y += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.transform));
-        this.scene.add(cubeMesh);
+        this.root.add(cubeMesh);
         this.cubesNum++;
 
         this.requestAnimationFrame();
