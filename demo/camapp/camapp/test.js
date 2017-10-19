@@ -97,6 +97,7 @@ class App {
         });
 
         this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, (e) => {
+            this.addMessage('resized:' + JSON.stringify(e.detail));
             this.resize(e.detail.width, e.detail.height);
         });
 
@@ -129,7 +130,7 @@ class App {
         
         this.ar.addEventListener(ARKitWrapper.ORIENTATION_CHANGED_EVENT, (e) => {
             // do something when orientation is updated
-            this.showMessage('orientation:' + JSON.stringify(e.detail));
+            this.addMessage('orientation:' + JSON.stringify(e.detail));
         });
         
         window.addEventListener('deviceorientation', (e) => {
@@ -212,6 +213,7 @@ class App {
         
         document.querySelector('#message').onclick = function() {
             this.style.display = 'none';
+            this.innerHTML = '';
         }
         
         document.querySelector('#btn-snapdebug').addEventListener('click', () => {
@@ -412,6 +414,11 @@ class App {
     showMessage(txt) {
         document.querySelector('#message').textContent = txt;
         document.querySelector('#message').style.display = 'block';
+    }
+    addMessage(txt) {
+        document.querySelector('#message').style.display = 'block';
+        document.querySelector('#message').innerHTML += '<br>';
+        document.querySelector('#message').innerHTML += txt;
     }
 }
 
