@@ -267,6 +267,10 @@ class App {
             this.rot = rot;
             
             this.canvas.style.transform = 'rotate(' + this.rot + 'deg)';
+            
+            document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + this.rot;
+            document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
+
             return;
             let rotZ = this.root.rotation.z * 180 / Math.PI + 90;
             if (rotZ >= 360) {
@@ -289,6 +293,9 @@ class App {
             
             this.canvas.style.transform = 'rotate(' + this.rot + 'deg)';
             
+            document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + this.rot;
+            document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
+
             return;
             let rotZ = this.root.rotation.z * 180 / Math.PI - 90;
             if (rotZ <= -360) {
@@ -420,7 +427,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('init@@@' + JSON.stringify(e));
+        this.showMessage('init#' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
