@@ -370,7 +370,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('init:' + JSON.stringify(e.detail));
+        this.showMessage('init!' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
