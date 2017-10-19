@@ -131,6 +131,10 @@ class App {
             // do something when orientation is updated
             this.showMessage('orientation:' + JSON.stringify(e.detail));
         });
+        
+        window.addEventListener('deviceorientation', (e) => {
+            
+        });
     }
 
     createCube(name) {
@@ -345,6 +349,8 @@ class App {
         const cubeMesh = this.createCube(info.uuid);
         cubeMesh.matrixAutoUpdate = false;
 
+        this.showMessage('add:' + JSON.stringify(info));
+        
         info.transform.v3.y += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.transform));
         this.scene.add(cubeMesh);
@@ -364,7 +370,7 @@ class App {
     }
     
     onARInit(e) {
-        
+        this.showMessage('init:' + JSON.stringify(e.detail));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
