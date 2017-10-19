@@ -98,8 +98,7 @@ class App {
 
         this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, (e) => {
             this.addMessage('resized:' + JSON.stringify(e.detail));
-            //~ this.resize(e.detail.size.width, e.detail.size.height);
-            
+            //this.resize(e.detail.size.width, e.detail.size.height);
         });
 
         this.ar.addEventListener(ARKitWrapper.PLAINS_ADDED_EVENT, (e) => {
@@ -442,7 +441,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('IN' + JSON.stringify(e));
+        this.showMessage('I' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
