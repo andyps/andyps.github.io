@@ -270,6 +270,8 @@ class App {
             this.canvas.style.position = 'relative';
             this.canvas.style.left = -this.width/2 + this.height/2 + 'px';
             
+            this.canvas.style.top = this.width/2 - this.height/2 + "px";
+            
             document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + this.rot;
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
 
@@ -296,6 +298,7 @@ class App {
             this.canvas.style.transform = 'rotate(' + this.rot + 'deg)';
             this.canvas.style.position = 'relative';
             this.canvas.style.left = -this.width/2 + this.height/2 + 'px';
+            this.canvas.style.top = this.width/2 - this.height/2 + "px";
             
             document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + this.rot;
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
@@ -431,7 +434,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('init###' + JSON.stringify(e));
+        this.showMessage('INI' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
