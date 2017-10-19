@@ -267,6 +267,8 @@ class App {
             this.rot = rot;
             
             this.canvas.style.transform = 'rotate(' + this.rot + 'deg)';
+            this.canvas.style.position = 'relative';
+            this.canvas.style.left = -this.width/2 + this.height/2 + 'px';
             
             document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + this.rot;
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
@@ -292,6 +294,8 @@ class App {
             this.rot = rot;
             
             this.canvas.style.transform = 'rotate(' + this.rot + 'deg)';
+            this.canvas.style.position = 'relative';
+            this.canvas.style.left = -this.width/2 + this.height/2 + 'px';
             
             document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + this.rot;
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
