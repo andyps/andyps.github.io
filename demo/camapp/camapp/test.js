@@ -98,7 +98,7 @@ class App {
 
         this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, (e) => {
             this.addMessage('resized!:' + JSON.stringify(e.detail));
-            this.resize(e.detail.size.width, e.detail.size.height);
+            //~ this.resize(e.detail.size.width, e.detail.size.height);
         });
 
         this.ar.addEventListener(ARKitWrapper.PLAINS_ADDED_EVENT, (e) => {
@@ -131,6 +131,8 @@ class App {
         this.ar.addEventListener(ARKitWrapper.ORIENTATION_CHANGED_EVENT, (e) => {
             // do something when orientation is updated
             this.addMessage('orientation:' + JSON.stringify(e.detail));
+            
+            
         });
         
     }
@@ -256,7 +258,16 @@ class App {
             });
         });
         
+        this.rot = 0;
         document.querySelector('#btn-rotate1').addEventListener('click', () => {
+            let rot = this.rot + 90;
+            if (rot >= 360) {
+                rot = 0;
+            }
+            this.rot = rot;
+            
+            this.canvas.style.transform = 'rotate(' + this.rot + 'deg)';
+            return;
             let rotZ = this.root.rotation.z * 180 / Math.PI + 90;
             if (rotZ >= 360) {
                 rotZ = 0;
@@ -270,6 +281,15 @@ class App {
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
         });
         document.querySelector('#btn-rotate2').addEventListener('click', () => {
+            let rot = this.rot - 90;
+            if (rot <= -360) {
+                rot = 0;
+            }
+            this.rot = rot;
+            
+            this.canvas.style.transform = 'rotate(' + this.rot + 'deg)';
+            
+            return;
             let rotZ = this.root.rotation.z * 180 / Math.PI - 90;
             if (rotZ <= -360) {
                 rotZ = 0;
@@ -400,7 +420,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('init!' + JSON.stringify(e));
+        this.showMessage('init@@@' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
