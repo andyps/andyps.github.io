@@ -260,25 +260,25 @@ class App {
         
         this.rot = 0;
         document.querySelector('#btn-rotate1').addEventListener('click', () => {
-            let rot = this.rot + 90;
-            if (rot >= 360) {
-                rot = 0;
-            }
-            this.rot = rot;
+            //~ let rot = this.rot + 90;
+            //~ if (rot >= 360) {
+                //~ rot = 0;
+            //~ }
+            //~ this.rot = rot;
             
-            this.canvas.style.transform = 'rotate(' + this.rot + 'deg)';
-            this.canvas.style.position = 'relative';
-            this.canvas.style.left = -this.width/2 + this.height/2 + 'px';
+            //~ this.canvas.style.transform = 'rotate(' + this.rot + 'deg)';
+            //~ this.canvas.style.position = 'relative';
+            //~ this.canvas.style.left = -this.width/2 + this.height/2 + 'px';
             
-            this.canvas.style.top = this.width/2 - this.height/2 + "px";
+            //~ this.canvas.style.top = this.width/2 - this.height/2 + "px";
             
-            this.canvas.style.width = this.width + "px";
-            this.canvas.style.height = this.height + "px";
+            //~ this.canvas.style.width = this.width + "px";
+            //~ this.canvas.style.height = this.height + "px";
             
-            document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + this.rot;
-            document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
+            //~ document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + this.rot;
+            //~ document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
 
-            return;
+            //~ return;
             let rotZ = this.root.rotation.z * 180 / Math.PI + 90;
             if (rotZ >= 360) {
                 rotZ = 0;
@@ -292,25 +292,25 @@ class App {
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
         });
         document.querySelector('#btn-rotate2').addEventListener('click', () => {
-            let rot = this.rot - 90;
-            if (rot <= -360) {
-                rot = 0;
-            }
-            this.rot = rot;
+            //~ let rot = this.rot - 90;
+            //~ if (rot <= -360) {
+                //~ rot = 0;
+            //~ }
+            //~ this.rot = rot;
             
-            this.canvas.style.transform = 'rotate(' + this.rot + 'deg)';
-            this.canvas.style.position = 'relative';
-            this.canvas.style.left = -this.width/2 + this.height/2 + 'px';
-            this.canvas.style.top = this.width/2 - this.height/2 + "px";
+            //~ this.canvas.style.transform = 'rotate(' + this.rot + 'deg)';
+            //~ this.canvas.style.position = 'relative';
+            //~ this.canvas.style.left = -this.width/2 + this.height/2 + 'px';
+            //~ this.canvas.style.top = this.width/2 - this.height/2 + "px";
 
-            this.canvas.style.width = this.width + "px";
-            this.canvas.style.height = this.height + "px";
+            //~ this.canvas.style.width = this.width + "px";
+            //~ this.canvas.style.height = this.height + "px";
 
-            document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + this.rot;
-            document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
+            //~ document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + this.rot;
+            //~ document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
 
 
-            return;
+            //~ return;
             let rotZ = this.root.rotation.z * 180 / Math.PI - 90;
             if (rotZ <= -360) {
                 rotZ = 0;
@@ -441,7 +441,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('HI' + JSON.stringify(e));
+        this.showMessage('HI!' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
