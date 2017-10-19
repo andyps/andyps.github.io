@@ -114,6 +114,7 @@ class App {
         this.ar.addEventListener(ARKitWrapper.ANCHORS_UPDATED_EVENT, (e) => {
             // do something when anchors are updated
             console.log('ANCHORS_UPDATED_EVENT', e.detail);
+            this.addMessage('updateanchors:' +  e.detail.planes.length + ' a:' + e.detail.anchors.length);
         });
         
         this.ar.addEventListener(ARKitWrapper.LOCATION_UPDATED_EVENT, (e) => {
@@ -441,7 +442,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('HI!' + JSON.stringify(e));
+        this.showMessage('HI!!!' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
