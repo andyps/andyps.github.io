@@ -256,7 +256,7 @@ class App {
             });
         });
         
-        document.querySelector('#btn-rotate').addEventListener('click', () => {
+        document.querySelector('#btn-rotate1').addEventListener('click', () => {
             let rotZ = this.root.rotation.z * 180 / Math.PI + 90;
             if (rotZ >= 360) {
                 rotZ = 0;
@@ -266,9 +266,23 @@ class App {
             
             this.root.rotation.z = rotZ;
             
-            document.querySelector('#btn-rotate').innerHTML = 'Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
+            document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
+            document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
         });
-
+        document.querySelector('#btn-rotate2').addEventListener('click', () => {
+            let rotZ = this.root.rotation.z * 180 / Math.PI - 90;
+            if (rotZ <= -360) {
+                rotZ = 0;
+            } else {
+                rotZ = this.root.rotation.z - Math.PI / 2;
+            }
+            
+            this.root.rotation.z = rotZ;
+            
+            document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
+            document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
+        });
+        
     }
 
     requestAnimationFrame() {
@@ -386,7 +400,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('init' + JSON.stringify(e));
+        this.showMessage('init!' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
