@@ -126,6 +126,11 @@ class App {
             
             this.fpsStats.domElement.style.display = this.isDebug ? '' : 'none';
         });
+        
+        this.ar.addEventListener(ARKitWrapper.ORIENTATION_CHANGED_EVENT, (e) => {
+            // do something when orientation is updated
+            this.showMessage('orientation:' + JSON.stringify(e.detail));
+        });
     }
 
     createCube(name) {
@@ -340,8 +345,6 @@ class App {
         const cubeMesh = this.createCube(info.uuid);
         cubeMesh.matrixAutoUpdate = false;
 
-        this.showMessage('onARAddObject ' + JSON.stringify(info));
-                
         info.transform.v3.y += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.transform));
         this.scene.add(cubeMesh);
@@ -361,7 +364,6 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('Init success: ' + JSON.stringify(e));
         
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;

@@ -126,6 +126,11 @@ class App {
             
             this.fpsStats.domElement.style.display = this.isDebug ? '' : 'none';
         });
+        
+        this.ar.addEventListener(ARKitWrapper.ORIENTATION_CHANGED_EVENT, (e) => {
+            // do something when orientation is updated
+            console.log('ORIENTATION_CHANGED_EVENT', e.detail);
+        });
     }
 
     createCube(name) {
