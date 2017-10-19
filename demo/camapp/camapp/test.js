@@ -148,7 +148,7 @@ class App {
     resize(width, height) {
         this.width = width;
         this.height = height;
-        this.engine.setSize(width, height, false);
+        this.engine.setSize(width, height, true);
     }
     initScene(canvasId) {
         this.canvas = document.getElementById(canvasId);
@@ -434,7 +434,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('INI' + JSON.stringify(e));
+        this.showMessage('INIT' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
