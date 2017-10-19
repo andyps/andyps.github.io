@@ -99,6 +99,7 @@ class App {
         this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, (e) => {
             this.addMessage('resized:' + JSON.stringify(e.detail));
             //~ this.resize(e.detail.size.width, e.detail.size.height);
+            
         });
 
         this.ar.addEventListener(ARKitWrapper.PLAINS_ADDED_EVENT, (e) => {
@@ -272,6 +273,9 @@ class App {
             
             this.canvas.style.top = this.width/2 - this.height/2 + "px";
             
+            this.canvas.style.width = this.width + "px";
+            this.canvas.style.height = this.height + "px";
+            
             document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + this.rot;
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
 
@@ -299,9 +303,13 @@ class App {
             this.canvas.style.position = 'relative';
             this.canvas.style.left = -this.width/2 + this.height/2 + 'px';
             this.canvas.style.top = this.width/2 - this.height/2 + "px";
-            
+
+            this.canvas.style.width = this.width + "px";
+            this.canvas.style.height = this.height + "px";
+
             document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + this.rot;
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
+
 
             return;
             let rotZ = this.root.rotation.z * 180 / Math.PI - 90;
@@ -434,7 +442,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('INIT' + JSON.stringify(e));
+        this.showMessage('IN' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
