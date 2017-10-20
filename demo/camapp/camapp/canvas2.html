@@ -42,7 +42,7 @@ renderer.setSize( window.innerWidth, window.innerHeight, true );
 document.body.appendChild( renderer.domElement );
 
 var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+var material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 var cube = new THREE.Mesh( geometry, material );
 scene.add( cube );
 
@@ -55,6 +55,12 @@ scene.add(axis);
 
 camera.position.z = 10;
 
+window.onresize = function() {
+    renderer.setSize( window.innerWidth, window.innerHeight, true );
+    
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+}
 var animate = function () {
     requestAnimationFrame( animate );
 
