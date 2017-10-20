@@ -111,10 +111,12 @@ class App {
             console.log('PLAINS_REMOVED_EVENT', e.detail);
         });
 
+        this.updateAnchors = false;
+        this.updateAnchorsUuid = null;
         this.ar.addEventListener(ARKitWrapper.ANCHORS_UPDATED_EVENT, (e) => {
             // do something when anchors are updated
             console.log('ANCHORS_UPDATED_EVENT', e.detail);
-            this.addMessage('updateanchors:' +  e.detail.planes.length + ' a:' + e.detail.anchors.length);
+            //~ this.addMessage('updateanchors:' +  e.detail.planes.length + ' a:' + e.detail.anchors.length);
         });
         
         this.ar.addEventListener(ARKitWrapper.LOCATION_UPDATED_EVENT, (e) => {
@@ -131,7 +133,7 @@ class App {
         
         this.ar.addEventListener(ARKitWrapper.ORIENTATION_CHANGED_EVENT, (e) => {
             // do something when orientation is updated
-            this.addMessage('orientation:' + JSON.stringify(e.detail));
+            this.addMessage('orientation:' + JSON.stringify(e.detail) + 'window: ' + window.innerWidth);
             
             
         });
@@ -442,7 +444,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('HI!!!' + JSON.stringify(e));
+        this.showMessage('HI' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
