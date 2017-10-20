@@ -18,7 +18,7 @@ class App {
         this.raycaster = new THREE.Raycaster();
         this.registerUIEvents();
         
-        this.run();
+        //~ this.run();
     }
     run() {
         let render = (time) => {
