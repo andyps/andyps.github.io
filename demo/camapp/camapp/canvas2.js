@@ -49,7 +49,7 @@ class App {
             }
         }).then(this.onARInit.bind(this));
 
-        //~ this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
+        this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
 
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
             // do something when recording is started
@@ -194,7 +194,7 @@ class App {
         let light = new THREE.PointLight(0xffffff, 2, 0);
         this.camera.add(light);
         
-        //~ this.camera.matrixAutoUpdate = false;
+        this.camera.matrixAutoUpdate = false;
         
         this.fpsStats = new Stats();
         this.fpsStats.setMode(0);
@@ -445,7 +445,7 @@ class App {
     }
     onARAddObject(info) {
         const cubeMesh = this.createCube(info.uuid);
-        //~ cubeMesh.matrixAutoUpdate = false;
+        cubeMesh.matrixAutoUpdate = false;
 
         this.showMessage('add:' + JSON.stringify(info));
         
@@ -453,6 +453,9 @@ class App {
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.transform));
         this.root.add(cubeMesh);
         this.cubesNum++;
+
+        let axis = new THREE.AxisHelper(100);
+        cubeMesh.add(axis);
 
         this.requestAnimationFrame();
     }
@@ -468,7 +471,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('H' + JSON.stringify(e));
+        this.showMessage('X' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -485,14 +488,14 @@ class App {
     
     onARWatch() {
         const camera = this.ar.getData('camera');
-        //~ if (camera) {
-            //~ this.camera.projectionMatrix.fromArray(
-                //~ this.ar.flattenARMatrix(camera.projectionCamera)
-            //~ );
-            //~ this.camera.matrix.fromArray(
-                //~ this.ar.flattenARMatrix(camera.cameraTransform)
-            //~ );
-        //~ }
+        if (camera) {
+            this.camera.projectionMatrix.fromArray(
+                this.ar.flattenARMatrix(camera.projectionCamera)
+            );
+            this.camera.matrix.fromArray(
+                this.ar.flattenARMatrix(camera.cameraTransform)
+            );
+        }
 
         if (this.isDebug) {
             this.logDebugData();
