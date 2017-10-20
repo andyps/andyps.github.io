@@ -214,11 +214,7 @@ class App {
         cube.matrixAutoUpdate = false;
         this.scene.add( cube );
         
-        this.ar.addAnchor(
-            null,
-            this.ar.createARMatrix(cube.matrix.toArray())
-        );
-
+        this.cube = cube;
     }
     
     cleanScene() {
@@ -493,6 +489,11 @@ class App {
         );
         
         this.watchAR();
+        
+        this.ar.addAnchor(
+            null,
+            this.ar.createARMatrix(this.cube.matrix.toArray())
+        ).then(() => this.showMessage('defanchor'));
     }
     
     onARWatch() {
