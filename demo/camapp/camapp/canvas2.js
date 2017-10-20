@@ -212,7 +212,7 @@ class App {
         
         axis.matrixAutoUpdate = false;
         cube.matrixAutoUpdate = false;
-        this.scene.add( cube );
+        this.root.add(cube);
         
         this.cube = cube;
     }
@@ -476,7 +476,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('G' + JSON.stringify(e));
+        this.showMessage('M' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
