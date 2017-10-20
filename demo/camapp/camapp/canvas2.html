@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <title>Camera App Three.js</title>
+    
+    <link href="app.css" rel="stylesheet" type="text/css" charset="utf-8" >
+    
+    <script src="vendor/three.js"></script>
+    <script src="vendor/stats.js"></script> 
+    
+    <script src="fill/EventHandlerBase.js" type="module"></script>
+    <script src="platform/ARKitWrapper.js" type="module"></script>
+    
+    <script src="canvas2.js?t=111" type="module"></script>
+
+    <script src="webkit-simulator.js"></script>
+    
+    <style>
+        canvas#app-canvas {
+            border: 1px solid red;
+            width: auto;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<canvas id="app-canvas" oncontextmenu="return false;">Browser not supported</canvas>
+<div id="message" style="display: none;">Any message</div>
+
+<script>
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+var renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    canvas: document.querySelector('#app-canvas'),
+    alpha: true
+});
+renderer.setSize( window.innerWidth, window.innerHeight, true );
+document.body.appendChild( renderer.domElement );
+
+var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+var cube = new THREE.Mesh( geometry, material );
+scene.add( cube );
+
+cube.position.x = -5;
+cube.position.y = -3;
+
+let axis = new THREE.AxisHelper(100);
+axis.name = 'axis';
+scene.add(axis);
+
+camera.position.z = 10;
+
+var animate = function () {
+    requestAnimationFrame( animate );
+
+
+    renderer.render(scene, camera);
+};
+
+animate();
+</script>
+<span id="info-objectsCnt" style="display: none">0</span>
+
+<div id="info-container">
+    <div>
+        <button id="btn-snapdebug">Snap</button>
+        <button id="btn-options">Opts</button>
+        <br>
+        <button id="btn-rotate1" style="width: 100px">+Rot</button>
+        <button id="btn-rotate2" style="width: 100px">-Rot</button>
+        <br>
+        <textarea tabindex="-1" readonly id="info-debug" rows="10" cols="40"></textarea>
+        <br>
+        <textarea tabindex="-1" readonly id="info-snapdebug" rows="10" cols="40"></textarea>
+        
+        <div id="area-options" style="display: none; overflow: auto; height: 300px;">
+            <form id="form-options">
+                <input type="button" value="Send" id="btn-set-options"><br>
+                browser<input type="checkbox" name="opt-browser" checked>
+                points<input type="checkbox" name="opt-points" ><br>
+                focus<input type="checkbox" name="opt-focus" checked><br>
+                rec<input type="checkbox" name="opt-rec" checked>
+                rec_time<input type="checkbox" name="opt-rec_time" checked><br>
+                debug<input type="checkbox" name="opt-debug" checked>
+                stats<input type="checkbox" name="opt-statistics" checked><br>
+                anchors<input type="checkbox" name="opt-anchors" checked><br>
+                plane<input type="checkbox" name="opt-plane" checked><br>
+                mic<input type="checkbox" name="opt-mic" checked>
+                build<input type="checkbox" name="opt-build" checked><br>
+                warnings<input type="checkbox" name="opt-warnings" checked><br>
+                
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
