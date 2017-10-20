@@ -148,9 +148,13 @@ class App {
         
     }
 
-    createCube(name) {
+    createCube(name, origin) {
         let geometry = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
-        let material = new THREE.MeshLambertMaterial({color: 0x7d4db2, reflectivity: 0, wireframe: false, opacity: 0.8});
+        let color = 0x7d4db2;
+        if (origin) {
+            color = 0x00ff00;
+        }
+        let material = new THREE.MeshLambertMaterial({color: color, reflectivity: 0, wireframe: false, opacity: 0.8});
         let cubeMesh = new THREE.Mesh(geometry, material);
         cubeMesh.name = name;
         
@@ -184,11 +188,12 @@ class App {
         
         this.root = new THREE.Object3D();
         
-        let axis = new THREE.AxisHelper(100);
-        axis.name = 'axis';
-        this.scene.add(axis);
-        this.axis = axis;
-    
+        //~ let axis = new THREE.AxisHelper(100);
+        //~ axis.name = 'axis';
+        //~ this.scene.add(axis);
+        //~ this.axis = axis;
+        //~ axis.matrixAutoUpdate = false;
+        
         this.scene.add(this.root);
         
         let light = new THREE.PointLight(0xffffff, 2, 0);
@@ -203,18 +208,6 @@ class App {
         this.fpsStats.domElement.style.right = '0px';
         document.body.appendChild(this.fpsStats.domElement);
         
-        var geometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
-        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-        var cube = new THREE.Mesh( geometry, material );
-        cube.position.x = -5;
-        cube.position.y = -2;
-        cube.position.z = 1;
-        
-        axis.matrixAutoUpdate = false;
-        cube.matrixAutoUpdate = false;
-        this.root.add(cube);
-        
-        this.cube = cube;
     }
     
     cleanScene() {
@@ -355,6 +348,33 @@ class App {
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
         });
         
+        document.querySelector('#btn-def').addEventListener('click', () => {
+            
+            let transform = new THREE.Matrix4();
+            transform = transform.toArray();
+            transform = this.ar.createARMatrix(transform);
+
+            this.ar.addAnchor(
+                null,
+                transform
+            ).then(info => {
+                const cubeMesh = this.createCube(info.uuid, true);
+                cubeMesh.matrixAutoUpdate = false;
+
+                this.showMessage('add:' + JSON.stringify(info));
+                
+                cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.transform));
+                this.root.add(cubeMesh);
+                this.cubesNum++;
+
+                let axis = new THREE.AxisHelper(100);
+                axis.matrixAutoUpdate = false;
+                cubeMesh.add(axis);
+
+                this.requestAnimationFrame();
+            });
+
+        });
     }
 
     requestAnimationFrame() {
@@ -476,7 +496,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('M' + JSON.stringify(e));
+        this.showMessage('VVV' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -490,10 +510,6 @@ class App {
         
         this.watchAR();
         
-        this.ar.addAnchor(
-            null,
-            this.ar.createARMatrix(this.cube.matrix.toArray())
-        ).then(() => this.showMessage('defanchor'));
     }
     
     onARWatch() {
