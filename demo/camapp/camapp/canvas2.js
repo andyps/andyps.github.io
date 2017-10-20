@@ -180,7 +180,7 @@ class App {
         this.camera.position.set(0, 1.6, 0);
         this.camera.lookAt(new THREE.Vector3(0, 1.6, -100));
 
-        //~ this.scene.add(this.camera);
+        this.scene.add(this.camera);
         
         this.root = new THREE.Object3D();
         
@@ -475,7 +475,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage(')' + JSON.stringify(e));
+        this.showMessage('!' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
