@@ -172,13 +172,13 @@ class App {
         });
         this.resize(window.innerWidth, window.innerHeight);
         
-        //~ this.engine.setClearColor('#000', 0);
+        this.engine.setClearColor('#000', 0);
 
         this.camera = new THREE.PerspectiveCamera(37.94, this.width / this.height, 0.001, 1000);
         
         this.camera.position.z = 10;
-        //~ this.camera.position.set(0, 1.6, 0);
-        //~ this.camera.lookAt(new THREE.Vector3(0, 1.6, -100));
+        this.camera.position.set(0, 1.6, 0);
+        this.camera.lookAt(new THREE.Vector3(0, 1.6, -100));
 
         //~ this.scene.add(this.camera);
         
@@ -188,7 +188,7 @@ class App {
         axis.name = 'axis';
         this.scene.add(axis);
         this.axis = axis;
-
+    
         this.scene.add(this.root);
         
         let light = new THREE.PointLight(0xffffff, 2, 0);
@@ -209,7 +209,10 @@ class App {
         cube.position.x = -5;
         cube.position.y = -2;
         cube.position.z = 1;
-
+        
+        axis.matrixAutoUpdate = false;
+        cube.matrixAutoUpdate = false;
+        
         this.scene.add( cube );
     }
     
@@ -455,6 +458,7 @@ class App {
         this.cubesNum++;
 
         let axis = new THREE.AxisHelper(100);
+        axis.matrixAutoUpdate = false;
         cubeMesh.add(axis);
 
         this.requestAnimationFrame();
@@ -471,7 +475,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('X' + JSON.stringify(e));
+        this.showMessage(')' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
