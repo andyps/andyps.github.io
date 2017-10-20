@@ -5,7 +5,6 @@ const CUBE_SIZE = 0.1;
 
 class App {
     constructor(canvasId) {
-        return;
         this.isDebug = true;
         this.deviceId = null;
         
@@ -175,10 +174,9 @@ class App {
         
         //~ this.engine.setClearColor('#000', 0);
 
-        this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-
-        //~ this.camera = new THREE.PerspectiveCamera(37.94, this.width / this.height, 0.001, 1000);
+        this.camera = new THREE.PerspectiveCamera(37.94, this.width / this.height, 0.001, 1000);
         
+        this.camera.position.z = 10;
         //~ this.camera.position.set(0, 1.6, 0);
         //~ this.camera.lookAt(new THREE.Vector3(0, 1.6, -100));
 
@@ -186,7 +184,7 @@ class App {
         
         this.root = new THREE.Object3D();
         
-        let axis = new THREE.AxisHelper(10000);
+        let axis = new THREE.AxisHelper(100);
         axis.name = 'axis';
         this.scene.add(axis);
         this.axis = axis;
@@ -208,6 +206,10 @@ class App {
         var geometry = new THREE.BoxGeometry( 1, 1, 1 );
         var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
         var cube = new THREE.Mesh( geometry, material );
+        cube.position.x = -5;
+        cube.position.y = -2;
+        cube.position.z = 1;
+
         this.scene.add( cube );
     }
     
