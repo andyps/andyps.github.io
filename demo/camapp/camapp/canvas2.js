@@ -212,8 +212,13 @@ class App {
         
         axis.matrixAutoUpdate = false;
         cube.matrixAutoUpdate = false;
-        
         this.scene.add( cube );
+        
+        this.ar.addAnchor(
+            null,
+            this.ar.createARMatrix(cube.matrix.toArray())
+        );
+
     }
     
     cleanScene() {
@@ -475,7 +480,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('*' + JSON.stringify(e));
+        this.showMessage('***' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
