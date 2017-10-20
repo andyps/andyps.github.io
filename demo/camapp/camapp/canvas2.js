@@ -203,7 +203,7 @@ class App {
         this.fpsStats.domElement.style.right = '0px';
         document.body.appendChild(this.fpsStats.domElement);
         
-        var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+        var geometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
         var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
         var cube = new THREE.Mesh( geometry, material );
         cube.position.x = -5;
@@ -475,7 +475,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('!' + JSON.stringify(e));
+        this.showMessage('*' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }

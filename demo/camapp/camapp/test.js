@@ -187,6 +187,20 @@ class App {
         this.fpsStats.domElement.style.left = 'auto';
         this.fpsStats.domElement.style.right = '0px';
         document.body.appendChild(this.fpsStats.domElement);
+        
+        
+        
+        var geometry = new THREE.BoxGeometry( 0.1, 0.1, 0.1 );
+        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+        var cube = new THREE.Mesh( geometry, material );
+        cube.position.x = -5;
+        cube.position.y = -2;
+        cube.position.z = 1;
+        
+        cube.matrixAutoUpdate = false;
+        
+        this.scene.add( cube );
+
     }
     
     cleanScene() {
