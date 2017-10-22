@@ -501,7 +501,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('M' + JSON.stringify(e));
+        this.showMessage('H' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -571,6 +571,14 @@ class App {
         const date = (new Date()).toTimeString();
         
         const rot = this.camera.getWorldRotation();
+        
+        var p = new THREE.Vector4();
+        var s = new THREE.Vector4();
+        var q = new THREE.Quaternion();
+        this.camera.matrix.decompose(p, q, s);
+        var e = new THREE.Euler();
+        e.setFromQuaternion(q);
+        
         const camera = {
             pos: this.camera.getWorldPosition(),
             rot: {
@@ -581,7 +589,8 @@ class App {
             },
             dir: this.camera.getWorldDirection(),
             s: this.camera.getWorldScale(),
-            locRot: this.camera.rotation
+            locRot: this.camera.rotation,
+            euler: {xe: e.x * 180 / Math.PI, ye: e.y * 180 / Math.PI, ze: e.z * 180 / Math.PI}
         };
         document.querySelector('#info-debug').value = JSON.stringify(camera) + '\n---\n' +
             JSON.stringify(data) + ':' + date;
