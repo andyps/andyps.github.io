@@ -528,7 +528,7 @@ class App {
                 
                 var m = new THREE.Matrix4();
                 // m.makeRotationZ(-Math.PI);
-                m.makeRotationZ(-Math.PI / 2);
+                m.makeRotationZ(Math.PI / 2);
                 
                 var cameraTransformArr = this.ar.flattenARMatrix(camera.cameraTransform);
                 var cameraTransform = new THREE.Matrix4();
