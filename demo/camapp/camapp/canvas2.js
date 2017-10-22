@@ -580,7 +580,8 @@ class App {
                 z: rot.z * 180 / Math.PI
             },
             dir: this.camera.getWorldDirection(),
-            s: this.camera.getWorldScale()
+            s: this.camera.getWorldScale(),
+            locRot: this.camera.rotation
         };
         document.querySelector('#info-debug').value = JSON.stringify(camera) + '\n---\n' +
             JSON.stringify(data) + ':' + date;
