@@ -496,7 +496,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('VVV' + JSON.stringify(e));
+        this.showMessage('W' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -534,7 +534,14 @@ class App {
         let data = this.ar.getData();
         const date = (new Date()).toTimeString();
         
-        document.querySelector('#info-debug').value = JSON.stringify(data) + ':' + date;
+        const camera = {
+            pos: this.camera.getWorldPosition(),
+            rot: this.camera.getWorldRotation(),
+            dir: this.camera.getWorldDirection(),
+            s: this.camera.getWorldScale()
+        };
+        document.querySelector('#info-debug').value = JSON.stringify(camera) + '\n---\n' +
+            JSON.stringify(data) + ':' + date;
     }
     showMessage(txt) {
         document.querySelector('#message').textContent = txt;
