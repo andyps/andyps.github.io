@@ -496,7 +496,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('WWW' + JSON.stringify(e));
+        this.showMessage('G' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -538,10 +538,10 @@ class App {
         const camera = {
             pos: this.camera.getWorldPosition(),
             rot: {
-                o: r.order,
-                x: r.x * 180 / Math.PI,
-                y: r.y * 180 / Math.PI,
-                z: r.z * 180 / Math.PI
+                o: rot.order,
+                x: rot.x * 180 / Math.PI,
+                y: rot.y * 180 / Math.PI,
+                z: rot.z * 180 / Math.PI
             },
             dir: this.camera.getWorldDirection(),
             s: this.camera.getWorldScale()
