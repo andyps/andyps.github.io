@@ -501,7 +501,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('BB' + JSON.stringify(e));
+        this.showMessage('CC' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -521,11 +521,17 @@ class App {
         const camera = this.ar.getData('camera');
         if (camera) {
             if (this.changeProjMatrix) {
-                camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
-                camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
+                // pi
+                // camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
+                // camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
                 
-                camera.projectionCamera.v2.x = -camera.projectionCamera.v2.x;
-                camera.projectionCamera.v2.y = -camera.projectionCamera.v2.y;
+                // camera.projectionCamera.v2.x = -camera.projectionCamera.v2.x;
+                // camera.projectionCamera.v2.y = -camera.projectionCamera.v2.y;
+                
+                // pi/2
+                let x = camera.projectionCamera.v0.x;
+                camera.projectionCamera.v0.x = -camera.projectionCamera.v1.y;
+                camera.projectionCamera.v1.y = x;
             }
             this.camera.projectionMatrix.fromArray(
                 this.ar.flattenARMatrix(camera.projectionCamera)
