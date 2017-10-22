@@ -501,7 +501,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('LLL' + JSON.stringify(e));
+        this.showMessage('BB' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -524,8 +524,8 @@ class App {
                 camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
                 camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
                 
-                // camera.projectionCamera.v2.x = -camera.projectionCamera.v2.x;
-                // camera.projectionCamera.v2.y = -camera.projectionCamera.v2.y;
+                camera.projectionCamera.v2.x = -camera.projectionCamera.v2.x;
+                camera.projectionCamera.v2.y = -camera.projectionCamera.v2.y;
             }
             this.camera.projectionMatrix.fromArray(
                 this.ar.flattenARMatrix(camera.projectionCamera)
