@@ -496,7 +496,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('G' + JSON.stringify(e));
+        this.showMessage('GGG' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
