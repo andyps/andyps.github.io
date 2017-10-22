@@ -286,6 +286,7 @@ class App {
         
         this.rot = 0;
         document.querySelector('#btn-rotate1').addEventListener('click', () => {
+            /*
             let rot = this.rot + 90;
             if (rot >= 360) {
                 rot = 0;
@@ -305,14 +306,13 @@ class App {
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
 
             return;
+            */
             let rotZ = this.root.rotation.z * 180 / Math.PI + 90;
             if (rotZ >= 360) {
                 rotZ = 0;
-            } else {
-                rotZ = this.root.rotation.z + Math.PI / 2;
             }
             
-            this.root.rotation.z = rotZ;
+            this.root.rotation.z = rotZ * Math.PI / 180;
             
             document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
@@ -321,6 +321,7 @@ class App {
             this.changeProjMatrix = !this.changeProjMatrix;
         });
         document.querySelector('#btn-rotate2').addEventListener('click', () => {
+            /*
             let rot = this.rot - 90;
             if (rot <= -360) {
                 rot = 0;
@@ -338,16 +339,14 @@ class App {
             document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + this.rot;
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + this.rot;
             return;
-            
+            */
             
             let rotZ = this.root.rotation.z * 180 / Math.PI - 90;
             if (rotZ <= -360) {
                 rotZ = 0;
-            } else {
-                rotZ = this.root.rotation.z - Math.PI / 2;
             }
             
-            this.root.rotation.z = rotZ;
+            this.root.rotation.z = rotZ * Math.PI / 180;
             
             document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
@@ -501,7 +500,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('H' + JSON.stringify(e));
+        this.showMessage('R' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
