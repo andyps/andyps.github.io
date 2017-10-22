@@ -501,7 +501,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('CC' + JSON.stringify(e));
+        this.showMessage('KK' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -524,21 +524,38 @@ class App {
                 // pi
                 // camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
                 // camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
+                // above works
                 
+                var m = new THREE.Matrix4();
+                m.makeRotationZ(-Math.PI);
+                
+                var cameraTransformArr = this.ar.flattenARMatrix(camera.cameraTransform);
+                var cameraTransform = new THREE.Matrix4();
+                cameraTransform.fromArray(cameraTransformArr);
+                
+                cameraTransform.multiply(m);
                 // camera.projectionCamera.v2.x = -camera.projectionCamera.v2.x;
                 // camera.projectionCamera.v2.y = -camera.projectionCamera.v2.y;
                 
                 // pi/2
-                let x = camera.projectionCamera.v0.x;
-                camera.projectionCamera.v0.x = -camera.projectionCamera.v1.y;
-                camera.projectionCamera.v1.y = x;
+                // let x = camera.projectionCamera.v0.x;
+                // camera.projectionCamera.v0.x = -camera.projectionCamera.v1.y;
+                // camera.projectionCamera.v1.y = x;
+                
+                this.camera.projectionMatrix.fromArray(
+                    this.ar.flattenARMatrix(camera.projectionCamera)
+                );
+                this.camera.matrix.fromArray(
+                    cameraTransform.toArray()
+                );
+            } else {
+                this.camera.projectionMatrix.fromArray(
+                    this.ar.flattenARMatrix(camera.projectionCamera)
+                );
+                this.camera.matrix.fromArray(
+                    this.ar.flattenARMatrix(camera.cameraTransform)
+                );
             }
-            this.camera.projectionMatrix.fromArray(
-                this.ar.flattenARMatrix(camera.projectionCamera)
-            );
-            this.camera.matrix.fromArray(
-                this.ar.flattenARMatrix(camera.cameraTransform)
-            );
         }
 
         if (this.isDebug) {
