@@ -19,6 +19,8 @@ class App {
         this.registerUIEvents();
         
         //~ this.run();
+        
+        this.changeProjMatrix = false;
     }
     run() {
         let render = (time) => {
@@ -315,6 +317,9 @@ class App {
             document.querySelector('#btn-rotate1').innerHTML = '+Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
             document.querySelector('#btn-rotate2').innerHTML = '-Rot:' + Math.round(this.root.rotation.z * 180 / Math.PI);
         });
+        document.querySelector('#btn-test').addEventListener('click', () => {
+            this.changeProjMatrix = !this.changeProjMatrix;
+        });
         document.querySelector('#btn-rotate2').addEventListener('click', () => {
             let rot = this.rot - 90;
             if (rot <= -360) {
@@ -496,7 +501,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('GGG' + JSON.stringify(e));
+        this.showMessage('LLL' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -515,6 +520,13 @@ class App {
     onARWatch() {
         const camera = this.ar.getData('camera');
         if (camera) {
+            if (this.changeProjMatrix) {
+                camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
+                camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
+                
+                // camera.projectionCamera.v2.x = -camera.projectionCamera.v2.x;
+                // camera.projectionCamera.v2.y = -camera.projectionCamera.v2.y;
+            }
             this.camera.projectionMatrix.fromArray(
                 this.ar.flattenARMatrix(camera.projectionCamera)
             );
