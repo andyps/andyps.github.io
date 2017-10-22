@@ -501,7 +501,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('KK' + JSON.stringify(e));
+        this.showMessage('OO' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -527,7 +527,8 @@ class App {
                 // above works
                 
                 var m = new THREE.Matrix4();
-                m.makeRotationZ(-Math.PI);
+                // m.makeRotationZ(-Math.PI);
+                m.makeRotationZ(-Math.PI / 2);
                 
                 var cameraTransformArr = this.ar.flattenARMatrix(camera.cameraTransform);
                 var cameraTransform = new THREE.Matrix4();
