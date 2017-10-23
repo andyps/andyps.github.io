@@ -101,7 +101,7 @@ class App {
         });
 
         this.ar.addEventListener(ARKitWrapper.SIZE_CHANGED_EVENT, (e) => {
-            this.resize(e.detail.width, e.detail.height);
+            this.resize(e.detail.size.width, e.detail.size.height);
         });
 
         this.ar.addEventListener(ARKitWrapper.PLAINS_ADDED_EVENT, (e) => {
@@ -189,8 +189,8 @@ class App {
 
         this.scene.add(this.camera);
         
-        this.root = new THREE.Object3D();
-        this.scene.add(this.root);
+        //~ this.root = new THREE.Object3D();
+        //~ this.scene.add(this.root);
         
         let light = new THREE.PointLight(0xffffff, 2, 0);
         this.camera.add(light);
@@ -333,7 +333,7 @@ class App {
         
         info.transform.v3.y += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.transform));
-        this.root.add(cubeMesh);
+        this.scene.add(cubeMesh);
         this.cubesNum++;
 
         this.requestAnimationFrame();
@@ -357,7 +357,7 @@ class App {
         this.deviceId = this.ar.deviceInfo.uuid;
         this.updateOrientation(this.ar.deviceInfo.orientation);
         
-        this.showMessage('WebXR Demo ' + this.ar.deviceInfo.orientation);
+        this.showMessage('WebXR Demo!!! ' + this.ar.deviceInfo.orientation);
         
         this.resize(
             this.ar.deviceInfo.viewportSize.width,
