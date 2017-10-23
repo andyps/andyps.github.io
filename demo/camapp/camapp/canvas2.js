@@ -21,6 +21,7 @@ class App {
         //~ this.run();
         
         this.changeProjMatrix = false;
+        this.orientationAngle = null;
         
         this.orientation = null;
         this.fixOrientationMatrix = new THREE.Matrix4();
@@ -502,7 +503,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('I' + JSON.stringify(e));
+        this.showMessage('III' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -563,35 +564,50 @@ class App {
             }
             */
             
-            let orientationAngle;
-            switch (this.orientation) {
-                case ARKitWrapper.ORIENTATION_PORTRAIT:
-                    orientationAngle = Math.PI / 2;
-                    break;
-                case ARKitWrapper.ORIENTATION_UPSIDE_DOWN:
-                    orientationAngle = -Math.PI / 2;
-                    break;
-                case ARKitWrapper.ORIENTATION_LANDSCAPE_LEFT:
-                    orientationAngle = -Math.PI;
-                    break;
-                default:
-                    orientationAngle = 0;
-                    break;
-            }
-            if (orientationAngle > 0) {
-                this.fixOrientationMatrix.makeRotationZ(orientationAngle);
-                this.camera.matrix.fromArray(
-                    this.ar.flattenARMatrix(camera.cameraTransform)
-                ).multiply(this.fixOrientationMatrix);
-            } else {
+            if (this.changeProjMatrix) {
+                camera.cameraTransform.v0.x = -camera.cameraTransform.v0.x;
+                camera.cameraTransform.v1.y = -camera.cameraTransform.v1.y;
+
                 this.camera.matrix.fromArray(
                     this.ar.flattenARMatrix(camera.cameraTransform)
                 );
-            }
+                this.camera.projectionMatrix.fromArray(
+                    this.ar.flattenARMatrix(camera.projectionCamera)
+                );
+            } else {
             
-            this.camera.projectionMatrix.fromArray(
-                this.ar.flattenARMatrix(camera.projectionCamera)
-            );
+                let orientationAngle;
+                switch (this.orientation) {
+                    case ARKitWrapper.ORIENTATION_PORTRAIT:
+                        orientationAngle = Math.PI / 2;
+                        break;
+                    case ARKitWrapper.ORIENTATION_UPSIDE_DOWN:
+                        orientationAngle = -Math.PI / 2;
+                        break;
+                    case ARKitWrapper.ORIENTATION_LANDSCAPE_LEFT:
+                        orientationAngle = -Math.PI;
+                        break;
+                    default:
+                        orientationAngle = 0;
+                        break;
+                }
+                this.orientationAngle = orientationAngle;
+                if (orientationAngle > 0) {
+                    this.fixOrientationMatrix.makeRotationZ(orientationAngle);
+                    this.camera.matrix.fromArray(
+                        this.ar.flattenARMatrix(camera.cameraTransform)
+                    ).multiply(this.fixOrientationMatrix);
+                } else {
+                    this.camera.matrix.fromArray(
+                        this.ar.flattenARMatrix(camera.cameraTransform)
+                    );
+                }
+                
+                this.camera.projectionMatrix.fromArray(
+                    this.ar.flattenARMatrix(camera.projectionCamera)
+                );
+            
+            }
 
         }
 
@@ -628,7 +644,8 @@ class App {
             locRot: this.camera.rotation,
             euler: {xe: e.x * 180 / Math.PI, ye: e.y * 180 / Math.PI, ze: e.z * 180 / Math.PI}
         };
-        document.querySelector('#info-debug').value = JSON.stringify(camera) + '\n---\n' +
+        document.querySelector('#info-debug').value = this.orientationAngle + '\n' + 
+            JSON.stringify(camera) + '\n---\n' +
             JSON.stringify(data) + ':' + date;
     }
     showMessage(txt) {
