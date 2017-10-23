@@ -505,7 +505,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('GF' + JSON.stringify(e));
+        this.showMessage('FF' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -570,7 +570,7 @@ class App {
                 //~ camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
                 //~ camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
                 
-                if (this.orientationAngle > 0) {
+                if (this.orientationAngle != 0) {
                     var m = new THREE.Matrix4();
                     m.makeRotationZ(this.orientationAngle);
                     
