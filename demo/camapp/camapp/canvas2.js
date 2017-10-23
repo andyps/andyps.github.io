@@ -636,8 +636,8 @@ class App {
             //~ }
             //~ this.orientationAngle = orientationAngle;
             
-            if (orientationAngle != 0) {
-                this.fixOrientationMatrix.makeRotationZ(orientationAngle);
+            if (this.orientationAngle != 0) {
+                this.fixOrientationMatrix.makeRotationZ(this.orientationAngle);
                 this.camera.matrix.fromArray(
                     this.ar.flattenARMatrix(camera.cameraTransform)
                 ).multiply(this.fixOrientationMatrix);
