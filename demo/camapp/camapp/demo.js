@@ -133,8 +133,6 @@ class App {
         
         this.ar.addEventListener(ARKitWrapper.ORIENTATION_CHANGED_EVENT, e => {
             this.updateOrientation(e.detail.orientation);
-            
-            this.showMessage('detail:' + JSON.stringify(e.detail) + 'orientation: ' + e.detail.orientation);
         });
     }
 
@@ -188,9 +186,6 @@ class App {
         this.camera.lookAt(new THREE.Vector3(0, 1.6, -100));
 
         this.scene.add(this.camera);
-        
-        //~ this.root = new THREE.Object3D();
-        //~ this.scene.add(this.root);
         
         let light = new THREE.PointLight(0xffffff, 2, 0);
         this.camera.add(light);
@@ -357,8 +352,6 @@ class App {
         this.deviceId = this.ar.deviceInfo.uuid;
         this.updateOrientation(this.ar.deviceInfo.orientation);
         
-        this.showMessage('WebXR Demo!!! ' + this.ar.deviceInfo.orientation);
-        
         this.resize(
             this.ar.deviceInfo.viewportSize.width,
             this.ar.deviceInfo.viewportSize.height
@@ -385,8 +378,6 @@ class App {
         this.camera.projectionMatrix.fromArray(
             this.ar.flattenARMatrix(camera.projectionCamera)
         );
-        
-        this.showMessage('orientationAngle:' + this.orientationAngle);
         
         this.requestAnimationFrame();
     }
