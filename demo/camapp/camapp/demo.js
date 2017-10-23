@@ -349,10 +349,10 @@ class App {
             return;
         }
 
-        this.showMessage('WebXR Demo');
-
         this.deviceId = this.ar.deviceInfo.uuid;
         this.updateOrientation(this.ar.deviceInfo.orientation);
+        
+        this.showMessage('WebXR Demo! ' + this.ar.deviceInfo.orientation);
         
         this.resize(
             this.ar.deviceInfo.viewportSize.width,
