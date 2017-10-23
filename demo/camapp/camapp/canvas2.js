@@ -21,7 +21,7 @@ class App {
         //~ this.run();
         
         this.changeProjMatrix = false;
-        this.orientationAngle = null;
+        this.orientationAngle = 0;
         
         this.orientation = null;
         this.fixOrientationMatrix = new THREE.Matrix4();
@@ -145,14 +145,31 @@ class App {
             this.fpsStats.domElement.style.display = this.isDebug ? '' : 'none';
         });
         
-        this.ar.addEventListener(ARKitWrapper.ORIENTATION_CHANGED_EVENT, (e) => {
-            // do something when orientation is updated
+        this.ar.addEventListener(ARKitWrapper.ORIENTATION_CHANGED_EVENT, e => {
             this.addMessage('orientation:' + JSON.stringify(e.detail) + 'window: ' + window.innerWidth);
-            this.orientation = e.detail.orientation;
+            
+            this.updateOrientation(e.detail.orientation);
         });
-        
     }
-
+    
+    updateOrientation(orientation) {
+        this.orientation = orientation;
+        switch (this.orientation) {
+            case ARKitWrapper.ORIENTATION_PORTRAIT:
+                this.orientationAngle = Math.PI / 2;
+                break;
+            case ARKitWrapper.ORIENTATION_UPSIDE_DOWN:
+                this.orientationAngle = -Math.PI / 2;
+                break;
+            case ARKitWrapper.ORIENTATION_LANDSCAPE_LEFT:
+                this.orientationAngle = -Math.PI;
+                break;
+            default:
+                this.orientationAngle = 0;
+                break;
+        }
+    }
+    
     createCube(name, origin) {
         let geometry = new THREE.BoxGeometry(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE);
         let color = 0x7d4db2;
@@ -505,13 +522,13 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('EEE' + JSON.stringify(e));
+        this.showMessage('YES' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
         
         this.deviceId = this.ar.deviceInfo.uuid;
-        this.orientation = this.ar.deviceInfo.orientation;
+        this.updateOrientation(this.ar.deviceInfo.orientation);
 
         this.resize(
             this.ar.deviceInfo.viewportSize.width,
@@ -524,116 +541,116 @@ class App {
     
     onARWatch() {
         const camera = this.ar.getData('camera');
-        if (camera) {
+        if (!camera) return;
             
-            /*
-            if (this.changeProjMatrix) {
-                // pi
-                // camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
-                // camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
-                // above works
-                
-                var m = new THREE.Matrix4();
+        /*
+        if (this.changeProjMatrix) {
+            // pi
+            // camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
+            // camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
+            // above works
+            
+            var m = new THREE.Matrix4();
 
-                m.makeRotationZ(Math.PI / 2);
+            m.makeRotationZ(Math.PI / 2);
+            
+            var cameraTransformArr = this.ar.flattenARMatrix(camera.cameraTransform);
+            var cameraTransform = new THREE.Matrix4();
+            cameraTransform.fromArray(cameraTransformArr);
+            
+            cameraTransform.multiply(m);
+            // camera.projectionCamera.v2.x = -camera.projectionCamera.v2.x;
+            // camera.projectionCamera.v2.y = -camera.projectionCamera.v2.y;
+            
+            // pi/2
+            // let x = camera.projectionCamera.v0.x;
+            // camera.projectionCamera.v0.x = -camera.projectionCamera.v1.y;
+            // camera.projectionCamera.v1.y = x;
+            
+            this.camera.projectionMatrix.fromArray(
+                this.ar.flattenARMatrix(camera.projectionCamera)
+            );
+            this.camera.matrix.fromArray(
+                cameraTransform.toArray()
+            );
+        } else {
+            this.camera.projectionMatrix.fromArray(
+                this.ar.flattenARMatrix(camera.projectionCamera)
+            );
+            this.camera.matrix.fromArray(
+                this.ar.flattenARMatrix(camera.cameraTransform)
+            );
+        }
+        */
+        
+        if (this.changeProjMatrix) {
+            //~ camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
+            //~ camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
+            
+            if (this.orientationAngle != 0) {
+                var m = new THREE.Matrix4();
+                m.makeRotationZ(this.orientationAngle);
                 
                 var cameraTransformArr = this.ar.flattenARMatrix(camera.cameraTransform);
                 var cameraTransform = new THREE.Matrix4();
                 cameraTransform.fromArray(cameraTransformArr);
-                
                 cameraTransform.multiply(m);
-                // camera.projectionCamera.v2.x = -camera.projectionCamera.v2.x;
-                // camera.projectionCamera.v2.y = -camera.projectionCamera.v2.y;
                 
-                // pi/2
-                // let x = camera.projectionCamera.v0.x;
-                // camera.projectionCamera.v0.x = -camera.projectionCamera.v1.y;
-                // camera.projectionCamera.v1.y = x;
-                
-                this.camera.projectionMatrix.fromArray(
-                    this.ar.flattenARMatrix(camera.projectionCamera)
-                );
                 this.camera.matrix.fromArray(
                     cameraTransform.toArray()
                 );
+                
             } else {
-                this.camera.projectionMatrix.fromArray(
-                    this.ar.flattenARMatrix(camera.projectionCamera)
-                );
                 this.camera.matrix.fromArray(
                     this.ar.flattenARMatrix(camera.cameraTransform)
                 );
             }
+            
+            this.camera.projectionMatrix.fromArray(
+                this.ar.flattenARMatrix(camera.projectionCamera)
+            );
+        } else {
+            /*
+            this.camera.matrix.fromArray(
+                this.ar.flattenARMatrix(camera.cameraTransform)
+            );
+            this.camera.projectionMatrix.fromArray(
+                this.ar.flattenARMatrix(camera.projectionCamera)
+            );
             */
             
-            if (this.changeProjMatrix) {
-                //~ camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
-                //~ camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
-                
-                if (this.orientationAngle != 0) {
-                    var m = new THREE.Matrix4();
-                    m.makeRotationZ(this.orientationAngle);
-                    
-                    var cameraTransformArr = this.ar.flattenARMatrix(camera.cameraTransform);
-                    var cameraTransform = new THREE.Matrix4();
-                    cameraTransform.fromArray(cameraTransformArr);
-                    cameraTransform.multiply(m);
-                    
-                    this.camera.matrix.fromArray(
-                        cameraTransform.toArray()
-                    );
-                    
-                } else {
-                    this.camera.matrix.fromArray(
-                        this.ar.flattenARMatrix(camera.cameraTransform)
-                    );
-                }
-                
-                this.camera.projectionMatrix.fromArray(
-                    this.ar.flattenARMatrix(camera.projectionCamera)
-                );
+            //~ let orientationAngle;
+            //~ switch (this.orientation) {
+                //~ case ARKitWrapper.ORIENTATION_PORTRAIT:
+                    //~ orientationAngle = Math.PI / 2;
+                    //~ break;
+                //~ case ARKitWrapper.ORIENTATION_UPSIDE_DOWN:
+                    //~ orientationAngle = -Math.PI / 2;
+                    //~ break;
+                //~ case ARKitWrapper.ORIENTATION_LANDSCAPE_LEFT:
+                    //~ orientationAngle = -Math.PI;
+                    //~ break;
+                //~ default:
+                    //~ orientationAngle = 0;
+                    //~ break;
+            //~ }
+            //~ this.orientationAngle = orientationAngle;
+            
+            if (orientationAngle != 0) {
+                this.fixOrientationMatrix.makeRotationZ(orientationAngle);
+                this.camera.matrix.fromArray(
+                    this.ar.flattenARMatrix(camera.cameraTransform)
+                ).multiply(this.fixOrientationMatrix);
             } else {
-                /*
                 this.camera.matrix.fromArray(
                     this.ar.flattenARMatrix(camera.cameraTransform)
                 );
-                this.camera.projectionMatrix.fromArray(
-                    this.ar.flattenARMatrix(camera.projectionCamera)
-                );
-                */
-                let orientationAngle;
-                switch (this.orientation) {
-                    case ARKitWrapper.ORIENTATION_PORTRAIT:
-                        orientationAngle = Math.PI / 2;
-                        break;
-                    case ARKitWrapper.ORIENTATION_UPSIDE_DOWN:
-                        orientationAngle = -Math.PI / 2;
-                        break;
-                    case ARKitWrapper.ORIENTATION_LANDSCAPE_LEFT:
-                        orientationAngle = -Math.PI;
-                        break;
-                    default:
-                        orientationAngle = 0;
-                        break;
-                }
-                this.orientationAngle = orientationAngle;
-                if (orientationAngle != 0) {
-                    this.fixOrientationMatrix.makeRotationZ(orientationAngle);
-                    this.camera.matrix.fromArray(
-                        this.ar.flattenARMatrix(camera.cameraTransform)
-                    ).multiply(this.fixOrientationMatrix);
-                } else {
-                    this.camera.matrix.fromArray(
-                        this.ar.flattenARMatrix(camera.cameraTransform)
-                    );
-                }
-                
-                this.camera.projectionMatrix.fromArray(
-                    this.ar.flattenARMatrix(camera.projectionCamera)
-                );
-                
             }
-
+            
+            this.camera.projectionMatrix.fromArray(
+                this.ar.flattenARMatrix(camera.projectionCamera)
+            );
+            
         }
 
         if (this.isDebug) {
