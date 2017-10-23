@@ -323,7 +323,7 @@ class App {
         document.querySelector('#btn-test').addEventListener('click', () => {
             this.changeProjMatrix = !this.changeProjMatrix;
             
-            this.orientationAngle = document.querySelector('#angle').value;
+            this.orientationAngle = parseFloat(document.querySelector('#angle').value);
         });
         document.querySelector('#btn-rotate2').addEventListener('click', () => {
             /*
@@ -662,7 +662,7 @@ class App {
             locRot: this.camera.rotation,
             euler: {xe: e.x * 180 / Math.PI, ye: e.y * 180 / Math.PI, ze: e.z * 180 / Math.PI}
         };
-        document.querySelector('#info-debug').value = this.orientationAngle + '\n' + 
+        document.querySelector('#info-debug').value = (this.changeProjMatrix ? 'true:' : 'false:') + this.orientationAngle + '\n' + 
             JSON.stringify(camera) + '\n---\n' +
             JSON.stringify(data) + ':' + date;
     }

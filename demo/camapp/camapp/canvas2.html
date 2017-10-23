@@ -13,7 +13,7 @@
     <script src="fill/EventHandlerBase.js" type="module"></script>
     <script src="platform/ARKitWrapper.js" type="module"></script>
     
-    <script src="canvas2.js?t=y" type="module"></script>
+    <script src="canvas2.js?t=F" type="module"></script>
 
     <script src="webkit-simulator.js"></script>
     
@@ -87,7 +87,13 @@ animate();*/
         <button id="btn-rotate2" style="width: 100px">-Rot</button>
         <br>
         <button id="btn-test" style="width: 100px">Test</button>
-        <input type="text" value="0" id="angle">
+        <select id="angle">
+            <option value="0">0</option>
+            <option value="1.571">1.571</option>
+            <option value="-1.571">-1.571</option>
+            <option value="3.142">3.142</option>
+            <option value="-3.142">-3.142</option>
+        </select>
         
         <br>
         <textarea tabindex="-1" readonly id="info-debug" rows="10" cols="40"></textarea>
