@@ -505,7 +505,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('FF' + JSON.stringify(e));
+        this.showMessage('EEE' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -593,21 +593,21 @@ class App {
                     this.ar.flattenARMatrix(camera.projectionCamera)
                 );
             } else {
-            
+                /*
                 this.camera.matrix.fromArray(
                     this.ar.flattenARMatrix(camera.cameraTransform)
                 );
                 this.camera.projectionMatrix.fromArray(
                     this.ar.flattenARMatrix(camera.projectionCamera)
                 );
-                /*
+                */
                 let orientationAngle;
                 switch (this.orientation) {
                     case ARKitWrapper.ORIENTATION_PORTRAIT:
                         orientationAngle = Math.PI / 2;
                         break;
                     case ARKitWrapper.ORIENTATION_UPSIDE_DOWN:
-                        orientationAngle = Math.PI / 2;
+                        orientationAngle = -Math.PI / 2;
                         break;
                     case ARKitWrapper.ORIENTATION_LANDSCAPE_LEFT:
                         orientationAngle = -Math.PI;
@@ -617,7 +617,7 @@ class App {
                         break;
                 }
                 this.orientationAngle = orientationAngle;
-                if (orientationAngle > 0) {
+                if (orientationAngle != 0) {
                     this.fixOrientationMatrix.makeRotationZ(orientationAngle);
                     this.camera.matrix.fromArray(
                         this.ar.flattenARMatrix(camera.cameraTransform)
@@ -631,7 +631,7 @@ class App {
                 this.camera.projectionMatrix.fromArray(
                     this.ar.flattenARMatrix(camera.projectionCamera)
                 );
-                */
+                
             }
 
         }
