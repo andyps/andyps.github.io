@@ -522,7 +522,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('YES!' + JSON.stringify(e));
+        this.showMessage('ME' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -542,47 +542,25 @@ class App {
     onARWatch() {
         const camera = this.ar.getData('camera');
         if (!camera) return;
-            
-        /*
-        if (this.changeProjMatrix) {
-            // pi
-            // camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
-            // camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
-            // above works
-            
-            var m = new THREE.Matrix4();
 
-            m.makeRotationZ(Math.PI / 2);
-            
-            var cameraTransformArr = this.ar.flattenARMatrix(camera.cameraTransform);
-            var cameraTransform = new THREE.Matrix4();
-            cameraTransform.fromArray(cameraTransformArr);
-            
-            cameraTransform.multiply(m);
-            // camera.projectionCamera.v2.x = -camera.projectionCamera.v2.x;
-            // camera.projectionCamera.v2.y = -camera.projectionCamera.v2.y;
-            
-            // pi/2
-            // let x = camera.projectionCamera.v0.x;
-            // camera.projectionCamera.v0.x = -camera.projectionCamera.v1.y;
-            // camera.projectionCamera.v1.y = x;
-            
-            this.camera.projectionMatrix.fromArray(
-                this.ar.flattenARMatrix(camera.projectionCamera)
-            );
+        const camera = this.ar.getData('camera');
+        if (!camera) return;
+
+        if (this.orientationAngle != 0) {
+            this.fixOrientationMatrix.makeRotationZ(this.orientationAngle);
             this.camera.matrix.fromArray(
-                cameraTransform.toArray()
-            );
+                this.ar.flattenARMatrix(camera.cameraTransform)
+            ).multiply(this.fixOrientationMatrix);
         } else {
-            this.camera.projectionMatrix.fromArray(
-                this.ar.flattenARMatrix(camera.projectionCamera)
-            );
             this.camera.matrix.fromArray(
                 this.ar.flattenARMatrix(camera.cameraTransform)
             );
         }
-        */
         
+        this.camera.projectionMatrix.fromArray(
+            this.ar.flattenARMatrix(camera.projectionCamera)
+        );
+        /*
         if (this.changeProjMatrix) {
             //~ camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
             //~ camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
@@ -610,32 +588,6 @@ class App {
                 this.ar.flattenARMatrix(camera.projectionCamera)
             );
         } else {
-            /*
-            this.camera.matrix.fromArray(
-                this.ar.flattenARMatrix(camera.cameraTransform)
-            );
-            this.camera.projectionMatrix.fromArray(
-                this.ar.flattenARMatrix(camera.projectionCamera)
-            );
-            */
-            
-            //~ let orientationAngle;
-            //~ switch (this.orientation) {
-                //~ case ARKitWrapper.ORIENTATION_PORTRAIT:
-                    //~ orientationAngle = Math.PI / 2;
-                    //~ break;
-                //~ case ARKitWrapper.ORIENTATION_UPSIDE_DOWN:
-                    //~ orientationAngle = -Math.PI / 2;
-                    //~ break;
-                //~ case ARKitWrapper.ORIENTATION_LANDSCAPE_LEFT:
-                    //~ orientationAngle = -Math.PI;
-                    //~ break;
-                //~ default:
-                    //~ orientationAngle = 0;
-                    //~ break;
-            //~ }
-            //~ this.orientationAngle = orientationAngle;
-            
             if (this.orientationAngle != 0) {
                 this.fixOrientationMatrix.makeRotationZ(this.orientationAngle);
                 this.camera.matrix.fromArray(
@@ -652,7 +604,7 @@ class App {
             );
             
         }
-
+        */
         if (this.isDebug) {
             this.logDebugData();
         }
