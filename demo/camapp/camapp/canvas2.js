@@ -522,7 +522,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('YES' + JSON.stringify(e));
+        this.showMessage('YES!' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
