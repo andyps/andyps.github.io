@@ -322,6 +322,8 @@ class App {
         });
         document.querySelector('#btn-test').addEventListener('click', () => {
             this.changeProjMatrix = !this.changeProjMatrix;
+            
+            this.orientationAngle = document.querySelector('#angle').value;
         });
         document.querySelector('#btn-rotate2').addEventListener('click', () => {
             /*
@@ -503,7 +505,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('yyy' + JSON.stringify(e));
+        this.showMessage('Y' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -567,7 +569,7 @@ class App {
             if (this.changeProjMatrix) {
                 //~ camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
                 //~ camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
-
+                
                 if (this.orientationAngle > 0) {
                     var m = new THREE.Matrix4();
                     m.makeRotationZ(this.orientationAngle);
