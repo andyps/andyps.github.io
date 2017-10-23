@@ -21,6 +21,9 @@ class App {
         //~ this.run();
         
         this.changeProjMatrix = false;
+        
+        this.orientation = null;
+        this.fixOrientationMatrix = new THREE.Matrix4();
     }
     run() {
         let render = (time) => {
@@ -144,8 +147,7 @@ class App {
         this.ar.addEventListener(ARKitWrapper.ORIENTATION_CHANGED_EVENT, (e) => {
             // do something when orientation is updated
             this.addMessage('orientation:' + JSON.stringify(e.detail) + 'window: ' + window.innerWidth);
-            
-            
+            this.orientation = e.detail.orientation;
         });
         
     }
@@ -500,12 +502,13 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('R' + JSON.stringify(e));
+        this.showMessage('I' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
         
         this.deviceId = this.ar.deviceInfo.uuid;
+        this.orientation = this.ar.deviceInfo.orientation;
 
         this.resize(
             this.ar.deviceInfo.viewportSize.width,
@@ -519,6 +522,8 @@ class App {
     onARWatch() {
         const camera = this.ar.getData('camera');
         if (camera) {
+            
+            /*
             if (this.changeProjMatrix) {
                 // pi
                 // camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
@@ -526,7 +531,7 @@ class App {
                 // above works
                 
                 var m = new THREE.Matrix4();
-                // m.makeRotationZ(-Math.PI);
+
                 m.makeRotationZ(Math.PI / 2);
                 
                 var cameraTransformArr = this.ar.flattenARMatrix(camera.cameraTransform);
@@ -556,6 +561,38 @@ class App {
                     this.ar.flattenARMatrix(camera.cameraTransform)
                 );
             }
+            */
+            
+            let orientationAngle;
+            switch (this.orientation) {
+                case ARKitWrapper.ORIENTATION_PORTRAIT:
+                    orientationAngle = Math.PI / 2;
+                    break;
+                case ARKitWrapper.ORIENTATION_UPSIDE_DOWN:
+                    orientationAngle = -Math.PI / 2;
+                    break;
+                case ARKitWrapper.ORIENTATION_LANDSCAPE_LEFT:
+                    orientationAngle = -Math.PI;
+                    break;
+                default:
+                    orientationAngle = 0;
+                    break;
+            }
+            if (orientationAngle > 0) {
+                this.fixOrientationMatrix.makeRotationZ(orientationAngle);
+                this.camera.matrix.fromArray(
+                    this.ar.flattenARMatrix(camera.cameraTransform)
+                ).multiply(this.fixOrientationMatrix);
+            } else {
+                this.camera.matrix.fromArray(
+                    this.ar.flattenARMatrix(camera.cameraTransform)
+                );
+            }
+            
+            this.camera.projectionMatrix.fromArray(
+                this.ar.flattenARMatrix(camera.projectionCamera)
+            );
+
         }
 
         if (this.isDebug) {
