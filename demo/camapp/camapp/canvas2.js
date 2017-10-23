@@ -503,7 +503,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('III' + JSON.stringify(e));
+        this.showMessage('l' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -565,8 +565,8 @@ class App {
             */
             
             if (this.changeProjMatrix) {
-                camera.cameraTransform.v0.x = -camera.cameraTransform.v0.x;
-                camera.cameraTransform.v1.y = -camera.cameraTransform.v1.y;
+                camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
+                camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
 
                 this.camera.matrix.fromArray(
                     this.ar.flattenARMatrix(camera.cameraTransform)
