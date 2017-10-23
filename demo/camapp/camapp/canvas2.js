@@ -503,7 +503,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('l' + JSON.stringify(e));
+        this.showMessage('yyy' + JSON.stringify(e));
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -565,12 +565,28 @@ class App {
             */
             
             if (this.changeProjMatrix) {
-                camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
-                camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
+                //~ camera.projectionCamera.v0.x = -camera.projectionCamera.v0.x;
+                //~ camera.projectionCamera.v1.y = -camera.projectionCamera.v1.y;
 
-                this.camera.matrix.fromArray(
-                    this.ar.flattenARMatrix(camera.cameraTransform)
-                );
+                if (this.orientationAngle > 0) {
+                    var m = new THREE.Matrix4();
+                    m.makeRotationZ(this.orientationAngle);
+                    
+                    var cameraTransformArr = this.ar.flattenARMatrix(camera.cameraTransform);
+                    var cameraTransform = new THREE.Matrix4();
+                    cameraTransform.fromArray(cameraTransformArr);
+                    cameraTransform.multiply(m);
+                    
+                    this.camera.matrix.fromArray(
+                        cameraTransform.toArray()
+                    );
+                    
+                } else {
+                    this.camera.matrix.fromArray(
+                        this.ar.flattenARMatrix(camera.cameraTransform)
+                    );
+                }
+                
                 this.camera.projectionMatrix.fromArray(
                     this.ar.flattenARMatrix(camera.projectionCamera)
                 );
@@ -582,7 +598,7 @@ class App {
                         orientationAngle = Math.PI / 2;
                         break;
                     case ARKitWrapper.ORIENTATION_UPSIDE_DOWN:
-                        orientationAngle = -Math.PI / 2;
+                        orientationAngle = Math.PI / 2;
                         break;
                     case ARKitWrapper.ORIENTATION_LANDSCAPE_LEFT:
                         orientationAngle = -Math.PI;
