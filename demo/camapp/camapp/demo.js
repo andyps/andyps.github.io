@@ -132,6 +132,9 @@ class App {
         });
         
         this.ar.addEventListener(ARKitWrapper.ORIENTATION_CHANGED_EVENT, e => {
+            
+            this.showMessage('orientation:' + JSON.stringify(e.detail) + 'window: ' + e.detail.orientation);
+            
             this.updateOrientation(e.detail.orientation);
         });
     }
