@@ -17,6 +17,10 @@ class App {
 
         this.raycaster = new THREE.Raycaster();
         this.registerUIEvents();
+        
+        this.orientation = null;
+        this.fixOrientationMatrix = new THREE.Matrix4();
+        this.orientationAngle = null;
     }
 
     initAR() {
@@ -127,9 +131,22 @@ class App {
             this.fpsStats.domElement.style.display = this.isDebug ? '' : 'none';
         });
         
-        this.ar.addEventListener(ARKitWrapper.ORIENTATION_CHANGED_EVENT, (e) => {
-            // do something when orientation is updated
-            console.log('ORIENTATION_CHANGED_EVENT', e.detail);
+        this.ar.addEventListener(ARKitWrapper.ORIENTATION_CHANGED_EVENT, e => {
+            this.orientation = e.detail.orientation;
+            switch (this.orientation) {
+                case ARKitWrapper.ORIENTATION_PORTRAIT:
+                    this.orientationAngle = Math.PI / 2;
+                    break;
+                case ARKitWrapper.ORIENTATION_UPSIDE_DOWN:
+                    this.orientationAngle = -Math.PI / 2;
+                    break;
+                case ARKitWrapper.ORIENTATION_LANDSCAPE_LEFT:
+                    this.orientationAngle = -Math.PI;
+                    break;
+                default:
+                    this.orientationAngle = 0;
+                    break;
+            }
         });
     }
 
@@ -340,14 +357,22 @@ class App {
     
     onARWatch() {
         const camera = this.ar.getData('camera');
-        if (camera) {
-            this.camera.projectionMatrix.fromArray(
-                this.ar.flattenARMatrix(camera.projectionCamera)
-            );
+        if (!camera) return;
+
+        if (this.orientationAngle != 0) {
+            this.fixOrientationMatrix.makeRotationZ(this.orientationAngle);
+            this.camera.matrix.fromArray(
+                this.ar.flattenARMatrix(camera.cameraTransform)
+            ).multiply(this.fixOrientationMatrix);
+        } else {
             this.camera.matrix.fromArray(
                 this.ar.flattenARMatrix(camera.cameraTransform)
             );
         }
+        
+        this.camera.projectionMatrix.fromArray(
+            this.ar.flattenARMatrix(camera.projectionCamera)
+        );
 
         this.requestAnimationFrame();
     }
