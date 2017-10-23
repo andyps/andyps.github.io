@@ -348,7 +348,9 @@ class App {
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
-        
+
+        this.showMessage('WebXR Demo');
+
         this.deviceId = this.ar.deviceInfo.uuid;
         this.updateOrientation(this.ar.deviceInfo.orientation);
         
