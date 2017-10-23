@@ -132,10 +132,9 @@ class App {
         });
         
         this.ar.addEventListener(ARKitWrapper.ORIENTATION_CHANGED_EVENT, e => {
-            
-            this.showMessage('orientation:' + JSON.stringify(e.detail) + 'window: ' + e.detail.orientation);
-            
             this.updateOrientation(e.detail.orientation);
+            
+            this.showMessage('detail:' + JSON.stringify(e.detail) + 'orientation: ' + e.detail.orientation);
         });
     }
 
@@ -383,7 +382,9 @@ class App {
         this.camera.projectionMatrix.fromArray(
             this.ar.flattenARMatrix(camera.projectionCamera)
         );
-
+        
+        this.showMessage('orientationAngle:' + this.orientationAngle);
+        
         this.requestAnimationFrame();
     }
     
