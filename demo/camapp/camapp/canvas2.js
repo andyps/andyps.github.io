@@ -543,9 +543,6 @@ class App {
         const camera = this.ar.getData('camera');
         if (!camera) return;
 
-        const camera = this.ar.getData('camera');
-        if (!camera) return;
-
         if (this.orientationAngle != 0) {
             this.fixOrientationMatrix.makeRotationZ(this.orientationAngle);
             this.camera.matrix.fromArray(
