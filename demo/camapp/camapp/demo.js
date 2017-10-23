@@ -187,7 +187,7 @@ class App {
         this.camera.position.set(0, 1.6, 0);
         this.camera.lookAt(new THREE.Vector3(0, 1.6, -100));
 
-        this.scene.add(this.camera);
+        //~ this.scene.add(this.camera);
         
         let light = new THREE.PointLight(0xffffff, 2, 0);
         this.camera.add(light);
@@ -354,7 +354,7 @@ class App {
         this.deviceId = this.ar.deviceInfo.uuid;
         this.updateOrientation(this.ar.deviceInfo.orientation);
         
-        this.showMessage('WebXR Demo! ' + this.ar.deviceInfo.orientation);
+        this.showMessage('WebXR Demo!!! ' + this.ar.deviceInfo.orientation);
         
         this.resize(
             this.ar.deviceInfo.viewportSize.width,
