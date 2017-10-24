@@ -199,9 +199,14 @@ class App {
         let light = new THREE.PointLight(0xffffff, 2, 0);
         this.camera.add(light);
         
+        const cameraAxis = new THREE.AxisHelper(0.1);
+        cameraAxis.name = 'cameraAxis';
+        this.camera.add(cameraAxis);
+        cameraAxis.position.z = -1;
+        
         //~ this.camera.matrixAutoUpdate = false;
         
-        let axis = new THREE.AxisHelper(100);
+        const axis = new THREE.AxisHelper(100);
         axis.name = 'axis';
         this.scene.add(axis);
         this.axis = axis;
@@ -422,7 +427,18 @@ class App {
     
     testMove() {
         //~ this.cubeMesh
+        const cameraBasis = {
+            x: new THREE.Vector3(),
+            y: new THREE.Vector3(),
+            z: new THREE.Vector3()
+        };
+        this.camera.matrix.extractBasis(cameraBasis.x, cameraBasis.y, cameraBasis.z);
         
+        cameraBasis.x.normalize();
+        cameraBasis.y.normalize();
+        cameraBasis.z.normalize();
+        
+        this.cubeMesh.position.addScaledVector(x, 1);
     }
 }
 
