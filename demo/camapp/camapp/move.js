@@ -348,7 +348,7 @@ class App {
         }
     }
     onARHitTest(data, tapPos) {
-        this.showMessage('onARHitTest:' + tapPos.x + ', ' + tapPos.y);
+        this.showMessage('onARHitTest:' + tapPos.x + ', ' + tapPos.y + '; ' + this.cubesNum);
         console.log('onARHitTest:' + tapPos.x + ', ' + tapPos.y);
         let info;
         let planeResults = [];
@@ -430,7 +430,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('init');
+        this.showMessage('init!');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
