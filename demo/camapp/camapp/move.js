@@ -29,6 +29,8 @@ class App {
         this.cameraBasis = null;
         this.touches = null;
         this.pickInfo = null;
+        // this.startTouches = null;
+        // this.startTouchTime = 0;
     }
 
     run() {
@@ -259,7 +261,7 @@ class App {
 
     registerUIEvents() {
         
-        this.tapPos = {x: 0, y: 0};
+        // this.tapPos = {x: 0, y: 0};
         this.canvas.addEventListener('click', e => {
             this.showMessage('click');
             //~ let normX = e.clientX / this.width;
@@ -345,7 +347,9 @@ class App {
             this.fpsStats.end();
         }
     }
-    onARHitTest(data) {
+    onARHitTest(data, tapPos) {
+        this.showMessage('onARHitTest:' + tapPos.x + ', ' + tapPos.y);
+        console.log('onARHitTest:' + tapPos.x + ', ' + tapPos.y);
         let info;
         let planeResults = [];
         let planeExistingUsingExtentResults = [];
@@ -387,7 +391,7 @@ class App {
         } else {
             // if hit testing is negative put object at distance 1m from camera
             this.raycaster.setFromCamera(
-                {x: this.tapPos.x, y: this.tapPos.y},
+                {x: tapPos.x, y: tapPos.y},
                 this.camera
             );
             
@@ -426,6 +430,7 @@ class App {
     }
     
     onARInit(e) {
+        this.showMessage('init');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -639,24 +644,58 @@ class App {
         }
         return null;
     }
+    hitTest(clientX, clientY) {
+        this.showMessage('hitTest:' + clientX + ', ' + clientY);
+        console.log('hitTest:' + clientX + ', ' + clientY);
+        
+        const normX = clientX / this.width;
+        const normY = clientY / this.height;
+        this.ar.hitTest(normX, normY).then(
+            data => {
+                const tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
+                this.onARHitTest(data, tapPos);
+            }
+        ).catch(e => e);
+    }
     onTouchStart(e) {
+        // save original touch in addition to the last one
+        // if touchmove then it's not a tap
+        // in ontouchend check if it was a move then it's not a tap otherwise check coordinates of original first toucch and current one (from event.changedTouches)
         e.preventDefault();
         console.log('onTouchStart', e);
-        if (this.cubesNum <= 0) {
-            return;
-        }
-        
-        this.addMessage('start' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
-        
         if (!e.changedTouches.length) {
             return;
         }
+        
+
+
+        this.addMessage('start:' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
+        
+        
+        
+        // if (this.cubesNum <= 0) {
+            // return;
+        // }
+        
         if (!this.touches) {
             const touch = e.changedTouches[0];
             const pickInfo = this.pick(this.getMousePos(touch));
             if (!pickInfo.hit) {
                 this.pickInfo = null;
                 this.touches = null;
+                
+                // if (this.startTouches) {
+                     
+                    // return;
+                // }
+                // this.startTouches = [];
+                // this.startTouches.push(this.copyTouch(touch));
+                
+                if (!this.pickInfo) {
+                    // add new object
+                    this.hitTest(touch.clientX, touch.clientY);
+                }
+                
                 return;
             }
             
@@ -678,6 +717,10 @@ class App {
         if (!this.touches) {
             return;
         }
+        if (!this.pickInfo) {
+            
+            return;
+        }
         const savedTouch = this.touches[0];
         const touch = this.getTouchInfoById(e.changedTouches, savedTouch.identifier);
         if (!touch) {
@@ -692,6 +735,8 @@ class App {
         this.touches = null;
         this.pickInfo = null;
         this.cameraBasis = null;
+        // this.startTouches = null;
+        // this.startTouchTime = 0;
     }
     onTouchEnd(e) {
         //~ e.preventDefault();
@@ -702,6 +747,20 @@ class App {
         if (!e.changedTouches.length) {
             return;
         }
+        
+        // if (this.startTouches) {
+            // const savedStartTouch = this.startTouches[0];
+            // const startTouch = this.getTouchInfoById(e.changedTouches, savedStartTouch.identifier);
+            // if (startTouch && startTouch.clientX == savedStartTouch.clientX && startTouch.clientY == savedStartTouch.clientY) {
+                // if (this.startTouchTime) {
+                    // tap
+                    
+                // }
+            // }
+            // this.startTouches = null;
+            // this.startTouchTime = 0;
+        // }
+        
         if (!this.touches) {
             return;
         }
