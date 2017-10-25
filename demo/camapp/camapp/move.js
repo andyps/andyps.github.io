@@ -285,7 +285,20 @@ class App {
         }, false);
         this.canvas.addEventListener('mouseup', e => {
             this.onMouseUp();
-        }, false); 
+        }, false);
+        
+        this.canvas.addEventListener('touchstart', e => {
+            this.onTouchStart(e);
+        }, false);
+        this.canvas.addEventListener('touchmove', e => {
+            this.onTouchMove(e);
+        }, false);
+        this.canvas.addEventListener('touchend', e => {
+            this.onTouchEnd(e);
+        }, false);
+        this.canvas.addEventListener('touchcancel', e => {
+            this.onTouchCancel(e);
+        }, false);
     }
 
     requestAnimationFrame() {
@@ -547,10 +560,8 @@ class App {
         const prevMousePosX = this.mousePos ? this.mousePos.x : this.mouseDown.pointerX;
         
         const mouseDX = mousePos.x - prevMousePosX;
-        //~ const mouseDY = this.mouseDown.pointerY - mousePos.pointerY;
-        //~ const mouseDist = Math.sqrt(mouseDX * mouseDX + mouseDY * mouseDY);
         
-        console.log(prevMousePosX, mousePos.x, mouseDX, this.moveSpeed * mouseDX);
+        //~ console.log(prevMousePosX, mousePos.x, mouseDX, this.moveSpeed * mouseDX);
         
         this.mousePos = mousePos;
         
@@ -565,6 +576,65 @@ class App {
     resetMouse() {
         this.mouseDown = null;
         this.mousePos = null;
+    }
+    addMessage(txt) {
+        document.querySelector('#message').style.display = 'block';
+        document.querySelector('#message').innerHTML += '<br>';
+        document.querySelector('#message').innerHTML += txt;
+    }
+    getTouchesLog(e) {
+        let touches = [];
+        let targetTouches = [];
+        let changedTouches = [];
+        
+        let i = 0;
+        for (i = 0; i < e.touches.length; i++) {
+            touches.push({
+                id: e.touches[i].identifier,
+                x: e.touches[i].clientX,
+                y: e.touches[i].clientY
+            });
+        }
+        for (i = 0; i < e.targetTouches.length; i++) {
+            targetTouches.push({
+                id: e.targetTouches[i].identifier,
+                x: e.targetTouches[i].clientX,
+                y: e.targetTouches[i].clientY
+            });
+        }
+        for (i = 0; i < e.changedTouches.length; i++) {
+            changedTouches.push({
+                id: e.changedTouches[i].identifier,
+                x: e.changedTouches[i].clientX,
+                y: e.changedTouches[i].clientY
+            });
+        }
+        
+        return {touches: touches, targetTouches: targetTouches, changedTouches: changedTouches};
+    }
+    onTouchStart(e) {
+        e.preventDefault();
+        console.log('onTouchStart', e);
+        this.showMessage('');
+        
+        this.addMessage('start' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
+    }
+    onTouchMove(e) {
+        e.preventDefault();
+        console.log('onTouchMove', e);
+        
+        this.addMessage('move' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
+    }
+    
+    onTouchEnd(e) {
+        e.preventDefault();
+        console.log('onTouchEnd', e);
+        
+        this.addMessage('end' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
+    }
+    onTouchCancel(e) {
+        e.preventDefault();
+        console.log('onTouchCancel', e);
     }
 }
 
