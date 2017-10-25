@@ -27,6 +27,8 @@ class App {
         this.mousePos = null;
         this.moveSpeed = 0.01;
         this.cameraBasis = null;
+        this.touches = null;
+        this.pickInfo = null;
     }
 
     run() {
@@ -217,7 +219,7 @@ class App {
         this.axis = axis;
         
         const cubeMesh = this.createCube('cube1');
-        cubeMesh.position.set(0, 1.6, 1);
+        cubeMesh.position.set(3, 1.6, 1);
         cubeMesh.scale.set(10, 10, 10);
         this.scene.add(cubeMesh);
         this.cubeMesh = cubeMesh;
@@ -613,29 +615,99 @@ class App {
         
         return {touches: touches, targetTouches: targetTouches, changedTouches: changedTouches};
     }
+    copyTouch(touch) {
+        return {
+            identifier: touch.identifier,
+            clientX: touch.clientX,
+            clientY: touch.clientY
+        }
+    }
+    getTouchInfoById(touchList, id) {
+        for (let i = 0; i < touchList.length; i++) {
+            if (touchList[i].identifier === id) {
+                return this.copyTouch(touchList[i]);
+            }
+        }
+        return null;
+    }
     onTouchStart(e) {
         e.preventDefault();
         console.log('onTouchStart', e);
-        //~ document.querySelector('#info').value = '';
+        if (this.cubesNum <= 0) {
+            return;
+        }
         
         this.addMessage('start' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
+        
+        if (!e.changedTouches.length) {
+            return;
+        }
+        if (!this.touches) {
+            const touch = e.changedTouches[0];
+            const pickInfo = this.pick(this.getMousePos(touch));
+            if (!pickInfo.hit) {
+                this.pickInfo = null;
+                this.touches = null;
+                return;
+            }
+            
+            this.calculateCameraBasis();
+            this.pickInfo = pickInfo;
+            this.touches = [];
+            this.touches.push(this.copyTouch(touch));
+        }
     }
     onTouchMove(e) {
         e.preventDefault();
         console.log('onTouchMove', e);
         
         this.addMessage('move' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
+        
+        if (!e.changedTouches.length) {
+            return;
+        }
+        if (!this.touches) {
+            return;
+        }
+        const savedTouch = this.touches[0];
+        const touch = this.getTouchInfoById(e.changedTouches, savedTouch.identifier);
+        if (!touch) {
+            return;
+        }
+        const dx = touch.clientX - savedTouch.clientX;
+        
+        this.pickInfo.pickedMesh.position.addScaledVector(this.cameraBasis.x, this.moveSpeed * dx);
     }
-    
+    resetTouch() {
+        this.touches = null;
+        this.pickInfo = null;
+        this.cameraBasis = null;
+    }
     onTouchEnd(e) {
         //~ e.preventDefault();
         console.log('onTouchEnd', e);
         
         this.addMessage('end' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
+        
+        if (!e.changedTouches.length) {
+            return;
+        }
+        if (!this.touches) {
+            return;
+        }
+        const savedTouch = this.touches[0];
+        const touch = this.getTouchInfoById(e.changedTouches, savedTouch.identifier);
+        if (!touch) {
+            return;
+        }
+        
+        this.resetTouch();
     }
     onTouchCancel(e) {
         e.preventDefault();
         console.log('onTouchCancel', e);
+        
+        this.resetTouch();
     }
 }
 
