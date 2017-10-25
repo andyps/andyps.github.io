@@ -225,6 +225,14 @@ class App {
         this.cubeMesh = cubeMesh;
         this.cubesNum++;
 
+        const cubeMesh2 = this.createCube('cube2');
+        cubeMesh2.position.set(3, 0.2, 1);
+        cubeMesh2.scale.set(10, 10, 10);
+        this.scene.add(cubeMesh2);
+        this.cubeMesh2 = cubeMesh2;
+        this.cubesNum++;
+        
+        
         this.fpsStats = new Stats();
         this.fpsStats.setMode(0);
         this.fpsStats.domElement.style.display = 'none';
