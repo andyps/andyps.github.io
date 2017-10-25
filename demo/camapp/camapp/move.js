@@ -578,9 +578,9 @@ class App {
         this.mousePos = null;
     }
     addMessage(txt) {
-        document.querySelector('#message').style.display = 'block';
-        document.querySelector('#message').innerHTML += '<br>';
-        document.querySelector('#message').innerHTML += txt;
+        document.querySelector('#info').style.display = 'block';
+        document.querySelector('#info').value += '\n';
+        document.querySelector('#info').value += txt;
     }
     getTouchesLog(e) {
         let touches = [];
@@ -615,7 +615,7 @@ class App {
     onTouchStart(e) {
         e.preventDefault();
         console.log('onTouchStart', e);
-        this.showMessage('');
+        document.querySelector('#info').value = '';
         
         this.addMessage('start' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
     }
@@ -627,7 +627,7 @@ class App {
     }
     
     onTouchEnd(e) {
-        e.preventDefault();
+        //~ e.preventDefault();
         console.log('onTouchEnd', e);
         
         this.addMessage('end' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
