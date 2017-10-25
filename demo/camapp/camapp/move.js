@@ -270,7 +270,8 @@ class App {
         });
         
         document.querySelector('#btn-test').addEventListener('click', () => {
-            this.testMove();
+            //~ this.testMove();
+            document.querySelector('#info').value = '';
         });
         
         /*
@@ -615,7 +616,7 @@ class App {
     onTouchStart(e) {
         e.preventDefault();
         console.log('onTouchStart', e);
-        document.querySelector('#info').value = '';
+        //~ document.querySelector('#info').value = '';
         
         this.addMessage('start' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
     }
