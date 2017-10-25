@@ -430,7 +430,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('init!');
+        this.showMessage('init!!!');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -707,7 +707,7 @@ class App {
     }
     onTouchMove(e) {
         e.preventDefault();
-        console.log('onTouchMove', e);
+        // console.log('onTouchMove', e);
         
         this.addMessage('move' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
         
@@ -727,9 +727,24 @@ class App {
             return;
         }
         const dx = touch.clientX - savedTouch.clientX;
+        const dy = touch.clientY - savedTouch.clientY;
         
         this.touches[0] = this.copyTouch(touch);
-        this.pickInfo.pickedMesh.position.addScaledVector(this.cameraBasis.x, this.moveSpeed * dx);
+        
+        
+        if (e.touches.length == 1) {
+            // axis x or z
+            
+            if (Math.abs(dx) >= Math.abs(dy)) {
+                this.pickInfo.pickedMesh.position.addScaledVector(this.cameraBasis.x, this.moveSpeed * dx);
+            } else {
+                this.pickInfo.pickedMesh.position.addScaledVector(this.cameraBasis.z, this.moveSpeed * dy);
+            }
+            
+        } else {
+            // axis y
+            this.pickInfo.pickedMesh.position.addScaledVector(new THREE.Vector3(0, -1, 0), this.moveSpeed * dy);
+        }
     }
     resetTouch() {
         this.touches = null;
