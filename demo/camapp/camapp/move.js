@@ -6,12 +6,11 @@ class App {
     constructor(canvasId) {
         this.isDebug = true;
         this.deviceId = null;
+        this.cubesNum = 0;
         
         this.clock = new THREE.Clock();
         this.initScene(canvasId);
         
-        this.cubesNum = 0;
-
         this.initAR();
 
         this.raycaster = new THREE.Raycaster();
@@ -22,6 +21,12 @@ class App {
         this.orientationAngle = 0;
         
         this.run();
+        
+        this.pickableMeshes = null;
+        this.mouseDown = null;
+        this.mousePos = null;
+        this.moveSpeed = 0.01;
+        this.cameraBasis = null;
     }
 
     run() {
@@ -268,6 +273,19 @@ class App {
             this.testMove();
         });
         
+        
+        this.canvas.addEventListener('mousedown', e => {
+            this.onMouseDown(e);
+        }, false);
+        this.canvas.addEventListener('mouseout', e => {
+            this.onMouseOut();
+        }, false);
+        this.canvas.addEventListener('mousemove', e => {
+            this.onMouseMove(e);
+        }, false);
+        this.canvas.addEventListener('mouseup', e => {
+            this.onMouseUp();
+        }, false); 
     }
 
     requestAnimationFrame() {
@@ -438,7 +456,115 @@ class App {
         cameraBasis.y.normalize();
         cameraBasis.z.normalize();
         
-        this.cubeMesh.position.addScaledVector(x, 1);
+        this.cubeMesh.position.addScaledVector(cameraBasis.x, 1);
+    }
+    
+    calculateCameraBasis() {
+        this.cameraBasis = {
+            x: new THREE.Vector3(),
+            y: new THREE.Vector3(),
+            z: new THREE.Vector3()
+        };
+        this.camera.matrix.extractBasis(this.cameraBasis.x, this.cameraBasis.y, this.cameraBasis.z);
+        this.cameraBasis.x.normalize();
+        this.cameraBasis.y.normalize();
+        this.cameraBasis.z.normalize();
+    }
+    onMouseDown(e) {
+        if (this.cubesNum <= 0) {
+            return;
+        }
+        e.preventDefault();
+        this.mousePos = null;
+        if (e.button !== 0) {
+            if (this.mouseDown) {
+                this.mouseDown = null;
+            }
+            return;
+        }
+        
+        const mouseDown = this.pick(this.getMousePos(e));
+        if (!mouseDown.hit) {
+            this.mouseDown = null;
+            return;
+        }
+        
+        this.calculateCameraBasis();
+        this.mouseDown = mouseDown;
+    }
+    getPickableMeshes() {
+        if (this.pickableMeshes) {
+            return this.pickableMeshes;
+        }
+        this.pickableMeshes = [];
+        var cnt = this.scene.children.length;
+        for (var i = 0; i < cnt; i++) {
+            const mesh = this.scene.children[i];
+            if (mesh.type != 'Mesh') {
+                continue;
+            }
+            
+            this.pickableMeshes.push(mesh);
+        }
+        return this.pickableMeshes;
+    }
+    pick(mousePos) {
+        let pickInfo = {};
+        this.raycaster.setFromCamera(
+            {x: mousePos.ndcX, y: mousePos.ndcY},
+            this.camera
+        );
+        const intersects = this.raycaster.intersectObjects(this.getPickableMeshes());
+        if (!intersects.length) {
+            pickInfo.hit = false;
+            return pickInfo;
+        }
+        pickInfo.hit = true;
+        pickInfo.pickedMesh = intersects[0].object;
+        pickInfo.pickedPoint = intersects[0].point;
+        pickInfo.pointerX = mousePos.x;
+        pickInfo.pointerY = mousePos.y;
+        pickInfo.ndcX = mousePos.ndcX;
+        pickInfo.ndcY = mousePos.ndcY;
+        return pickInfo;
+    }
+    getMousePos(e) {
+        var x, y;
+        var canvasRect = this.canvas.getBoundingClientRect();
+        x = e.clientX - canvasRect.left;
+        y = e.clientY - canvasRect.top;
+        
+        var ndcX = (x / canvasRect.width) * 2 - 1;
+        var ndcY = -(y / canvasRect.height) * 2 + 1;
+        return {x: x, y: y, ndcX: ndcX, ndcY: ndcY};
+    }
+    
+    onMouseMove(e) {
+        if (!this.mouseDown && !this.mousePos) {
+            return;
+        }
+        const mousePos = this.getMousePos(e);
+        const prevMousePosX = this.mousePos ? this.mousePos.x : this.mouseDown.pointerX;
+        
+        const mouseDX = mousePos.x - prevMousePosX;
+        //~ const mouseDY = this.mouseDown.pointerY - mousePos.pointerY;
+        //~ const mouseDist = Math.sqrt(mouseDX * mouseDX + mouseDY * mouseDY);
+        
+        console.log(prevMousePosX, mousePos.x, mouseDX, this.moveSpeed * mouseDX);
+        
+        this.mousePos = mousePos;
+        
+        this.mouseDown.pickedMesh.position.addScaledVector(this.cameraBasis.x, this.moveSpeed * mouseDX);
+    }
+    onMouseUp() {
+        this.resetMouse();
+    }
+    onMouseOut() {
+        this.resetMouse();
+    }
+    resetMouse() {
+        this.mouseDown = null;
+        this.mousePos = null;
     }
 }
 
