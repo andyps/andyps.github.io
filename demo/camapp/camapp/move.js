@@ -258,17 +258,18 @@ class App {
     }
 
     registerUIEvents() {
-        /*
+        
         this.tapPos = {x: 0, y: 0};
         this.canvas.addEventListener('click', e => {
-            let normX = e.clientX / this.width;
-            let normY = e.clientY / this.height;
+            this.showMessage('click');
+            //~ let normX = e.clientX / this.width;
+            //~ let normY = e.clientY / this.height;
             
-            this.tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
+            //~ this.tapPos = {x: 2 * normX - 1, y: -2 * normY + 1};
             
-            this.ar.hitTest(normX, normY).then(data => this.onARHitTest(data)).catch(e => e);
+            //~ this.ar.hitTest(normX, normY).then(data => this.onARHitTest(data)).catch(e => e);
         });
-        */
+        
         document.querySelector('#message').onclick = function() {
             this.style.display = 'none';
         }
