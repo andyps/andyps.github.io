@@ -273,7 +273,7 @@ class App {
             this.testMove();
         });
         
-        
+        /*
         this.canvas.addEventListener('mousedown', e => {
             this.onMouseDown(e);
         }, false);
@@ -286,7 +286,7 @@ class App {
         this.canvas.addEventListener('mouseup', e => {
             this.onMouseUp();
         }, false);
-        
+        */
         this.canvas.addEventListener('touchstart', e => {
             this.onTouchStart(e);
         }, false);
