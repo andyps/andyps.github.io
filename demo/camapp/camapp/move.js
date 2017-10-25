@@ -676,6 +676,7 @@ class App {
         }
         const dx = touch.clientX - savedTouch.clientX;
         
+        this.touches[0] = this.copyTouch(touch);
         this.pickInfo.pickedMesh.position.addScaledVector(this.cameraBasis.x, this.moveSpeed * dx);
     }
     resetTouch() {
