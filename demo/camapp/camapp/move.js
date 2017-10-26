@@ -63,7 +63,7 @@ class App {
             }
         }).then(this.onARInit.bind(this));
 
-        //~ this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
+        this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
 
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
             // do something when recording is started
@@ -430,7 +430,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('init!!!');
+        this.showMessage('ini');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
