@@ -763,7 +763,12 @@ class App {
         this.ar.updateAnchor({
             uuid: this.pickInfo.pickedMesh.name,
             transform: transform
-        }).then(info => this.showMessage('anchor updated'));
+        }).then(info => {
+            this.showMessage(
+                'anchor updated ' + JSON.stringify(info) + '***' +
+                JSON.stringify(transform.toArray())
+            )
+        });
     }
     resetTouch() {
         this.touches = null;
