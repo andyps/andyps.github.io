@@ -26,7 +26,7 @@ class App {
         this.mouseDown = null;
         this.mousePos = null;
         this.moveSpeed = 0.001;
-        this.scaleSpeed = 0.01;
+        this.scaleSpeed = 0.1;
         this.cameraBasis = null;
         this.touches = null;
         this.pickInfo = null;
@@ -769,12 +769,16 @@ class App {
             
         } else {
             // axis y or scale
+            
             if (savedTouch2) {
                 touch2 = this.getTouchInfoById(e.changedTouches, savedTouch2.identifier);
             }
+            
+            this.showMessage('savedTouch2 ' + touch2 + ':::' + JSON.stringify(savedTouch2.identifier));
+            
             if (!touch2) {
                 // move along axis y
-                this.showMessage('move y');
+                //~ this.showMessage('move y');
                 this.pickInfo.pickedMesh.position.addScaledVector(new THREE.Vector3(0, -1, 0), this.moveSpeed * dy);
                 this.scaleDistance = 0;
             } else {
@@ -790,7 +794,6 @@ class App {
                     dy = touch2.clientY - touch.clientY;
                     const distance = Math.sqrt(dx * dx + dy * dy);
                     
-                    
                     const delta = distance - this.scaleDistance;
                     
                     if (this.scaleDistance > 0) {
@@ -804,7 +807,7 @@ class App {
                     this.scaleDistance = distance;
                 } else {
                     // move
-                    this.showMessage('move y2');
+                    //~ this.showMessage('move y2');
                     this.pickInfo.pickedMesh.position.addScaledVector(new THREE.Vector3(0, -1, 0), this.moveSpeed * dy);
                     this.scaleDistance = 0;
                 }
