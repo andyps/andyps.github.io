@@ -433,7 +433,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('H');
+        this.showMessage('BBB');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
