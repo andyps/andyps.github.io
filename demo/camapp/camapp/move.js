@@ -696,6 +696,8 @@ class App {
                 return;
             }
             
+            this.showMessage('PICK!');
+            
             this.calculateCameraBasis();
             this.pickInfo = pickInfo;
             this.touches = [];
