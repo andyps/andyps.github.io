@@ -416,6 +416,7 @@ class App {
         this.scene.add(cubeMesh);
         this.cubesNum++;
 
+        this.getPickableMeshes(true);
         this.requestAnimationFrame();
     }
     
@@ -430,7 +431,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('I');
+        this.showMessage('III');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -522,8 +523,8 @@ class App {
         this.calculateCameraBasis();
         this.mouseDown = mouseDown;
     }
-    getPickableMeshes() {
-        if (this.pickableMeshes) {
+    getPickableMeshes(forceUpdate) {
+        if (this.pickableMeshes && !forceUpdate) {
             return this.pickableMeshes;
         }
         this.pickableMeshes = [];
@@ -667,11 +668,7 @@ class App {
             return;
         }
         
-
-
         this.addMessage('start:' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
-        
-        
         
         // if (this.cubesNum <= 0) {
             // return;
