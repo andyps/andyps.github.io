@@ -433,7 +433,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('LLL');
+        this.showMessage('OOO');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -786,13 +786,15 @@ class App {
                 
                 if (Math.sign(dx) != Math.sign(dx2) && Math.sign(dy) != Math.sign(dy2)) {
                     // scale
-                    this.showMessage('scale');
                     dx = touch2.clientX - touch.clientX;
                     dy = touch2.clientY - touch.clientY;
                     const distance = Math.sqrt(dx * dx + dy * dy);
                     
+                    this.showMessage('scale' + distance + ';' + this.scaleDistance + ';' + (distance - this.scaleDistance));
+                    
                     const delta = distance - this.scaleDistance;
                     this.scaleDistance = distance;
+                    
                     this.pickInfo.pickedMesh.scale.addScalar(this.scaleSpeed * delta);
                 } else {
                     // move
