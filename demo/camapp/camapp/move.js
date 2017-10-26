@@ -433,7 +433,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('OOO');
+        this.showMessage('HHH');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -793,9 +793,11 @@ class App {
                     this.showMessage('scale' + distance + ';' + this.scaleDistance + ';' + (distance - this.scaleDistance));
                     
                     const delta = distance - this.scaleDistance;
-                    this.scaleDistance = distance;
                     
-                    this.pickInfo.pickedMesh.scale.addScalar(this.scaleSpeed * delta);
+                    if (this.scaleDistance > 0) {
+                        this.pickInfo.pickedMesh.scale.addScalar(this.scaleSpeed * delta);
+                    }
+                    this.scaleDistance = distance;
                 } else {
                     // move
                     this.showMessage('move y2');
