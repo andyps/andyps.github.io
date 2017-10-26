@@ -709,7 +709,10 @@ class App {
         e.preventDefault();
         // console.log('onTouchMove', e);
         
-        this.addMessage('move' + JSON.stringify(this.getTouchesLog(e)) + '\n---\n');
+        this.addMessage(
+            'move' + (this.pickInfo.pickedMesh ? 'picked' : '0') +
+            JSON.stringify(this.getTouchesLog(e)) + '\n---\n'
+        );
         
         if (!e.changedTouches.length) {
             return;
