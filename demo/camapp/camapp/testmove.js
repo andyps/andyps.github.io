@@ -653,8 +653,8 @@ class App {
             // return;
         // }
         
+        const touch = e.changedTouches[0];
         if (!this.touches) {
-            const touch = e.changedTouches[0];
             const pickInfo = this.pick(this.getMousePos(touch));
             if (!pickInfo.hit) {
                 this.pickInfo = null;
@@ -679,6 +679,12 @@ class App {
             this.pickInfo = pickInfo;
             this.touches = [];
             this.touches.push(this.copyTouch(touch));
+            
+            if (e.changedTouches.length > 1) {
+                this.touches.push(this.copyTouch(e.changedTouches[1]));
+            }
+        } else {
+            this.touches.push(this.copyTouch(touch));
         }
     }
     onTouchMove(e) {
@@ -695,6 +701,8 @@ class App {
             return;
         }
         const savedTouch = this.touches[0];
+        const savedTouch2 = this.touches[1]; // if 2 touches
+        
         const touch = this.getTouchInfoById(e.changedTouches, savedTouch.identifier);
         if (!touch) {
             return;
@@ -703,7 +711,6 @@ class App {
         const dy = touch.clientY - savedTouch.clientY;
         
         this.touches[0] = this.copyTouch(touch);
-        
         
         const position = this.pickInfo.pickedMesh.position.setFromMatrixPosition(this.pickInfo.pickedMesh.matrix);
         

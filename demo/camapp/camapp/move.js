@@ -20,12 +20,13 @@ class App {
         this.fixOrientationMatrix = new THREE.Matrix4();
         this.orientationAngle = 0;
         
-        //~ this.run();
+        this.run();
         
         this.pickableMeshes = null;
         this.mouseDown = null;
         this.mousePos = null;
         this.moveSpeed = 0.001;
+        this.scaleSpeed = 0.1;
         this.cameraBasis = null;
         this.touches = null;
         this.pickInfo = null;
@@ -63,7 +64,7 @@ class App {
             }
         }).then(this.onARInit.bind(this));
 
-        this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
+        //~ this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
 
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
             // do something when recording is started
@@ -213,26 +214,26 @@ class App {
         this.camera.add(cameraAxis);
         cameraAxis.position.z = -1;
         
-        this.camera.matrixAutoUpdate = false;
+        //~ this.camera.matrixAutoUpdate = false;
         
         const axis = new THREE.AxisHelper(100);
         axis.name = 'axis';
         this.scene.add(axis);
         this.axis = axis;
         
-        //~ const cubeMesh = this.createCube('cube1');
-        //~ cubeMesh.position.set(3, 1.6, 1);
-        //~ cubeMesh.scale.set(10, 10, 10);
-        //~ this.scene.add(cubeMesh);
-        //~ this.cubeMesh = cubeMesh;
-        //~ this.cubesNum++;
+        const cubeMesh = this.createCube('cube1');
+        cubeMesh.position.set(3, 1.6, 1);
+        cubeMesh.scale.set(10, 10, 10);
+        this.scene.add(cubeMesh);
+        this.cubeMesh = cubeMesh;
+        this.cubesNum++;
 
-        //~ const cubeMesh2 = this.createCube('cube2');
-        //~ cubeMesh2.position.set(3, 0.2, 1);
-        //~ cubeMesh2.scale.set(10, 10, 10);
-        //~ this.scene.add(cubeMesh2);
-        //~ this.cubeMesh2 = cubeMesh2;
-        //~ this.cubesNum++;
+        const cubeMesh2 = this.createCube('cube2');
+        cubeMesh2.position.set(3, 0.2, 1);
+        cubeMesh2.scale.set(10, 10, 10);
+        this.scene.add(cubeMesh2);
+        this.cubeMesh2 = cubeMesh2;
+        this.cubesNum++;
         
         
         this.fpsStats = new Stats();
@@ -409,7 +410,7 @@ class App {
     }
     onARAddObject(info) {
         const cubeMesh = this.createCube(info.uuid);
-        cubeMesh.matrixAutoUpdate = false;
+        //~ cubeMesh.matrixAutoUpdate = false;
         
         info.transform.v3.y += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.transform));
@@ -431,7 +432,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('LLL');
+        this.showMessage('KKK');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -674,8 +675,8 @@ class App {
             // return;
         // }
         
+        const touch = e.changedTouches[0];
         if (!this.touches) {
-            const touch = e.changedTouches[0];
             const pickInfo = this.pick(this.getMousePos(touch));
             if (!pickInfo.hit) {
                 this.pickInfo = null;
@@ -702,6 +703,12 @@ class App {
             this.pickInfo = pickInfo;
             this.touches = [];
             this.touches.push(this.copyTouch(touch));
+            
+            if (e.changedTouches.length > 1) {
+                this.touches.push(this.copyTouch(e.changedTouches[1]));
+            }
+        } else {
+            this.touches.push(this.copyTouch(touch));
         }
     }
     onTouchMove(e) {
@@ -724,21 +731,34 @@ class App {
             return;
         }
         const savedTouch = this.touches[0];
-        const touch = this.getTouchInfoById(e.changedTouches, savedTouch.identifier);
-        if (!touch) {
-            return;
-        }
-        const dx = touch.clientX - savedTouch.clientX;
-        const dy = touch.clientY - savedTouch.clientY;
+        const savedTouch2 = this.touches[1]; // if 2 touches
         
-        this.touches[0] = this.copyTouch(touch);
+        //~ const touch = this.getTouchInfoById(e.changedTouches, savedTouch.identifier);
+        //~ if (!touch) {
+            //~ return;
+        //~ }
+        //~ const dx = touch.clientX - savedTouch.clientX;
+        //~ const dy = touch.clientY - savedTouch.clientY;
         
+        //~ this.touches[0] = this.copyTouch(touch);
+        
+        let dx = 0;
+        let dy = 0;
+        let touch, touch2;
         
         const position = this.pickInfo.pickedMesh.position.setFromMatrixPosition(this.pickInfo.pickedMesh.matrix);
         
+        touch = this.getTouchInfoById(e.changedTouches, savedTouch.identifier);
+        if (!touch) {
+            return;
+        }
+        this.touches[0] = this.copyTouch(touch);
+        dx = touch.clientX - savedTouch.clientX;
+        dy = touch.clientY - savedTouch.clientY;
+
         if (e.touches.length == 1) {
             // axis x or z
-            
+            this.showMessage('move x or z');
             if (Math.abs(dx) >= Math.abs(dy)) {
                 this.pickInfo.pickedMesh.position.addScaledVector(this.cameraBasis.x, this.moveSpeed * dx);
             } else {
@@ -746,29 +766,53 @@ class App {
             }
             
         } else {
-            // axis y
-            this.pickInfo.pickedMesh.position.addScaledVector(new THREE.Vector3(0, -1, 0), this.moveSpeed * dy);
+            // axis y or scale
+            if (savedTouch2) {
+                touch2 = this.getTouchInfoById(e.changedTouches, savedTouch2.identifier);
+            }
+            if (!touch2) {
+                // move along axis y
+                this.showMessage('move y');
+                this.pickInfo.pickedMesh.position.addScaledVector(new THREE.Vector3(0, -1, 0), this.moveSpeed * dy);
+            } else {
+                // move or scale
+                this.touches[1] = this.copyTouch(touch2);
+                
+                let dx2 = touch2.clientX - savedTouch2.clientX;
+                let dy2 = touch2.clientY - savedTouch2.clientY;
+                
+                if (Math.sign(dx) != Math.sign(dx2) && Math.sign(dy) != Math.sign(dy2)) {
+                    // scale
+                    this.showMessage('scale');
+                    dx = touch2.clientX - touch.clientX;
+                    dy = touch2.clientY - touch.clientY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    this.pickInfo.pickedMesh.scale.addScalar(this.scaleSpeed * distance);
+                } else {
+                    // move
+                    this.showMessage('move y2');
+                    this.pickInfo.pickedMesh.position.addScaledVector(new THREE.Vector3(0, -1, 0), this.moveSpeed * dy);
+                }
+                
+            }
         }
         
         this.pickInfo.pickedMesh.updateMatrix();
         this.pickInfo.pickedMesh.updateMatrixWorld(true);
         
-        this.showMessage('beforeUpdateAnchor ' + this.pickInfo.pickedMesh.name);
-        
         let transform = this.pickInfo.pickedMesh.matrix.toArray();
         transform = this.ar.createARMatrix(transform);
         
-        this.showMessage('updateAnchor ' + this.pickInfo.pickedMesh.name);
-        
-        this.ar.updateAnchor({
-            uuid: this.pickInfo.pickedMesh.name,
-            transform: transform
-        }).then(info => {
-            this.showMessage(
-                'anchor updated ' + JSON.stringify(info) + '***' +
-                JSON.stringify(transform.toArray())
-            )
-        });
+        //~ this.ar.updateAnchor({
+            //~ uuid: this.pickInfo.pickedMesh.name,
+            //~ transform: transform
+        //~ }).then(info => {
+            //~ this.showMessage(
+                //~ 'anchor updated ' + JSON.stringify(info) + '***' +
+                //~ JSON.stringify(transform.toArray())
+            //~ )
+        //~ });
     }
     resetTouch() {
         this.touches = null;
@@ -805,6 +849,16 @@ class App {
         }
         const savedTouch = this.touches[0];
         const touch = this.getTouchInfoById(e.changedTouches, savedTouch.identifier);
+        
+        let touch2;
+        const savedTouch2 = this.touches[1];
+        if (savedTouch2) {
+            touch2 = this.getTouchInfoById(e.changedTouches, savedTouch2.identifier);
+        }
+        if (touch2) {
+            this.touches.pop();
+        }
+        
         if (!touch) {
             return;
         }

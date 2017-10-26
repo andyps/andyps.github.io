@@ -140,7 +140,8 @@ class webkitSimulator {
             arDidMoveBackground: new webkitSimulatorMessageHandler(this, 'didMoveBackground'),
             arWillEnterForeground: new webkitSimulatorMessageHandler(this, 'willEnterForeground'),
             arLoadUrl: new webkitSimulatorMessageHandler(this, 'loadUrl'),
-            arSetUIOptions: new webkitSimulatorMessageHandler(this, 'setUIOptions')
+            arSetUIOptions: new webkitSimulatorMessageHandler(this, 'setUIOptions'),
+            arUpdateAnchor: new webkitSimulatorMessageHandler(this, 'updateAnchor')
         };
     }
 }
