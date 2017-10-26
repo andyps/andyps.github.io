@@ -431,7 +431,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('VVV');
+        this.showMessage('V');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -755,6 +755,8 @@ class App {
         
         const transform = this.pickInfo.pickedMesh.matrix.toArray();
         transform = this.ar.createARMatrix(transform);
+        
+        this.showMessage('updateAnchor ' + this.pickInfo.pickedMesh.name);
         
         this.ar.updateAnchor({
             uuid: this.pickInfo.pickedMesh.name,
