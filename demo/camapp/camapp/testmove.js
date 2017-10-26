@@ -680,11 +680,11 @@ class App {
             this.touches = [];
             this.touches.push(this.copyTouch(touch));
             
-            if (e.changedTouches.length > 1) {
-                this.touches.push(this.copyTouch(e.changedTouches[1]));
-            }
+            //~ if (e.changedTouches.length > 1) {
+                //~ this.touches.push(this.copyTouch(e.changedTouches[1]));
+            //~ }
         } else {
-            this.touches.push(this.copyTouch(touch));
+            //~ this.touches.push(this.copyTouch(touch));
         }
     }
     onTouchMove(e) {
