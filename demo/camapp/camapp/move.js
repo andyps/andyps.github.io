@@ -431,7 +431,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('M');
+        this.showMessage('L');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -752,6 +752,8 @@ class App {
         
         this.pickInfo.pickedMesh.updateMatrix();
         this.pickInfo.pickedMesh.updateMatrixWorld(true);
+        
+        this.showMessage('beforeUpdateAnchor ' + this.pickInfo.pickedMesh.name);
         
         const transform = this.pickInfo.pickedMesh.matrix.toArray();
         transform = this.ar.createARMatrix(transform);
