@@ -25,7 +25,7 @@ class App {
         this.pickableMeshes = null;
         this.mouseDown = null;
         this.mousePos = null;
-        this.moveSpeed = 0.01;
+        this.moveSpeed = 0.001;
         this.cameraBasis = null;
         this.touches = null;
         this.pickInfo = null;
@@ -431,7 +431,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('MMM');
+        this.showMessage('M');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
