@@ -697,6 +697,7 @@ class App {
             }
             
             this.showMessage('PICK!');
+            document.querySelector('#info').value = 'PICK!';
             
             this.calculateCameraBasis();
             this.pickInfo = pickInfo;
