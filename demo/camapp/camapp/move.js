@@ -409,7 +409,7 @@ class App {
     }
     onARAddObject(info) {
         const cubeMesh = this.createCube(info.uuid);
-        cubeMesh.matrixAutoUpdate = false;
+        cubeMesh.matrixAutoUpdate = true;
         
         info.transform.v3.y += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.transform));
@@ -431,7 +431,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('III');
+        this.showMessage('GGG');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -710,7 +710,7 @@ class App {
         // console.log('onTouchMove', e);
         
         this.addMessage(
-            'move' + (this.pickInfo.pickedMesh ? 'picked' : '0') +
+            'move' + (this.pickInfo && this.pickInfo.hit ? 'picked' : '0') +
             JSON.stringify(this.getTouchesLog(e)) + '\n---\n'
         );
         
