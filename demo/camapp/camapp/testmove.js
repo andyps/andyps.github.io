@@ -275,11 +275,11 @@ class App {
             this.style.display = 'none';
         }
         
-        window.addEventListener('resize', () => {
-            this.resize(window.innerWidth, window.innerHeight);
-            this.camera.aspect = window.innerWidth / window.innerHeight;
-            this.camera.updateProjectionMatrix();
-        });
+        //~ window.addEventListener('resize', () => {
+            //~ this.resize(window.innerWidth, window.innerHeight);
+            //~ this.camera.aspect = window.innerWidth / window.innerHeight;
+            //~ this.camera.updateProjectionMatrix();
+        //~ });
         
         /*
         this.canvas.addEventListener('mousedown', e => {
