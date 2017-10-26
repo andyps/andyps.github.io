@@ -757,9 +757,9 @@ class App {
         const transform = this.pickInfo.pickedMesh.matrix.toArray();
         transform = this.ar.createARMatrix(transform);
         this.ar.updateAnchor(
-            null,
             transform
         ).then(info => this.showMessage('anchor updated'));
+        
     }
     resetTouch() {
         this.touches = null;

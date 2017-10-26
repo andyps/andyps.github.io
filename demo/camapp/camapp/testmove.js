@@ -727,7 +727,6 @@ class App {
         const transform = this.pickInfo.pickedMesh.matrix.toArray();
         transform = this.ar.createARMatrix(transform);
         this.ar.updateAnchor(
-            null,
             transform
         );
     }
