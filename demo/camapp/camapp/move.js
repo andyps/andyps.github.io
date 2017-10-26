@@ -348,7 +348,7 @@ class App {
         }
     }
     onARHitTest(data, tapPos) {
-        this.showMessage('onARHitTest:' + tapPos.x + ', ' + tapPos.y + '; ' + this.cubesNum);
+        //~ this.showMessage('onARHitTest:' + tapPos.x + ', ' + tapPos.y + '; ' + this.cubesNum);
         console.log('onARHitTest:' + tapPos.x + ', ' + tapPos.y);
         let info;
         let planeResults = [];
@@ -431,7 +431,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('F');
+        this.showMessage('FFF');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -646,7 +646,7 @@ class App {
         return null;
     }
     hitTest(clientX, clientY) {
-        this.showMessage('hitTest:' + clientX + ', ' + clientY);
+        //~ this.showMessage('hitTest:' + clientX + ', ' + clientY);
         console.log('hitTest:' + clientX + ', ' + clientY);
         
         const normX = clientX / this.width;
@@ -696,8 +696,7 @@ class App {
                 return;
             }
             
-            this.showMessage('PICK!');
-            document.querySelector('#info').value = 'PICK!';
+            //~ this.showMessage('PICK!');
             
             this.calculateCameraBasis();
             this.pickInfo = pickInfo;
