@@ -724,11 +724,13 @@ class App {
         this.pickInfo.pickedMesh.updateMatrix();
         this.pickInfo.pickedMesh.updateMatrixWorld(true);
         
-        const transform = this.pickInfo.pickedMesh.matrix.toArray();
+        let transform = this.pickInfo.pickedMesh.matrix.toArray();
         transform = this.ar.createARMatrix(transform);
-        this.ar.updateAnchor(
-            transform
-        );
+        
+        this.ar.updateAnchor({
+            uuid: this.pickInfo.pickedMesh.name,
+            transform: transform
+        });
     }
     resetTouch() {
         this.touches = null;
