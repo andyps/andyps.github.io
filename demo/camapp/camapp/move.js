@@ -25,7 +25,7 @@ class App {
         this.pickableMeshes = null;
         this.mouseDown = null;
         this.mousePos = null;
-        this.moveSpeed = 1;
+        this.moveSpeed = 0.01;
         this.cameraBasis = null;
         this.touches = null;
         this.pickInfo = null;
@@ -409,7 +409,7 @@ class App {
     }
     onARAddObject(info) {
         const cubeMesh = this.createCube(info.uuid);
-        cubeMesh.matrixAutoUpdate = true;
+        cubeMesh.matrixAutoUpdate = false;
         
         info.transform.v3.y += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.transform));
@@ -431,7 +431,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('GGG');
+        this.showMessage('MMM');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -735,6 +735,8 @@ class App {
         this.touches[0] = this.copyTouch(touch);
         
         
+        const position = this.pickInfo.pickedMesh.position.setFromMatrixPosition(this.pickInfo.pickedMesh.matrix);
+        
         if (e.touches.length == 1) {
             // axis x or z
             
@@ -748,6 +750,9 @@ class App {
             // axis y
             this.pickInfo.pickedMesh.position.addScaledVector(new THREE.Vector3(0, -1, 0), this.moveSpeed * dy);
         }
+        
+        this.pickInfo.pickedMesh.updateMatrix();
+        this.pickInfo.pickedMesh.updateMatrixWorld(true);
     }
     resetTouch() {
         this.touches = null;
