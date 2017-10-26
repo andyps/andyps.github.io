@@ -431,7 +431,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('V');
+        this.showMessage('M');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
