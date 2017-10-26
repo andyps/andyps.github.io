@@ -26,12 +26,13 @@ class App {
         this.mouseDown = null;
         this.mousePos = null;
         this.moveSpeed = 0.001;
-        this.scaleSpeed = 0.1;
+        this.scaleSpeed = 0.01;
         this.cameraBasis = null;
         this.touches = null;
         this.pickInfo = null;
         // this.startTouches = null;
         // this.startTouchTime = 0;
+        this.scaleDistance = 0;
     }
 
     run() {
@@ -432,7 +433,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('KKK');
+        this.showMessage('LLL');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
@@ -758,6 +759,7 @@ class App {
 
         if (e.touches.length == 1) {
             // axis x or z
+            this.scaleDistance = 0;
             this.showMessage('move x or z');
             if (Math.abs(dx) >= Math.abs(dy)) {
                 this.pickInfo.pickedMesh.position.addScaledVector(this.cameraBasis.x, this.moveSpeed * dx);
@@ -774,6 +776,7 @@ class App {
                 // move along axis y
                 this.showMessage('move y');
                 this.pickInfo.pickedMesh.position.addScaledVector(new THREE.Vector3(0, -1, 0), this.moveSpeed * dy);
+                this.scaleDistance = 0;
             } else {
                 // move or scale
                 this.touches[1] = this.copyTouch(touch2);
@@ -788,11 +791,14 @@ class App {
                     dy = touch2.clientY - touch.clientY;
                     const distance = Math.sqrt(dx * dx + dy * dy);
                     
-                    this.pickInfo.pickedMesh.scale.addScalar(this.scaleSpeed * distance);
+                    const delta = distance - this.scaleDistance;
+                    this.scaleDistance = distance;
+                    this.pickInfo.pickedMesh.scale.addScalar(this.scaleSpeed * delta);
                 } else {
                     // move
                     this.showMessage('move y2');
                     this.pickInfo.pickedMesh.position.addScaledVector(new THREE.Vector3(0, -1, 0), this.moveSpeed * dy);
+                    this.scaleDistance = 0;
                 }
                 
             }
@@ -818,6 +824,8 @@ class App {
         this.touches = null;
         this.pickInfo = null;
         this.cameraBasis = null;
+        
+        this.scaleDistance = 0;
         // this.startTouches = null;
         // this.startTouchTime = 0;
     }
@@ -857,6 +865,7 @@ class App {
         }
         if (touch2) {
             this.touches.pop();
+            this.scaleDistance = 0;
         }
         
         if (!touch) {
