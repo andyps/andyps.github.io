@@ -797,7 +797,7 @@ class App {
                         this.pickInfo.pickedMesh.scale.addScalar(this.scaleSpeed * delta);
                         
                         this.showMessage(
-                            'scale' + distance + ';' + this.scaleDistance + ';' + (distance - this.scaleDistance) + ';' + delta +
+                            'scale' + distance + ';' + this.scaleDistance + ';' + (distance - this.scaleDistance) + ';' + this.scaleSpeed * delta +
                             ':::' + JSON.stringify(this.pickInfo.pickedMesh.scale)
                         );
                     }
