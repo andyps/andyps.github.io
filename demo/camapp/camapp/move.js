@@ -25,7 +25,7 @@ class App {
         this.pickableMeshes = null;
         this.mouseDown = null;
         this.mousePos = null;
-        this.moveSpeed = 0.01;
+        this.moveSpeed = 1;
         this.cameraBasis = null;
         this.touches = null;
         this.pickInfo = null;
