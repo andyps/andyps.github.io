@@ -20,7 +20,7 @@ class App {
         this.fixOrientationMatrix = new THREE.Matrix4();
         this.orientationAngle = 0;
         
-        this.run();
+        //~ this.run();
         
         this.pickableMeshes = null;
         this.mouseDown = null;
@@ -213,26 +213,26 @@ class App {
         this.camera.add(cameraAxis);
         cameraAxis.position.z = -1;
         
-        //~ this.camera.matrixAutoUpdate = false;
+        this.camera.matrixAutoUpdate = false;
         
         const axis = new THREE.AxisHelper(100);
         axis.name = 'axis';
         this.scene.add(axis);
         this.axis = axis;
         
-        const cubeMesh = this.createCube('cube1');
-        cubeMesh.position.set(3, 1.6, 1);
-        cubeMesh.scale.set(10, 10, 10);
-        this.scene.add(cubeMesh);
-        this.cubeMesh = cubeMesh;
-        this.cubesNum++;
+        //~ const cubeMesh = this.createCube('cube1');
+        //~ cubeMesh.position.set(3, 1.6, 1);
+        //~ cubeMesh.scale.set(10, 10, 10);
+        //~ this.scene.add(cubeMesh);
+        //~ this.cubeMesh = cubeMesh;
+        //~ this.cubesNum++;
 
-        const cubeMesh2 = this.createCube('cube2');
-        cubeMesh2.position.set(3, 0.2, 1);
-        cubeMesh2.scale.set(10, 10, 10);
-        this.scene.add(cubeMesh2);
-        this.cubeMesh2 = cubeMesh2;
-        this.cubesNum++;
+        //~ const cubeMesh2 = this.createCube('cube2');
+        //~ cubeMesh2.position.set(3, 0.2, 1);
+        //~ cubeMesh2.scale.set(10, 10, 10);
+        //~ this.scene.add(cubeMesh2);
+        //~ this.cubeMesh2 = cubeMesh2;
+        //~ this.cubesNum++;
         
         
         this.fpsStats = new Stats();
@@ -430,7 +430,7 @@ class App {
     }
     
     onARInit(e) {
-        this.showMessage('ini');
+        this.showMessage('I');
         if (!this.ar.deviceInfo || !this.ar.deviceInfo.uuid) {
             return;
         }
