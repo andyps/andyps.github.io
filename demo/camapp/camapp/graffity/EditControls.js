@@ -15,7 +15,7 @@ export default class EditControls extends EventHandlerBase {
         this.app = app;
         this.canvas = app.canvas;
         
-        this.app.showMessage('VVV');
+        this.app.showMessage('W');
         
         this.reset();
         
@@ -191,7 +191,7 @@ export default class EditControls extends EventHandlerBase {
         
         if (!isScale) {
             // move along camera Y axis
-            this.pickedMesh.position.addScaledVector(new THREE.Vector3(0, -1, 0), MOVE_SPEED * dy);
+            this.pickedMesh.position.addScaledVector(new THREE.Vector3(0, -1, 0), MOVE_SPEED * dy1);
         } else {
             // scale
             const scaleDelta = scaleDistance - this.scaleDistance;
