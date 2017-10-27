@@ -7,7 +7,7 @@ const STATE_MOVE_Y_OR_SCALE = 3;
 const STATE_MOVE_XZ = 4;
 
 const MOVE_SPEED = 0.001;
-const SCALE_SPEED = 0.1;
+const SCALE_SPEED = 0.01;
 
 export default class EditControls extends EventHandlerBase {
     constructor(app) {
@@ -15,7 +15,7 @@ export default class EditControls extends EventHandlerBase {
         this.app = app;
         this.canvas = app.canvas;
         
-        this.app.showMessage('W');
+        this.app.showMessage('WWW');
         
         this.reset();
         
