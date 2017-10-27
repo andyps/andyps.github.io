@@ -385,7 +385,7 @@ class App {
             return;
         }
 
-        this.showMessage('G');
+        this.showMessage('GGG');
         
         this.deviceId = this.ar.deviceInfo.uuid;
         this.updateOrientation(this.ar.deviceInfo.orientation);

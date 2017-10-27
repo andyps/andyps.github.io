@@ -135,6 +135,8 @@ export default class EditControls extends EventHandlerBase {
         
         this.state = STATE_MOVE_Y_OR_SCALE;
         
+        this.app.showMessage('handleTwoTouchesStart:' + this.app.mode + ' STATE: ' + this.state);
+        
         this.scaleDistance = this.getTouchesDistance(touch1, touch2);
     }
     getTouchesDistance(touch1, touch2) {
