@@ -6,7 +6,7 @@ const STATE_NONE = 0;
 const STATE_MOVE_Y_OR_SCALE = 3;
 const STATE_MOVE_XZ = 4;
 
-const MOVE_SPEED = 0.001;
+const MOVE_SPEED = 0.005;
 const SCALE_SPEED = 0.01;
 
 export default class EditControls extends EventHandlerBase {
