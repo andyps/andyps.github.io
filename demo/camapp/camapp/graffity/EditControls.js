@@ -147,6 +147,7 @@ export default class EditControls extends EventHandlerBase {
     onTouchStart(e) {
         e.preventDefault();
         
+        this.app.showMessage('onTouchStart:' + e.touches.length);
         if (e.touches.length == 1) {
             this.handleOneTouchStart(e.touches);
         } else if (e.touches.length == 2) {
@@ -155,11 +156,11 @@ export default class EditControls extends EventHandlerBase {
             this.state = STATE_NONE;
         }
         
-        this.app.showMessage('MODE:' + this.app.mode + ' STATE: ' + this.state);
+        //~ this.app.showMessage('MODE:' + this.app.mode + ' STATE: ' + this.state);
         
         if (this.app.mode == EditControls.MODE_VIEW) {
             this.reset();
-            this.app.showMessage('MODE:' + this.app.mode + ' STATE: ' + this.state);
+            //~ this.app.showMessage('MODE:' + this.app.mode + ' STATE: ' + this.state);
             return;
         }
         
@@ -204,7 +205,7 @@ export default class EditControls extends EventHandlerBase {
         e.preventDefault();
         this.state = STATE_NONE;
         
-        this.app.showMessage('MODE:' + this.app.mode + ' STATE: ' + this.state);
+        //~ this.app.showMessage('MODE:' + this.app.mode + ' STATE: ' + this.state);
     }
     onTouchCancel(e) {
         e.preventDefault();
