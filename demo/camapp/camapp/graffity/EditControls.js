@@ -15,8 +15,6 @@ export default class EditControls extends EventHandlerBase {
         this.app = app;
         this.canvas = app.canvas;
         
-        this.app.showMessage('WWW');
-        
         this.reset();
         
         this.canvas.addEventListener('touchstart', e => {
