@@ -127,8 +127,8 @@ export default class EditControls extends EventHandlerBase {
     }
     handleTwoTouchesStart(touches) {
         console.log('handleTwoTouchesStart');
-        const touch1 = e.touches[0];
-        const touch2 = e.touches[1];
+        const touch1 = touches[0];
+        const touch2 = touches[1];
         this.touches = [];
         this.saveTouchInfo(touch1, 0);
         this.saveTouchInfo(touch2, 1);
