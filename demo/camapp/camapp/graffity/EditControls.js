@@ -148,7 +148,7 @@ export default class EditControls extends EventHandlerBase {
         if (e.touches.length == 1) {
             this.handleOneTouchStart(e.touches);
         } else if (e.touches.length == 2) {
-            this.handleTwoTouchStart(e.touches);
+            this.handleTwoTouchesStart(e.touches);
         } else {
             this.state = STATE_NONE;
         }
