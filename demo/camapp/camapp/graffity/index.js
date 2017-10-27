@@ -23,6 +23,16 @@ class App {
 
         this.raycaster = new THREE.Raycaster();
         this.registerUIEvents();
+        
+        
+        this.run();
+    }
+    run() {
+        let render = (time) => {
+            this.render(time);
+            window.requestAnimationFrame(render);
+        };
+        render();
     }
     setMode(mode) {
         this.mode = mode;
@@ -50,7 +60,7 @@ class App {
             }
         }).then(this.onARInit.bind(this));
 
-        this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
+        //~ this.ar.addEventListener(ARKitWrapper.WATCH_EVENT, this.onARWatch.bind(this));
 
         this.ar.addEventListener(ARKitWrapper.RECORD_START_EVENT, () => {
             // do something when recording is started
@@ -195,7 +205,21 @@ class App {
         let light = new THREE.PointLight(0xffffff, 2, 0);
         this.camera.add(light);
         
-        this.camera.matrixAutoUpdate = false;
+        //~ this.camera.matrixAutoUpdate = false;
+        /*@todo remove */
+        const cubeMesh = this.createCube('cube1');
+        cubeMesh.position.set(3, 1.6, 1);
+        cubeMesh.scale.set(10, 10, 10);
+        this.scene.add(cubeMesh);
+        this.cubeMesh = cubeMesh;
+        this.cubesNum++;
+        const cubeMesh2 = this.createCube('cube2');
+        cubeMesh2.position.set(3, 0.2, 1);
+        cubeMesh2.scale.set(10, 10, 10);
+        this.scene.add(cubeMesh2);
+        this.cubeMesh2 = cubeMesh2;
+        this.cubesNum++;
+        this.camera.position.z = 10;
         
         this.fpsStats = new Stats();
         this.fpsStats.setMode(0);
@@ -336,7 +360,7 @@ class App {
     }
     onARAddObject(info) {
         const cubeMesh = this.createCube(info.uuid);
-        cubeMesh.matrixAutoUpdate = false;
+        //~ cubeMesh.matrixAutoUpdate = false;
         
         info.transform.v3.y += CUBE_SIZE / 2;
         cubeMesh.matrix.fromArray(this.ar.flattenARMatrix(info.transform));

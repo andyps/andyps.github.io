@@ -1,14 +1,13 @@
 import EventHandlerBase from '../fill/EventHandlerBase.js'
 
-const DOUBLETAP_TIME_SENSITIVITY = 500;
+const DOUBLETAP_TIME_SENSITIVITY = 400;
 
 const STATE_NONE = 0;
-//~ const STATE_MOVE_Y = 1;
-//~ const STATE_SCALE = 2;
 const STATE_MOVE_Y_OR_SCALE = 3;
 const STATE_MOVE_XZ = 4;
 
 const MOVE_SPEED = 0.001;
+const SCALE_SPEED = 0.1;
 
 export default class EditControls extends EventHandlerBase {
     constructor(app) {
@@ -16,10 +15,7 @@ export default class EditControls extends EventHandlerBase {
         this.app = app;
         this.canvas = app.canvas;
         
-        this.state = STATE_NONE;
-        this.touches = [];
-        this.pickInfo = null;
-        this.cameraBasis = null;
+        this.reset();
         
         this.canvas.addEventListener('touchstart', e => {
             this.onTouchStart(e);
@@ -66,84 +62,157 @@ export default class EditControls extends EventHandlerBase {
         return false;
     }
     handleModeOnTap(pickInfo, isDoubleTap) {
-        const lastPickInfo = this.pickInfo;
+        const lastPickInfo = this.lastPickInfo;
         let mode;
-        if (!isDoubleTap && pickInfo.hit && this.app.mode == EditControls.MODE_VIEW) {
-            this.app.setMode(EditControls.MODE_EDIT_TRANSLATE);
+        
+        if (this.app.mode == EditControls.MODE_VIEW) {
+            if (pickInfo && pickInfo.hit) {
+                this.app.setMode(EditControls.MODE_EDIT_TRANSLATE);
+                this.pickedMesh = pickInfo.pickedMesh;
+            }
             return;
         }
+        if (!isDoubleTap) {
+            return;
+        }
+        
         if (lastPickInfo && pickInfo && lastPickInfo.hit && pickInfo.hit && lastPickInfo.pickedMesh.name == pickInfo.pickedMesh.name) {
             // edit modes
-            if (this.app.mode == App.MODE_EDIT_TRANSLATE) {
-                mode = EditControls.MODE_EDIT_TRANSLATE;
-            } else {
-                mode = EditControls.MODE_EDIT_TRANSLATE;
-            }
+            mode = EditControls.MODE_EDIT_TRANSLATE;
         } else {
             // view mode
             mode = EditControls.MODE_VIEW;
         }
         this.app.setMode(mode);
     }
-    obtainStateOnTouchStart(touchesLen) {
-        if (touchesLen == 1) {
-            this.state = STATE_MOVE_XZ;
-        } else if (touchesLen == 2) {
-            this.state = STATE_MOVE_Y_OR_SCALE;
-        }
+    reset() {
         this.state = STATE_NONE;
+        this.touches = [];
+        this.pickedMesh = null;
+        this.lastPickInfo = null;
+        this.cameraBasis = null;
+        this.scaleDistance = 0;
+    }
+    handleOneTouchStart(touches) {
+        const touch = touches[0];
+        const pickInfo = this.app.pick(this.getTouchPos(touch));
+        let isDoubleTap = this.isDoubleTap(touch);
+        
+        this.touches = [];
+        this.saveTouchInfo(touch, 0);
+        this.handleModeOnTap(pickInfo, isDoubleTap);
+        
+        this.state = STATE_MOVE_XZ;
+        this.lastPickInfo = pickInfo;
+        
+        console.log('handleOneTouchStart', isDoubleTap);
+    }
+    handleOneTouchMove(touch) {
+        const savedTouch = this.touches[0];
+        const dx = touch.clientX - savedTouch.clientX;
+        const dy = touch.clientY - savedTouch.clientY;
+        
+        if (Math.abs(dx) >= Math.abs(dy)) {
+            // move along camera X axis
+            this.pickedMesh.position.addScaledVector(this.cameraBasis.x, MOVE_SPEED * dx);
+        } else {
+            // move along camera Z axis
+            this.pickedMesh.position.addScaledVector(this.cameraBasis.z, MOVE_SPEED * dy);
+        }
+        
+        this.pickedMesh.updateMatrix();
+        this.pickedMesh.updateMatrixWorld(true);
+        
+        this.saveTouchInfo(touch, 0);
+    }
+    handleTwoTouchesStart(touches) {
+        console.log('handleTwoTouchesStart');
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        this.touches = [];
+        this.saveTouchInfo(touch1, 0);
+        this.saveTouchInfo(touch2, 1);
+        
+        this.state = STATE_MOVE_Y_OR_SCALE;
+        
+        this.scaleDistance = this.getTouchesDistance(touch1, touch2);
+    }
+    getTouchesDistance(touch1, touch2) {
+        let dx = touch2.clientX - touch1.clientX;
+        let dy = touch2.clientY - touch1.clientY;
+        return Math.sqrt(dx * dx + dy * dy);
     }
     onTouchStart(e) {
         e.preventDefault();
         
-        const touch = e.changedTouches[0];
         if (e.touches.length == 1) {
-            const pickInfo = this.app.pick(this.getTouchPos(touch));
-            
-            let isDoubleTap = this.isDoubleTap(touch);
-            this.saveTouchInfo(touch, 0);
-            
-            this.handleModeOnTap(pickInfo, isDoubleTap);
-            
+            this.handleOneTouchStart(e.touches);
         } else if (e.touches.length == 2) {
-            this.saveTouchInfo(touch, 1);
+            this.handleTwoTouchStart(e.touches);
+        } else {
+            this.state = STATE_NONE;
         }
         
-        this.obtainStateOnTouchStart(e.touches.length);
+        this.app.showMessage('MODE:' + this.app.mode + ' STATE: ' + this.state);
+        
+        if (this.app.mode == EditControls.MODE_VIEW) {
+            this.reset();
+            this.app.showMessage('MODE:' + this.app.mode + ' STATE: ' + this.state);
+            return;
+        }
+        
         this.calculateCameraBasis();
+    }
+    handleTwoTouchesMove(touches) {
+        const savedTouch1 = this.touches[0];
+        const savedTouch2 = this.touches[1];
+        let touch1 = this.getTouchInfoById(touches, savedTouch1.identifier);
+        let touch2 = this.getTouchInfoById(touches, savedTouch2.identifier);
+        if (!touch1 || !touch2) {
+            return;
+        }
+        
+        let dx1 = touch1.clientX - savedTouch1.clientX;
+        let dy1 = touch1.clientY - savedTouch1.clientY;
+        let dx2 = touch2.clientX - savedTouch2.clientX;
+        let dy2 = touch2.clientY - savedTouch2.clientY;
+
+        let isScale = true;
+        if ((dy1 > 0 && dy2 > 0) || (dy1 < 0 && dy2 < 0)) {
+            isScale = false;
+        }
+        
+        let scaleDistance = this.getTouchesDistance(touch1, touch2);
+        
+        if (!isScale) {
+            // move along camera Y axis
+            this.pickedMesh.position.addScaledVector(new THREE.Vector3(0, -1, 0), MOVE_SPEED * dy);
+        } else {
+            // scale
+            const scaleDelta = scaleDistance - this.scaleDistance;
+            this.pickedMesh.scale.addScalar(SCALE_SPEED * scaleDelta);
+        }
+        
+        this.saveTouchInfo(touch1, 0);
+        this.saveTouchInfo(touch2, 1);
+        
+        this.scaleDistance = scaleDistance;
     }
     onTouchEnd(e) {
         e.preventDefault();
-        if (!this.touches.length) {
-            return;
-        }
+        this.state = STATE_NONE;
         
-        const savedTouch1 = this.touches[0];
-        const savedTouch2 = this.touches[1];
-        let touch1 = this.getTouchInfoById(e.changedTouches, savedTouch1.identifier);
-        let touch2;
-        
-        if (savedTouch2) {
-            touch2 = this.getTouchInfoById(e.changedTouches, savedTouch2.identifier);
-        }
-        
-        if (touch2) {
-            this.touches.pop();
-            return;
-        }
-        if (touch1) {
-            this.touches.shift();
-            return;
-        }
+        this.app.showMessage('MODE:' + this.app.mode + ' STATE: ' + this.state);
+    }
+    onTouchCancel(e) {
+        e.preventDefault();
+        this.reset();
     }
     onTouchMove(e) {
         e.preventDefault();
         
         // check mode and state
         if (this.app.mode == EditControls.MODE_VIEW || this.state == STATE_NONE) {
-            return;
-        }
-        if (!this.touches || !this.pickInfo) {
             return;
         }
         
@@ -157,54 +226,11 @@ export default class EditControls extends EventHandlerBase {
                 return;
             }
             this.handleTwoTouchesMove(e.touches);
-        }
-    }
-
-    handleTwoTouchesMove(touches) {
-        const savedTouch1 = this.touches[0];
-        const savedTouch2 = this.touches[1];
-        
-        let touch1 = this.getTouchInfoById(touches, savedTouch1.identifier);
-        let touch2;
-        if (savedTouch2) {
-            touch2 = this.getTouchInfoById(touches, savedTouch2.identifier);
-        }
-        if (!touch2) {
-            return;
-        }
-        let dx = touch1.clientX - savedTouch1.clientX;
-        let dy = touch1.clientY - savedTouch1.clientY;
-
-        let dx2 = touch2.clientX - savedTouch2.clientX;
-        let dy2 = touch2.clientY - savedTouch2.clientY;
-
-        if (Math.sign(dx) != Math.sign(dx2) && Math.sign(dy) != Math.sign(dy2)) {
-            // scale
-            
-            
-            
-            
-            
-            
         } else {
-            // move
-            this.pickInfo.pickedMesh.position.addScaledVector(new THREE.Vector3(0, -1, 0), MOVE_SPEED * dy);
+            this.state = STATE_NONE;
         }
     }
-    handleOneTouchMove(touch) {
-        const savedTouch = this.touches[0];
-        const dx = touch.clientX - savedTouch.clientX;
-        const dy = touch.clientY - savedTouch.clientY;
-        
-        if (Math.abs(dx) >= Math.abs(dy)) {
-            this.pickInfo.pickedMesh.position.addScaledVector(this.cameraBasis.x, MOVE_SPEED * dx);
-        } else {
-            this.pickInfo.pickedMesh.position.addScaledVector(this.cameraBasis.z, MOVE_SPEED * dy);
-        }
-        
-        this.pickInfo.pickedMesh.updateMatrix();
-        this.pickInfo.pickedMesh.updateMatrixWorld(true);
-    }
+
     getTouchPos(e) {
         var x, y;
         var canvasRect = this.canvas.getBoundingClientRect();
