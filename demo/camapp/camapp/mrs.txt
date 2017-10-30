@@ -1,0 +1,31 @@
+1. initAR
+2. Create or get User
+3. Get gallery from MRS
+4. Load gallery files
+5. Get objects from MRS
+6. Load objects files
+7. Render Open Gallery Button
+8. Render loaded objects in scene
+9. When user put an object from gallery Render it
+10. Double tap on object - edit mode
+11. Double tap not on object - back to view mode
+12. Work in edit mode
+
+https://stackoverflow.com/questions/40048673/using-geo-coordintes-instead-of-cartesian-to-draw-in-argon-and-a-frame
+https://www.mathworks.com/help/aeroblks/llatoecefposition.html
+https://en.wikipedia.org/wiki/ECEF
+
+http://www.oc.nps.edu/oc2902w/coord/llhxyz.htm
+
+
+https://cesiumjs.org/Cesium/Build/Documentation/Cartographic.html
+http://www.oc.nps.edu/oc2902w/coord/geodesy.js
+
+
+https://github.com/AnalyticalGraphicsInc/cesium/blob/1.38/Source/Core/Cartesian3.js#L776 - from LLA to ECEF (from degrees to cartesian ecef)
+https://github.com/AnalyticalGraphicsInc/cesium/blob/1.38/Source/Core/Cartographic.js#L119 - from ECEF to LLA (from cartesian ecef to lla radians)
+
+
+github:aelatgt/cesium@referenceFrames
+https://groups.google.com/forum/#!msg/cesium-dev/e_TonMnT8UA/ElthDZaWmQ0J;context-place=searchin/cesium-dev/custom$20build%7Csort:date - Custom Cesium Build
+https://groups.google.com/forum/#!msg/cesium-dev/sxOJ7TzFiIY/UDjyknLsX44J;context-place=searchin/cesium-dev/custom$20build%7Csort:date- Custom Cesium Build
