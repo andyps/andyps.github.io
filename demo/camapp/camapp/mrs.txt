@@ -11,6 +11,7 @@
 11. Double tap not on object - back to view mode
 12. Work in edit mode
 
+https://en.wikipedia.org/wiki/North_east_down
 https://stackoverflow.com/questions/40048673/using-geo-coordintes-instead-of-cartesian-to-draw-in-argon-and-a-frame
 https://www.mathworks.com/help/aeroblks/llatoecefposition.html
 https://en.wikipedia.org/wiki/ECEF
@@ -29,3 +30,13 @@ https://github.com/AnalyticalGraphicsInc/cesium/blob/1.38/Source/Core/Cartograph
 github:aelatgt/cesium@referenceFrames
 https://groups.google.com/forum/#!msg/cesium-dev/e_TonMnT8UA/ElthDZaWmQ0J;context-place=searchin/cesium-dev/custom$20build%7Csort:date - Custom Cesium Build
 https://groups.google.com/forum/#!msg/cesium-dev/sxOJ7TzFiIY/UDjyknLsX44J;context-place=searchin/cesium-dev/custom$20build%7Csort:date- Custom Cesium Build
+
+
+
+https://cesiumjs.org/Cesium/Build/Documentation/Transforms.html#.northEastDownToFixedFrame - matrix from ned to ecef
+
+
+https://cesiumjs.org/Cesium/Build/Documentation/PositionProperty.html#referenceFrame
+
+https://www.mathworks.com/help/map/ref/ecef2lv.html - ECEF to Local
+https://github.com/ethz-asl/geodetic_utils/tree/master/src
